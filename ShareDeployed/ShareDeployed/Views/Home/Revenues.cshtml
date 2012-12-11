@@ -1,0 +1,236 @@
+﻿@model ShareDeployed.Common.RequetResponse.RangeRequest
+@{
+	ViewBag.Title = "Revenues";
+
+	if (Model != null)
+	{
+		var now = DateTime.Now;
+		Model.From = new DateTime(now.Year, now.Month, 1);
+		Model.To = now;
+	}
+	if(Session!=null)
+	{
+		<input value="@Session["UserId"]" hidden="hidden" id="uid" />
+	}
+}
+
+@section Scripts{
+	@Scripts.Render("~/bundles/jqueryval")
+	@Scripts.Render("~/bundles/jqueryui")
+	<script type="text/javascript">
+		function RevenuesViewModel() {
+
+			var self = this;
+			self.userId = ko.observable(0);
+			self.loaded = ko.observable(false);
+			self.loadedTotal = ko.observable(false);
+			self.requested = ko.observable(false);
+			self.revenues = ko.observableArray([]);
+
+			var now = new Date();
+			now.setDate(1);
+
+			$("#From").datepicker({ dateFormat: "yy-mm-dd" }).datepicker("setDate", $.datepicker.formatDate('yy-mm-dd', now));
+			$("#To").datepicker({ dateFormat: "yy-mm-dd" }).datepicker("setDate", "0");
+
+			$("#chckId").live("click", function () {
+				if (this.checked) {
+					$("#chckName").removeAttr("checked");
+				}
+				else {
+					var two = $("#chckName").attr("checked", "checked");
+				}
+				$.uniform.update(two);
+			});
+
+			self.removeRevenue = function (revenue) {
+				$.ajax({
+					type: "DELETE",
+					headers:{"UserId":self.userId()},
+					url: "/api/Revenue/delete?id=" + revenue.Id
+				})
+				.done(function () { self.revenues.remove(revenue); });
+			}
+
+			self.getData = function () {
+
+				$('#formRange').validate();
+				if ($('#formRange').valid() == false)
+					return;
+
+				self.userId($('#uid').val());
+				self.requested(true);
+				self.loaded(false);
+
+				var urlTotal = "/api/Revenue/GetTotal?v1=" + $('#To').val() + "&v2=" + $('#From').val()
+				$.ajax({
+					typr: "GET",
+					url: urlTotal,
+					headers: { "UserId": self.userId(), "AuthToken": "11111" },
+					success: function (jsonStr) {
+						self.loadedTotal(true);
+						$('#TotalMsg').text('Total: ' + jsonStr.Total);
+						console.log(jsonStr);
+					}
+				}).fail(function () {
+					alert('Fail');
+					self.loadedTotal(true);
+				});
+
+				var url = "/api/Revenue/ByRange?from=" + $('#From').val() + "&to=" + $('#To').val()
+
+				$.ajax({
+					typr: "GET",
+					url: url,
+					headers: { "UserId": self.userId(), "AuthToken": "11111" },
+					success: function (jsonStr) {
+						self.loaded(true);
+						self.requested(false);
+						self.revenues(jsonStr);
+					}
+				}).fail(function () {
+					self.loaded(true);
+					self.requested(false);
+					$('#errorMsg').val('Fail!!!');
+				});
+			}
+		}
+
+		function find() {
+
+			var id = $('#prodId').val();
+			var byId = document.getElementById("chckId").checked;
+			var byName = document.getElementById("chckName").checked;
+			var uid = $('#uid').val();
+
+			if (byId == true) {
+				$.ajax({
+					typr: "GET",
+					url: "/api/revenue/byid/" + id,
+					headers: { "UserId": uid, "AuthToken": "11111" },
+					success: function (jsonStr) {
+						console.log(jsonStr);
+						var str = jsonStr.Name + ': $' + jsonStr.Amount;
+						$('#product').text(str);
+					}
+				}).fail(function () {
+					$('#product').text('Error occurred while loading data.');
+				});
+			}
+
+			if (byName == true) {
+				$.ajax({
+					typr: "GET",
+					url: "/api/revenue?name=" + id,
+					headers: { "UserId": uid, "AuthToken": "11111" },
+					success: function (jsonStr) {
+						console.log(jsonStr);
+						var str = jsonStr.Name + ': $' + jsonStr.Amount;
+						$('#product').text(str);
+					}
+				}).fail(function () {
+					$('#product').text('Error occurred while loading data.');
+				});
+			}
+		}
+
+		ko.bindingHandlers.dateString = {
+			update: function (element, valueAccessor, allBindingsAccessor, viewModel) {
+				var value = valueAccessor(),
+					allBindings = allBindingsAccessor();
+				var valueUnwrapped = ko.utils.unwrapObservable(value);
+				var pattern = allBindings.datePattern || 'MM/dd/yyyy';
+				$(element).text(valueUnwrapped.toString(pattern));
+			}
+		}
+
+		ko.applyBindings(new RevenuesViewModel());
+	</script>
+}
+
+<hgroup class="title">
+	<h1>@ViewBag.Title.</h1>
+	<h2>@ViewBag.Message</h2>
+</hgroup>
+
+<aside>
+	<h4>Expenses management</h4>
+	<section class="revenue">
+		@Html.ActionLink("Create revenue", "AddRevenue")
+	</section>
+</aside>
+
+<section class="revenues">
+	<header>
+		<h4>Find revenue</h4>
+	</header>
+	<div>
+		<label for="prodId">ID:</label>
+		<input type="text" id="prodId" size="5" />
+		<input type="button" value="Search" onclick="find();" />
+		<br />
+		<input type="checkbox" checked="checked" id="chckId" />
+		By id
+		<input type="checkbox" id="chckName" />
+		By name
+		<br />
+		<form id="formRange" data-bind="submit:getData">
+			@Html.AntiForgeryToken();
+			@Html.ValidationSummary(true)
+			<fieldset>
+				<legend>Revenue</legend>
+				<div class="editor-label">
+					@Html.LabelFor(model => model.From)
+				</div>
+				<div class="editor-field">
+					@Html.EditorFor(model => model.From)
+					@Html.ValidationMessageFor(model => model.From)
+				</div>
+				<div class="editor-label">
+					@Html.LabelFor(model => model.To)
+				</div>
+				<div class="editor-field">
+					@Html.EditorFor(model => model.To)
+					@Html.ValidationMessageFor(model => model.To)
+				</div>
+				<p>
+					<input type="submit" value="Get" />
+				</p>
+			</fieldset>
+		</form>
+		<p id="product" />
+	</div>
+</section>
+
+<section class="revenue">
+	<img id="loader" src="@Scripts.Url("~/Images/ajax-loader.gif")" data-bind="visible: requested" />
+</section>
+
+<div data-bind="visible: loadedTotal">
+	<p id="TotalMsg"></p>
+</div>
+
+<section class="revenues" data-bind="visible: loaded">
+	<header>
+		<h3>Revenues</h3>
+	</header>
+	<div>
+		<ul id="revenues" data-bind="visible: loaded, foreach: revenues">
+			<li class="ui-widget-content ui-corner-all">
+				<h2 data-bind="text: Name" class="ui-widget-header"></h2>
+				<div>
+					<span data-bind="text: Amount || 'Amount?'"></span>
+				</div>
+				<div>
+					<span data-bind="text: Description"></span>
+				</div>
+				<div>
+					<span data-bind="dateString: Time"></span>
+				</div>
+				<p>
+					<a href="#" data-bind="click: $root.removeRevenue" class="removeRevenue ui-state-default ui-corner-all">Remove</a>
+				</p>
+			</li>
+		</ul>
+	</div>
+</section>

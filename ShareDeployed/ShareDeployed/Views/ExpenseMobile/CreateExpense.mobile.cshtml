@@ -1,0 +1,58 @@
+﻿@model ShareDeployed.Common.Models.Expense
+@Styles.Render("~/Content/Mobile/datebox")
+@Scripts.Render("~/jquerymobile/datebox")
+<script type="text/javascript">
+	$(document).bind('pageinit', function () {
+		$('#Time').attr('data-role', 'datebox');
+	});
+</script>
+<h2>New expense </h2>
+@using (Html.BeginForm("CreateExpense", "ExpenseMobile"))
+{
+	@Html.ValidationSummary(true)
+	<fieldset>
+		<legend>Enter Expense Information!</legend>
+		<div class="editor-label">
+			@Html.LabelFor(model => model.Name)
+		</div>
+		<div class="editor-field">
+			@Html.TextBoxFor(Model => Model.Name)
+			@Html.ValidationMessageFor(Model => Model.Name)
+		</div>
+		<div class="editor-label">
+			@Html.LabelFor(model => model.Time)
+		</div>
+		<div class="editor-field">
+			@Html.TextBoxFor(Model => Model.Time)
+			@Html.ValidationMessageFor(Model => Model.Time)
+		</div>
+		<div class="editor-label">
+			@Html.LabelFor(model => model.Amount)
+		</div>
+		<div class="editor-field">
+			@Html.TextBoxFor(Model => Model.Amount)
+			@Html.ValidationMessageFor(Model => Model.Amount)
+		</div>
+		<div class="editor-label">
+			@Html.LabelFor(model => model.IsRequired)
+		</div>
+		<div class="editor-field">
+			@Html.TextBoxFor(Model => Model.IsRequired)
+			@*@Html.ValidationMessageFor(Model => Model.Time)*@
+		</div>
+		<div class="editor-label">
+			@Html.LabelFor(model => model.Description)
+		</div>
+		<div class="editor-field">
+			@Html.TextBoxFor(Model => Model.Description)
+			@*@Html.ValidationMessageFor(Model => Model.Time)*@
+		</div>
+		<p>
+			<input type="submit" value="Save" />
+		</p>
+	</fieldset>
+}
+@if (IsPost && ViewBag.Message != null)
+{
+	<h1>@ViewBag.Message</h1>
+}

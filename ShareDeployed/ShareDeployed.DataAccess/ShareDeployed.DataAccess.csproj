@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B92D4469-4A30-41A9-966A-D859084EAD1D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ShareDeployed.DataAccess</RootNamespace>
+    <AssemblyName>ShareDeployed.DataAccess</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=4.3.1.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.4.3.1\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Helper\QueryExtensions.cs" />
+    <Compile Include="Helper\TracingExtension.cs" />
+    <Compile Include="Implementation\ConcreteRepositories.cs" />
+    <Compile Include="Implementation\GenericRepository.cs" />
+    <Compile Include="Implementation\UnityOfWorkEx.cs" />
+    <Compile Include="Initializer\ShareDbInitializer.cs" />
+    <Compile Include="Interfaces\IContext.cs" />
+    <Compile Include="Interfaces\IRepository.cs" />
+    <Compile Include="Interfaces\IUnityOfWork.cs" />
+    <Compile Include="Mappings\MessageMap.cs" />
+    <Compile Include="Mappings\MessangerClientMap.cs" />
+    <Compile Include="Mappings\MessangerGroupMap.cs" />
+    <Compile Include="Mappings\MessangerUserMap.cs" />
+    <Compile Include="MessangerContext.cs" />
+    <Compile Include="Migrations\201209211917124_Initial.cs" />
+    <Compile Include="Migrations\201209211917124_Initial.Designer.cs">
+      <DependentUpon>201209211917124_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201210170832216_Word.cs" />
+    <Compile Include="Migrations\201210170832216_Word.Designer.cs">
+      <DependentUpon>201210170832216_Word.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201211201617208_MessangerStart.cs" />
+    <Compile Include="Migrations\201211201617208_MessangerStart.Designer.cs">
+      <DependentUpon>201211201617208_MessangerStart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201211210925387_IsNewInMessage.cs" />
+    <Compile Include="Migrations\201211210925387_IsNewInMessage.Designer.cs">
+      <DependentUpon>201211210925387_IsNewInMessage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201211231441414_FromEmailInMessage.cs" />
+    <Compile Include="Migrations\201211231441414_FromEmailInMessage.Designer.cs">
+      <DependentUpon>201211231441414_FromEmailInMessage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201211241845003_RenameChatUsersToMessangerUsers.cs" />
+    <Compile Include="Migrations\201211241845003_RenameChatUsersToMessangerUsers.Designer.cs">
+      <DependentUpon>201211241845003_RenameChatUsersToMessangerUsers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201212032205392_AddedReadMessagesTable.cs" />
+    <Compile Include="Migrations\201212032205392_AddedReadMessagesTable.Designer.cs">
+      <DependentUpon>201212032205392_AddedReadMessagesTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201212041337074_AddedUserReadMessage.cs" />
+    <Compile Include="Migrations\201212041337074_AddedUserReadMessage.Designer.cs">
+      <DependentUpon>201212041337074_AddedUserReadMessage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201212041402185_DeleteReadMessagesTable.cs" />
+    <Compile Include="Migrations\201212041402185_DeleteReadMessagesTable.Designer.cs">
+      <DependentUpon>201212041402185_DeleteReadMessagesTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Migrations\MigrationConfig.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShareDeployedContext.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ShareDeployed.Common\ShareDeployed.Common.csproj">
+      <Project>{967e6a63-b6c6-4b95-95d7-009ca1ce4f3d}</Project>
+      <Name>ShareDeployed.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

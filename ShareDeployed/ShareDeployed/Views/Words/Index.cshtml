@@ -1,0 +1,255 @@
+﻿@{
+	ViewBag.Title = "Words index page";
+}
+@section Styles{
+	@Styles.Render("~/Content/bootstrap")
+	<style type="text/css">
+		#navcontainer ul
+		{
+			margin: 0;
+			padding: 0;
+			list-style-type: none;
+		}
+
+			#navcontainer ul li
+			{
+				display: inline;
+			}
+	</style>
+}
+
+@section Scripts{
+	@Scripts.Render("~/bundles/jqueryval")
+	@Scripts.Render("~/bundles/jqueryui")
+	<script type="text/javascript">
+		function WordsViewModel() {
+			var self = this;
+			self.userId = ko.observable(0);
+			self.authToken = ko.observable("1");
+			self.words = ko.observableArray([]);
+			self.loaded = ko.observable(false);
+			self.requested = ko.observable(false);
+
+			self.pageSize = ko.observable(10);
+			self.pageIndex = ko.observable(0);
+
+			self.pagedList = ko.dependentObservable(function () {
+				var size = self.pageSize();
+				var start = self.pageIndex() * size;
+				return self.words.slice(start, start + size);
+			});
+
+			self.maxPageIndex = ko.dependentObservable(function () {
+				return Math.ceil(self.words().length / self.pageSize()) - 1;
+			});
+			self.previousPage = function () {
+				if (self.pageIndex() > 0) {
+					self.pageIndex(self.pageIndex() - 1);
+				}
+			};
+			self.nextPage = function () {
+				if (self.pageIndex() < self.maxPageIndex()) {
+					self.pageIndex(self.pageIndex() + 1);
+				}
+			};
+			self.allPages = ko.dependentObservable(function () {
+				var pages = [];
+				for (i = 0; i <= self.maxPageIndex() ; i++) {
+					pages.push({ pageNumber: (i + 1) });
+				}
+				return pages;
+			});
+			self.moveToPage = function (index) {
+				self.pageIndex(index);
+			};
+
+			self.curPageIndex = function () {
+				return self.pageIndex() + 1;
+			};
+
+			self.getWords = function () {
+				self.userId($("#uid").val());
+				self.requested(false);
+
+				var chkAll = document.getElementById("chckAll").checked;
+				var chkComplexity = document.getElementById("chckComplexity").checked;
+
+				if (chkAll == true) {
+					$.ajax({
+						typr: "GET",
+						url: "/api/Words/GetAll/",
+						headers: { "UserId": self.userId(), "AuthToken": "11111" },
+						success: function (jsonStr) {
+							self.words(jsonStr)
+
+							self.loaded(true);
+							self.requested(false);
+						}
+					}).fail(function () {
+						self.loaded(false);
+						self.requested(false);
+					});
+				}
+				else {
+					var url = "/api/Words/GetByComplexity?complex=" + (chkComplexity == true ? 1 : 0).toString();
+					$.ajax({
+						typr: "GET",
+						url: url,
+						headers: { "UserId": self.userId(), "AuthToken": "11111" },
+						success: function (jsonStr) {
+							self.words(jsonStr)
+
+							self.loaded(true);
+							self.requested(false);
+						}
+					}).fail(function () {
+						self.loaded(false);
+						self.requested(false);
+					});
+				}
+			};
+
+			self.removeWord = function (word) {
+				$.ajax({
+					type: "DELETE",
+					headers: { "UserId": self.userId(), "AuthToken": "11111" },
+					url: "/api/Words/delete?id=" + word.Id
+				})
+					.done(function () { self.words.remove(word); });
+			};
+
+			self.makeComplicated = function (word) {
+				$.ajax({ type: "PUT", url: "/api/Words/MakeComplicated?id=" + word.Id + "&comp=1" })
+					.done(function () {
+						var wordsArray = self.words();
+						var indx = $.inArray(word, wordsArray, 0);
+						if (indx > 0) {
+							wordsArray[indx].Complicated = true;
+						}
+
+						word.Complicated = true;
+						self.moveToPage(self.curPageIndex()-1);
+						self.words.valueHasMutated();
+					});
+			};
+
+			self.makeSimple = function (word) {
+				$.ajax({ type: "PUT", url: "/api/Words/MakeComplicated?id=" + word.Id + "&comp=0" })
+					.done(function () {
+						var wordsArray = self.words();
+						var indx = $.inArray(word, wordsArray, 0);
+						if (indx > 0) {
+							wordsArray[indx].Complicated = false;
+						}
+
+						word.Complicated = false;
+						self.moveToPage(self.curPageIndex()-1);
+						self.words.valueHasMutated();
+						
+					});
+			};
+
+			self.NotComplicated = function (word) {
+				return word.Complicated == false;
+			};
+		};
+
+		ko.applyBindings(new WordsViewModel());
+	</script>
+	<script type="text/html" id="PagingPanel">
+		Page <span data-bind="text: PageNumber" />of <span data-bind="text: TotalPagesCount" />.
+		 <br />
+		<a href="#next" data-bind="click: back"></a>
+		<a href="#next" data-bind="click: next"></a>
+	</script>
+}
+
+<h2>Words main page</h2>
+
+@if (Session != null)
+{
+	<input type="text" value="@Session["UserId"]" hidden="hidden" id="uid" />
+}
+
+<aside>
+	<h4>Words management</h4>
+	<section class="revenue">
+		@Html.ActionLink("Upload words", "Upload")
+	</section>
+</aside>
+
+<div id="presettings">
+	<form id="formRange" data-bind="submit:getWords">
+		<fieldset>
+			<legend>Words</legend>
+
+			<div data-role="fieldcontain">
+				<legend>Get all avaliable words:</legend>
+				<label for="chckId">All words</label>
+				<input type="checkbox" name="checkbox-1" id="chckAll" />
+			</div>
+
+			<div data-role="fieldcontain">
+				<legend>Get words by it complexity type:</legend>
+				<label for="chckName">Only complex words</label>
+				<input type="checkbox" name="checkbox-2" id="chckComplexity" />
+			</div>
+
+			<p>
+				<input type="submit" value="Get" />
+			</p>
+		</fieldset>
+	</form>
+</div>
+
+<section class="revenue">
+	<img id="loader" src="@Scripts.Url("~/Images/ajax-loader.gif")" data-bind="visible: requested" />
+</section>
+
+<section class="revenues" data-bind="visible: loaded">
+	<header>
+		<h3>Word list:</h3>
+	</header>
+	<div>
+		<ul id="words" data-bind="visible: loaded, foreach: pagedList">
+			<li class="ui-widget-content ui-corner-all">
+				<div>
+					<span data-bind="text: ForeignWord"></span>
+				</div>
+				<div>
+					<span data-bind="text: Translation"></span>
+				</div>
+				<div>
+					<span data-bind="text: Complicated"></span>
+				</div>
+				<p>
+					<a href="#" data-bind="click: $root.removeWord" class="removeWord ui-state-default ui-corner-all">Remove</a>
+				</p>
+				<p>
+					<a href="#" data-bind="click: $root.makeComplicated, visible:$root.NotComplicated($data)"
+						class="removeWord ui-state-default ui-corner-all">Make complicated</a>
+				</p>
+				<p>
+					<a href="#" data-bind="click: $root.makeSimple, visible:!$root.NotComplicated($data)"
+						class="removeWord ui-state-default ui-corner-all">Make simple</a>
+				</p>
+			</li>
+		</ul>
+	</div>
+	<div id="curPage">
+		Page <span data-bind="text: $root.curPageIndex()" />of <span data-bind="text: $root.maxPageIndex()+1" />
+	</div>
+	<div id="navcontainer">
+		<ul>
+			<li data-bind="css: { disabled: pageIndex() === 0 }"><a href="#" data-bind="click: previousPage">Previous</a></li>
+		</ul>
+		<ul data-bind="foreach: allPages">
+			<li data-bind="css: { active: $data.pageNumber === ($root.pageIndex() + 1) }">
+				<a href="#" data-bind="text: $data.pageNumber, click: function() { $root.moveToPage($data.pageNumber-1); }"></a>
+			</li>
+		</ul>
+		<ul>
+			<li data-bind="css: { disabled: pageIndex() === maxPageIndex() }"><a href="#" data-bind="click: nextPage">Next</a></li>
+		</ul>
+	</div>
+</section>

@@ -1,0 +1,35 @@
+﻿@{
+	ViewBag.Title = "Upload words dictionaries";
+}
+@section Scripts{
+	<script type="text/javascript">
+		function UploadViewodel() {
+			var self = this;
+			self.currentCount = ko.observable(1);
+
+			self.generateMore = function () {
+				var previousCount = self.currentCount();
+				self.currentCount(previousCount + 1);
+				alert(self.currentCount());
+				$('#formUpload').append('<label for="file' + self.currentCount() + '">File name:</label><input type="file" name="file' + self.currentCount() +
+									'" id="file' + self.currentCount() + '" />');
+			};
+		};
+
+		ko.applyBindings(new UploadViewodel());
+	</script>
+}
+
+<h2>Upload words dictionaries</h2>
+<div>
+	Number of uploads <span data-bind="text: currentCount"></span>
+	<button data-bind="click: generateMore">Generate new upload</button>
+</div>
+
+<form id="formUpload" action="" method="post" enctype="multipart/form-data">
+	<input type="submit" />
+
+	<label for="file1">File name:</label>
+	<input type="file" name="file1" id="file1" />
+
+</form>

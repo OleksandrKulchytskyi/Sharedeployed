@@ -1,0 +1,277 @@
+﻿@model ShareDeployed.Common.RequetResponse.RangeRequest
+@{
+	ViewBag.Title = "Expenses";
+
+	if (Model != null)
+	{
+		var now = DateTime.Now;
+		Model.From = new DateTime(now.Year, now.Month, 1);
+		Model.To = now;
+	}
+
+	if (Session != null)
+	{
+	<input type="text" value="@Session["UserId"]" hidden="hidden" id="uid" />
+	}
+}
+
+@section Scripts{
+	@Scripts.Render("~/bundles/jqueryval")
+	@Scripts.Render("~/bundles/jqueryui")
+	<script type="text/javascript">
+		function ExpensesViewModel() {
+			var self = this;
+			self.userId = ko.observable(0);
+			self.loaded = ko.observable(false);
+			self.loadedTotal = ko.observable(false);
+			self.requested = ko.observable(false);
+			self.expenses = ko.observableArray([]);
+
+			var now = new Date();
+			now.setDate(1);
+
+			$("#From").datepicker({ dateFormat: "yy-mm-dd" }).datepicker("setDate", $.datepicker.formatDate('yy-mm-dd', now));
+			$("#To").datepicker({ dateFormat: "yy-mm-dd" }).datepicker("setDate", "0");
+
+			$("#chckId").live("click", function () {
+				if (this.checked) {
+					$("#chckName").removeAttr("checked");
+				}
+				else {
+					var two = $("#chckName").attr("checked", "checked");
+				}
+				$.uniform.update(two);
+			});
+
+			self.removeExpense = function (expense) {
+				self.userId($("#uid").val());
+
+				$.ajax({
+					type: "DELETE",
+					headers: { "UserId": self.userId(), "AuthToken": "11111" },
+					url: "/api/Expense/delete?id=" + expense.Id
+				})
+				.done(function () { self.expenses.remove(expense); });
+			}
+
+			self.getData = function () {
+				$('#formRange').validate();
+				if ($('#formRange').valid()) {
+
+					self.userId($("#uid").val());
+					self.requested(true);
+					self.loaded(false);
+					self.loadedTotal(false);
+
+					var urlTotal = ("/api/Expense/GetTotal?v1=" + $('#To').val() + "&v2=" + $('#From').val());
+					//$.getJSON(urlTotal, function (data, status) {
+					//	self.loadedTotal(true);
+					//	$('#TotalMsg').text('Total: ' + data.Total);
+					//})
+					//	.fail(function () { alert('Fail'); })
+					//	.done(function () {
+					//		self.loadedTotal(true);
+					//	});
+
+					$.ajax({
+						typr: "GET",
+						url: urlTotal,
+						headers: { "UserId": self.userId(), "AuthToken": "11111" },
+						success: function (jsonStr) {
+							console.log(jsonStr);
+							self.loadedTotal(true);
+							$('#TotalMsg').text('Total: ' + jsonStr.Total);
+						}
+					}).fail(function () {
+						self.loadedTotal(true);
+						$('#TotalMsg').text('Total: 0');
+					});
+
+					var url = ("/api/Expense/ByRange?from=" + $('#From').val() + "&to=" + $('#To').val());
+					//$.getJSON(url, self.expenses)
+					//	.fail(function () {
+					//		self.loaded(true);
+					//		self.requested(false);
+					//		$('#errorMsg').val('Fail!!!');
+					//	})
+					//	.done(function () {
+					//		self.loaded(true);
+					//		self.requested(false);
+					//	});
+
+					$.ajax({
+						typr: "GET",
+						url: url,
+						headers: { "UserId": self.userId(), "AuthToken": "11111" },
+						success: function (jsonStr) {
+							console.log(jsonStr);
+							self.loaded(true);
+							self.requested(false);
+							self.expenses(jsonStr);
+						}
+					}).fail(function () {
+						self.loaded(true);
+						self.requested(false);
+						$('#errorMsg').val('Fail!!!');
+					});
+				}
+			}
+		}
+
+		function find() {
+			var id = $('#prodId').val();
+			var byId = document.getElementById("chckId").checked;
+			var byName = document.getElementById("chckName").checked;
+			var uid = $("#uid").val();
+
+			if (byId == true) {
+				//$.getJSON("/api/expense/byid/" + id,
+				//	function (data) {
+				//		var str = data.Name + ': $' + data.Amount;
+				//		$('#product').text(str);
+				//	})
+				//	.fail(function (jqXHR, textStatus, err) {
+				//		$('#product').text('Error: ' + err);
+				//	});
+
+				$.ajax({
+					typr: "GET",
+					url: "/api/expense/byid/" + id,
+					headers: { "UserId": uid, "AuthToken": "11111" },
+					success: function (jsonStr) {
+						console.log(jsonStr);
+						var str = jsonStr.Name + ': $' + jsonStr.Amount;
+						$('#product').text(str);
+					}
+				}).fail(function () {
+					$('#product').text('Error in loading...');
+				});
+			}
+
+			if (byName == true) {
+				//$.getJSON("/api/expense?name=" + id,
+				//	function (data) {
+				//		var str = data.Name + ': $' + data.Amount;
+				//		$('#product').text(str);
+				//	})
+				//.fail(
+				//	function (jqXHR, textStatus, err) {
+				//		$('#product').text('Error: ' + err);
+				//	});
+
+				$.ajax({
+					typr: "GET",
+					url: "/api/expense?name=" + id,
+					headers: { "UserId": uid, "AuthToken": "11111" },
+					success: function (jsonStr) {
+						console.log(jsonStr);
+						var str = jsonStr.Name + ': $' + jsonStr.Amount;
+						$('#product').text(str);
+					}
+				}).fail(function () {
+					$('#product').text('Error in loading...');
+				});
+			}
+		}
+
+		ko.bindingHandlers.dateString = {
+			update: function (element, valueAccessor, allBindingsAccessor, viewModel) {
+				var value = valueAccessor(),
+					allBindings = allBindingsAccessor();
+				var valueUnwrapped = ko.utils.unwrapObservable(value);
+				var pattern = allBindings.datePattern || 'MM/dd/yyyy';
+				$(element).text(valueUnwrapped.toString(pattern));
+			}
+		}
+
+		ko.applyBindings(new ExpensesViewModel());
+	</script>
+}
+
+<hgroup class="title">
+	<h1>@ViewBag.Title.</h1>
+	<h2>@ViewBag.Message</h2>
+</hgroup>
+
+<aside>
+	<h4>Expenses management</h4>
+	<section class="revenue">
+		@Html.ActionLink("Create expense", "AddExpense")
+	</section>
+</aside>
+
+<section class="revenues">
+	<header>
+		<h4>Find expense</h4>
+	</header>
+	<div>
+		<label for="prodId">ID:</label>
+		<input type="text" id="prodId" size="5" />
+		<input type="button" value="Search" onclick="find();" />
+		<br />
+		<input type="checkbox" checked="checked" id="chckId" />
+		By id
+		<input type="checkbox" id="chckName" />
+		By name
+		<br />
+		<form id="formRange" data-bind="submit:getData">
+			@Html.AntiForgeryToken();
+			@Html.ValidationSummary(true)
+			<fieldset>
+				<legend>Revenue</legend>
+				<div class="editor-label">
+					@Html.LabelFor(model => model.From)
+				</div>
+				<div class="editor-field">
+					@Html.EditorFor(model => model.From)
+					@Html.ValidationMessageFor(model => model.From)
+				</div>
+				<div class="editor-label">
+					@Html.LabelFor(model => model.To)
+				</div>
+				<div class="editor-field">
+					@Html.EditorFor(model => model.To)
+					@Html.ValidationMessageFor(model => model.To)
+				</div>
+				<p>
+					<input type="submit" value="Get" />
+				</p>
+			</fieldset>
+		</form>
+		<p id="product" />
+	</div>
+</section>
+
+<section class="revenue">
+	<img id="loader" src="@Scripts.Url("~/Images/ajax-loader.gif")" data-bind="visible: requested" />
+</section>
+
+<div data-bind="visible: loadedTotal">
+	<p id="TotalMsg"></p>
+</div>
+
+<section class="revenues" data-bind="visible: loaded">
+	<header>
+		<h3>Expenses</h3>
+	</header>
+	<div>
+		<ul id="expenses" data-bind="visible: loaded, foreach: expenses">
+			<li class="ui-widget-content ui-corner-all">
+				<h2 data-bind="text: Name" class="ui-widget-header"></h2>
+				<div>
+					<span data-bind="text: Amount || 'Amount?'"></span>
+				</div>
+				<div>
+					<span data-bind="text: Description"></span>
+				</div>
+				<div>
+					<span data-bind="dateString: Time"></span>
+				</div>
+				<p>
+					<a href="#" data-bind="click: $root.removeExpense" class="removeExpense ui-state-default ui-corner-all">
+						Remove</a>
+				</p>
+			</li>
+		</ul>
+	</div>
+</section>

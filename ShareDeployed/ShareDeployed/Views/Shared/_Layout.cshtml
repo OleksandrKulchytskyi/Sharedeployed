@@ -1,0 +1,387 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>@ViewBag.Title - ShareDeployed MVC Application</title>
+	<link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="keywords" content="sharedeployed,realtime messanger,signalr,webapi" />
+	@Styles.Render("~/Content/themes/base/css", "~/Content/css")
+	@Scripts.Render("~/bundles/modernizr")
+	@RenderSection("Styles", false)
+	<script type="text/javascript">
+		function toLocalTime(src) {
+			return new Date(src + " UTC").toString();
+		}
+	</script>
+</head>
+<body>
+	<header>
+		<div class="content-wrapper">
+			<div class="float-left">
+				<p class="site-title">@Html.ActionLink("Share deployed", "Index", "Home")</p>
+			</div>
+			<div class="float-right">
+				<section id="login">
+					@Html.Partial("_LoginPartial")
+				</section>
+				<nav>
+					<ul id="menu">
+						<li>@Html.ActionLink("Home", "Index", "Home")</li>
+						<li>@Html.ActionLink("Expenses", "Expenses", "Home")</li>
+						<li>@Html.ActionLink("Revenues", "Revenues", "Home")</li>
+						<li>@Html.ActionLink("Words", "Index", "Words")</li>
+						@if (Request.IsAuthenticated && Request.RequestContext.HttpContext.User.IsInRole("Admin"))
+	  {
+							<li>@Html.ActionLink("Trace data", "Index", "Trace")</li>
+	  }
+						@if (Request.Browser.IsMobileDevice)
+	  {
+							<li>@Html.Partial("_ViewSwitcher")</li>
+	  }
+					</ul>
+				</nav>
+			</div>
+		</div>
+	</header>
+	<div id="body">
+		@RenderSection("featured", required: false)
+		<section class="content-wrapper main-content clear-fix">
+			@RenderBody()
+		</section>
+	</div>
+	<footer>
+		<div class="content-wrapper">
+			<div class="float-left">
+				<p>&copy; @DateTime.Now.Year - ShareDeployed ASP.NET MVC Application</p>
+			</div>
+		</div>
+		<br />
+		@if (Request.IsAuthenticated)
+  {
+			<br></br>
+			<p></p>
+			<div class="content-wrapper">
+				<div class="float-left">
+					<button id="btnCheckNew">Check new</button>
+				</div>
+			</div>
+			<br></br>
+			<div id="statusdiv" class="float-left">
+				<ul id="connectionStatuses"></ul>
+			</div>
+			<br></br>
+			<p></p>
+			<div id="NewMessagesDialogDiv" style="display: none">
+				<ul id="MessagesContainer" data-bind="{template:{name: 'newMessage-template', foreach: newMessages} }">
+				</ul>
+			</div>
+			<br></br>
+			<p></p>
+			<div id="CheckMessagesDialog" style="display: none">
+				<ul id="CheckMessagesContainer" data-bind="{template:{name: 'groupMessagesTempl', foreach: groupsMessages} }">
+				</ul>
+			</div>
+			<div id="MsgResponseDialog" style="display: none">
+			</div>
+  }
+	</footer>
+
+	@Scripts.Render("~/bundles/jquery")
+	@Scripts.Render("~/bundles/jqueryui")
+	@Scripts.Render("~/bundles/knockout")
+	@Scripts.Render("~/bundles/jqueryval")
+	@Scripts.Render("~/bundles/cookie")
+	@Scripts.Render("~/bundles/app")
+	@Scripts.Render("~/bundles/SignalR")
+	@RenderSection("scripts", required: false)
+	<script type="text/javascript" src="~/signalr/hubs"></script>
+	<script type="text/html" id="newMessage-template">
+		<li class="ui-widget-content ui-corner-all">
+			<h3 data-bind="text: Subject" class="ui-widget-header"></h3>
+			<div>
+				<span data-bind="text: From || 'From?'"></span>
+			</div>
+			<div>
+				<span data-bind="stringOfDate: When"></span>
+			</div>
+			<div><a href='#' data-bind='click: $root.markAsRead'>Mark as read</a></div>
+		</li>
+	</script>
+	<script type="text/html" id="groupMessagesTempl">
+		<li>
+			<h3 data-bind="text: GroupName" class="ui-widget-header"></h3>
+			<ul data-bind="{template: {name:'MsgTemplate', foreach:Messages }}">
+			</ul>
+		</li>
+	</script>
+	<script type="text/html" id="MsgTemplate">
+		<li class="ui-widget-content ui-corner-all">
+			<h4 data-bind="text: Subject" class="ui-widget-header"></h4>
+			<div>
+				<span data-bind="text: From || 'From?'"></span>
+			</div>
+			<div>
+				<span data-bind="stringOfDate: When"></span>
+			</div>
+			<div><a href='#' data-bind='click: $root.deleteMsg'>Delete</a></div>
+			<div><a href='#' data-bind='click: $root.onResponseToMsg'>Reply</a></div>
+		</li>
+	</script>
+	<script type="text/javascript">
+		$.fx.speeds._default = 800;
+
+		ko.bindingHandlers.stopBindings = {
+			init: function () {
+				return { 'controlsDescendantBindings': true };
+			}
+		};
+
+		ko.observableArray.fn.removeMsgFromGroup = function (grpName, msg) {
+			var group = ko.utils.arrayFirst(this(), function (item) {
+				return item.GroupName() === grpName;
+			});
+			if (group !== undefined && group !== null) {
+				group.Messages.valueWillMutate();
+				group.Messages.remove(msg);
+				group.Messages.valueHasMutated();
+			}
+		};
+
+		function Message(data) {
+			this.Subject = ko.observable(data.Subject);
+			this.From = ko.observable(data.From);
+			this.When = ko.observable(data.When);
+			this.Id = ko.observable(data.Id);
+			this.IsRead = ko.observable(false);
+
+			if (data.User !== undefined) {
+				this.messangerUser = ko.observable(data.User.Name);
+				this.userId = ko.observable(data.User.Id);
+			}
+		}
+
+		function MessageInGroup(data, owner) {
+			this.Subject = ko.observable(data.Subject);
+			this.From = ko.observable(data.From);
+			this.When = ko.observable(data.When);
+			this.Id = ko.observable(data.Id);
+			this.IsRead = ko.observable(false);
+
+			if (data.User !== undefined) {
+				this.messangerUser = ko.observable(data.User.Name);
+				this.userId = ko.observable(data.User.Id);
+			}
+			if (owner !== null) {
+				this.GroupName = ko.observable(owner);
+			}
+		}
+
+		function GroupMessages(data) {
+			this.GroupName = ko.observable(data.GroupName);
+			var msgsArray = $.map(data.Messages, function (item) { return new MessageInGroup(item, data.GroupName) });
+			this.Messages = ko.observableArray(msgsArray);
+		}
+
+		function NewMessagesViewModel() {
+
+			var self = this;
+			self.newMessages = ko.observableArray([]);
+			self.groupsMessages = ko.observableArray([]);
+			self.MessangeR = ko.observable(null);
+
+			self.IsResponseOpened = ko.observable(false);
+			self.MailToResponse = ko.observable(null);
+			self.ResponseText = ko.observable(null);
+
+			self.SetResponseDialogState = function (state) {
+				self.IsResponseOpened(state);
+			};
+
+			self.onlyNewMessages = ko.computed(function () {
+				return ko.utils.arrayFilter(self.newMessages(), function (message) { return !message.IsRead() });
+			});
+
+			self.markAsRead = function (message) {
+				message.IsRead(true);
+
+				$.ajax({
+					url: "/api/messanger/markAsRead?msgId=" + message.Id() + "&usrId=" + message.userId(),
+					type: "GET",
+					headers: { "UserId": "1", "AuthToken": "11111" },
+					success: function (jsonStr) {
+						self.newMessages.remove(message);
+					}
+				}).fail(function () {
+					message.IsRead(false);
+					alert('Fail to mark this item as read.');
+				});
+			};
+
+			self.deleteMsg = function (msgToDelete) {
+				if (self.MessangeR() !== undefined) {
+					self.MessangeR().server.deleteMessage(msgToDelete.Id());
+					self.groupsMessages.removeMsgFromGroup(msgToDelete.GroupName(), msgToDelete);
+				}
+			};
+
+			self.onResponseToMsg= function (msgToResponse) {
+				if (self.MessangeR() !== undefined) {
+
+					if ($("#CheckMessagesDialog").dialog("isOpen") === true) {
+						$("#CheckMessagesDialog").dialog("close");
+					}
+
+					$("#MsgResponseDialog").dialog("open");
+				}
+			};
+
+			self.Initialize = function (mappedMsgs) {
+				self.newMessages.removeAll();
+				$.each(mappedMsgs, function (index, item) {
+					self.newMessages.push(item);
+				});
+				self.newMessages.valueHasMutated();
+			};
+
+			self.initGroupsMessages = function (grpsMsgs) {
+				var mappedMsgs = $.map(grpsMsgs, function (item) { return new GroupMessages(item) });
+				self.groupsMessages.valueWillMutate();
+				self.groupsMessages.removeAll();
+				$.each(mappedMsgs, function (indx, item) {
+					self.groupsMessages.push(item);
+				});
+				self.groupsMessages.valueHasMutated();
+			};
+
+			self.SetMessangeR = function (messangeR) {
+				self.MessangeR(messangeR);
+			};
+		}
+
+		///// DOM has been initialized
+		$(document).ready(function () {
+			var MsgsVM = new NewMessagesViewModel();
+			ko.applyBindings(MsgsVM);
+			MsgsVM.SetResponseDialogState(false);
+
+			$('#btnCheckNew').click(function () {
+				if (messanger !== undefined) {
+					messanger.server.checkForNewMessages();
+				}
+			});
+
+			ko.bindingHandlers.stringOfDate = {
+				update: function (element, valueAccessor, allBindingsAccessor, viewModel) {
+					var value = valueAccessor(),
+						allBindings = allBindingsAccessor();
+					var valueUnwrapped = ko.utils.unwrapObservable(value);
+					var pattern = allBindings.datePattern || 'MM/dd/yyyy';
+					$(element).text(valueUnwrapped.toString(pattern));
+				}
+			}
+
+			$('#NewMessagesDialogDiv').dialog({
+				autoOpen: false, modal: true,
+				width: 450, height: 350,
+				hide: "explode", show: "blind",
+				closeOnEscape: true,
+				buttons: {
+					"Close": function () {
+						$(this).dialog("close");
+					}
+				},
+				open: function (event, ui) {
+				}
+			});
+
+			$('#CheckMessagesDialog').dialog({
+				autoOpen: false, modal: true,
+				width: 450, height: 400,
+				hide: "explode", show: "blind",
+				closeOnEscape: true,
+				buttons: {
+					"Close": function () {
+						$(this).dialog("close");
+					}
+				},
+				open: function (event, ui) {
+				}
+			});
+
+			$('#MsgResponseDialog').dialog({
+				autoOpen: false, modal: true,
+				width: 480, height: 430,
+				hide: "explode", show: "blind",
+				title:"Mail response",
+				closeOnEscape: true,
+				buttons: {
+					"Close": function () {
+						MsgsVM.SetResponseDialogState(false);
+						$(this).dialog("close");
+					}
+				},
+				open: function (event, ui) {
+					MsgsVM.SetResponseDialogState(true);
+				}
+			});
+
+			///messanger hub declaration section
+			var messanger = $.connection.messangerHub;
+
+			messanger.client.onMessage = function (message) { };
+
+			messanger.client.onStatus = function (status) {
+				var count = $("#connectionStatuses").children().length;
+				if (count === 3) {
+					$("#connectionStatuses").empty();
+				}
+				$('#connectionStatuses').append('<li> ' + status + '</li>');
+			};
+
+			messanger.client.markInactive = function (userVMList) {
+				console.log(userVMList);
+			};
+
+			messanger.client.broadcastMessages = function (grpName, messages) {
+				if (MsgsVM.IsResponseOpened() === true) {
+					return;
+				}
+				var mappedMsgs = $.map(messages, function (item) { return new Message(item) });
+				MsgsVM.Initialize(mappedMsgs);
+
+				if ($("#NewMessagesDialogDiv").dialog("isOpen") === true) {
+					$("#NewMessagesDialogDiv").dialog("close");
+				}
+				var msgsCount = 'You have ' + messages.length.toString() + ' new message(s), Group:' + grpName;
+				$("#NewMessagesDialogDiv").dialog({ title: msgsCount });
+				$("#NewMessagesDialogDiv").dialog('open');
+			};
+
+			messanger.client.OnNewMessagesResponse = function (data) {
+				MsgsVM.initGroupsMessages(data);
+
+				if ($("#CheckMessagesDialog").dialog("isOpen") === true) {
+					$("#CheckMessagesDialog").dialog("close");
+				}
+
+				$("#CheckMessagesDialog").dialog({ title: "All messages" });
+				$("#CheckMessagesDialog").dialog('open');
+			};
+
+			$.connection.hub.connectionSlow(function () {
+				var count = $("#connectionStatuses").children().length;
+				if (count == 3) {
+					$("#connectionStatuses").empty();
+				}
+				$('#connectionStatuses').append('<li> There seems to be some connectivity issues...</li>');
+			});
+
+			$.connection.hub.start().done(function () {
+				MsgsVM.SetMessangeR(messanger);
+				messanger.server.join();
+			});
+		});
+	</script>
+</body>
+</html>

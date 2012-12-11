@@ -1,0 +1,43 @@
+﻿@{
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Trace data</h2>
+<p></p>
+<ul id="traceContainer"></ul>
+@section Scripts{
+	<script type="text/html" id="traceTempl">
+		<li class="ui-widget-content ui-corner-all">
+			<div>
+				<span data-bind="text: item || 'item?'"></span>
+			</div>
+		</li>
+	</script>
+	<script src="/signalr/hubs" type="text/javascript"></script>
+	<script type="text/javascript">
+		$(function () {
+
+			var traceR = $.connection.traceHub;
+
+			traceR.client.logTraceMsg = function (msg) {
+				console.log(msg);
+				$('#traceContainer').append('<li> ' + msg + '</li>');
+			};
+
+			traceR.client.userJoined = function (traceData, uId) {
+				console.log(traceData);
+				$('#traceContainer').append('<li>User has been successfully joined, ' + uId + '</li>');
+			};
+
+			$.connection.hub.start().
+			done(function () {
+				traceR.server.userJoin();
+				console.log("Hub initialization is done");
+			}).
+			fail(function () {
+				alert("Could not Connect!");
+			});
+		});
+	</script>
+}

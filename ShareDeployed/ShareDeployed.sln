@@ -1,0 +1,74 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShareDeployed", "ShareDeployed\ShareDeployed.csproj", "{F7B4ED77-BF88-4D99-9BFC-0F530FDD668D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShareDeployed.Common", "ShareDeployed.Common\ShareDeployed.Common.csproj", "{967E6A63-B6C6-4B95-95D7-009CA1CE4F3D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShareDeployed.Test", "ShareDeployed.Test\ShareDeployed.Test.csproj", "{13EDDB39-3E60-4CF7-846B-F31825219DDE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShareDeployed.DataAccess", "ShareDeployed.DataAccess\ShareDeployed.DataAccess.csproj", "{B92D4469-4A30-41A9-966A-D859084EAD1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShareDeployed.Mailgrabber", "ShareDeployed.Mailgrabber\ShareDeployed.Mailgrabber.csproj", "{967772D2-27B2-4C45-A6BA-1C695FA31076}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShareDeployed.RoutingHelper", "ShareDeployed.RoutingHelper\ShareDeployed.RoutingHelper.csproj", "{BE6E6F81-2C9B-4C7E-A684-88C255A2F3E6}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 7
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs24
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = ShareDeployed.Common\\ShareDeployed.Common.csproj
+		SccProjectName1 = ShareDeployed.Common
+		SccLocalPath1 = ShareDeployed.Common
+		SccProjectUniqueName2 = ShareDeployed\\ShareDeployed.csproj
+		SccProjectName2 = ShareDeployed
+		SccLocalPath2 = ShareDeployed
+		SccProjectUniqueName3 = ShareDeployed.Test\\ShareDeployed.Test.csproj
+		SccProjectName3 = ShareDeployed.Test
+		SccLocalPath3 = ShareDeployed.Test
+		SccProjectUniqueName4 = ShareDeployed.DataAccess\\ShareDeployed.DataAccess.csproj
+		SccProjectName4 = ShareDeployed.DataAccess
+		SccLocalPath4 = ShareDeployed.DataAccess
+		SccProjectUniqueName5 = ShareDeployed.Mailgrabber\\ShareDeployed.Mailgrabber.csproj
+		SccProjectName5 = ShareDeployed.Mailgrabber
+		SccLocalPath5 = ShareDeployed.Mailgrabber
+		SccProjectUniqueName6 = ShareDeployed.RoutingHelper\\ShareDeployed.RoutingHelper.csproj
+		SccProjectName6 = ShareDeployed.RoutingHelper
+		SccLocalPath6 = ShareDeployed.RoutingHelper
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F7B4ED77-BF88-4D99-9BFC-0F530FDD668D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7B4ED77-BF88-4D99-9BFC-0F530FDD668D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7B4ED77-BF88-4D99-9BFC-0F530FDD668D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7B4ED77-BF88-4D99-9BFC-0F530FDD668D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{967E6A63-B6C6-4B95-95D7-009CA1CE4F3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{967E6A63-B6C6-4B95-95D7-009CA1CE4F3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{967E6A63-B6C6-4B95-95D7-009CA1CE4F3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{967E6A63-B6C6-4B95-95D7-009CA1CE4F3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13EDDB39-3E60-4CF7-846B-F31825219DDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13EDDB39-3E60-4CF7-846B-F31825219DDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13EDDB39-3E60-4CF7-846B-F31825219DDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13EDDB39-3E60-4CF7-846B-F31825219DDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B92D4469-4A30-41A9-966A-D859084EAD1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B92D4469-4A30-41A9-966A-D859084EAD1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B92D4469-4A30-41A9-966A-D859084EAD1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B92D4469-4A30-41A9-966A-D859084EAD1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{967772D2-27B2-4C45-A6BA-1C695FA31076}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{967772D2-27B2-4C45-A6BA-1C695FA31076}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{967772D2-27B2-4C45-A6BA-1C695FA31076}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{967772D2-27B2-4C45-A6BA-1C695FA31076}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE6E6F81-2C9B-4C7E-A684-88C255A2F3E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE6E6F81-2C9B-4C7E-A684-88C255A2F3E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE6E6F81-2C9B-4C7E-A684-88C255A2F3E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE6E6F81-2C9B-4C7E-A684-88C255A2F3E6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

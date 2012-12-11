@@ -1,0 +1,45 @@
+﻿@model ShareDeployed.Common.Models.Revenue
+
+<h2>New revenue</h2>
+@using (Html.BeginForm("CreateRevenue", "RevenueMobile"))
+{
+	@Html.ValidationSummary(true)
+	<fieldset>
+		<legend>Enter Revenue Information!</legend>
+		<div class="editor-label">
+			@Html.LabelFor(model => model.Name)
+		</div>
+		<div class="editor-field">
+			@Html.TextBoxFor(Model => Model.Name)
+			@Html.ValidationMessageFor(Model => Model.Name)
+		</div>
+		<div class="editor-label">
+			@Html.LabelFor(model => model.Time)
+		</div>
+		<div class="editor-field">
+			@Html.TextBoxFor(Model => Model.Time)
+			@Html.ValidationMessageFor(Model => Model.Time)
+		</div>
+		<div class="editor-label">
+			@Html.LabelFor(model => model.Amount)
+		</div>
+		<div class="editor-field">
+			@Html.TextBoxFor(Model => Model.Amount)
+			@Html.ValidationMessageFor(Model => Model.Amount)
+		</div>
+		<div class="editor-label">
+			@Html.LabelFor(model => model.Description)
+		</div>
+		<div class="editor-field">
+			@Html.TextBoxFor(Model => Model.Description)
+			@*@Html.ValidationMessageFor(Model => Model.Time)*@
+		</div>
+		<p>
+			<input type="submit" value="Save" />
+		</p>
+	</fieldset>
+}
+@if (IsPost && ViewBag.Message != null)
+{
+	<h1>@ViewBag.Message</h1>
+}

@@ -1,0 +1,204 @@
+﻿@model ShareDeployed.Common.RequetResponse.RangeRequest
+@{
+	ViewBag.Title = "Revenues";
+
+	if (Model != null)
+	{
+		var now = DateTime.Now;
+		Model.From = new DateTime(now.Year, now.Month, 1);
+		Model.To = now;
+	}
+}
+
+@Scripts.Render("~/bundles/jqueryval")
+<script type="text/javascript">
+	function RevenuesViewModel() {
+
+		$.support.cors = true;
+		var self = this;
+		self.loaded = ko.observable(false);
+		self.loadedTotal = ko.observable(false);
+		self.requested = ko.observable(false);
+		self.revenues = ko.observableArray([]);
+
+		$("#chckId").live("click", function () {
+			if (this.checked) {
+				$("#chckName").removeAttr("checked");
+			}
+			else {
+				var two = $("#chckName").attr("checked", "checked");
+			}
+			$.uniform.update(two);
+		});
+
+		self.removeRevenue = function (revenue) {
+			$.ajax({ type: "DELETE", url: "/api/Revenue/delete/" + revenue.Id })
+			.done(function () { self.revenues.remove(revenue); });
+		}
+
+		self.getData = function () {
+
+			$('#formRange').validate();
+			if ($('#formRange').valid() == false)
+				return;
+
+			self.requested(true);
+			self.loaded(false);
+
+			var urlTotal = "/api/Revenue/GetTotal?v1=" + $('#To').val() + "&v2=" + $('#From').val()
+			$.getJSON(urlTotal, function (data, status) {
+				self.loadedTotal(true);
+				$('#TotalMsg').text('Total: ' + data.Total);
+			})
+				.fail(function () { alert('Fail'); })
+				.done(function () {
+					self.loadedTotal(true);
+				});
+
+			var url = "/api/Revenue/ByRange?from=" + $('#From').val() + "&to=" + $('#To').val()
+			$.getJSON(url, self.revenues)
+				.fail(function () {
+					self.loaded(true);
+					self.requested(false);
+					$('#errorMsg').val('Fail!!!');
+				})
+				.done(function () {
+					self.loaded(true);
+					self.requested(false);
+				});
+		}
+	}
+
+	function find() {
+
+		var id = $('#prodId').val();
+		var byId = document.getElementById("chckId").checked;
+		var byName = document.getElementById("chckName").checked;
+
+		if (byId == true) {
+			$.getJSON("/api/revenue/byid/" + id,
+				function (data) {
+					var str = data.Name + ': $' + data.Amount;
+					$('#revenueSingle').text(str);
+				})
+				.fail(function (jqXHR, textStatus, err) {
+					$('#revenueSingle').text('Error: ' + err);
+				});
+		}
+
+		if (byName == true) {
+			$.getJSON("/api/revenue?name=" + id,
+				function (data) {
+					var str = data.Name + ': $' + data.Amount;
+					$('#revenueSingle').text(str);
+				})
+			.fail(
+				function (jqXHR, textStatus, err) {
+					$('#revenueSingle').text('Error: ' + err);
+				});
+		}
+	}
+
+	ko.bindingHandlers.dateString = {
+		update: function (element, valueAccessor, allBindingsAccessor, viewModel) {
+			var value = valueAccessor(),
+				allBindings = allBindingsAccessor();
+			var valueUnwrapped = ko.utils.unwrapObservable(value);
+			var pattern = allBindings.datePattern || 'MM/dd/yyyy';
+			$(element).text(valueUnwrapped.toString(pattern));
+		}
+	}
+
+	var model = new RevenuesViewModel();
+	ko.applyBindings(model);
+</script>
+
+<div data-role="button" data-icon="plus" class="ui-btn-right">
+	@Html.ActionLink("New", "CreateRevenue", "RevenueMobile")
+</div>
+
+<div id="divRevenue" data-role="header">
+	<header>
+		<h4>Find revenue</h4>
+	</header>
+	<div>
+		<label for="prodId">ID:</label>
+		<input type="text" id="prodId" size="5" />
+		<input type="button" value="Search" onclick="find();" />
+		<br />
+
+		<div data-role="fieldcontain">
+			<legend>Search by name id:</legend>
+			<input type="checkbox" name="checkbox-1" id="chckId" />
+			<label for="chckId">By id</label>
+		</div>
+
+		<div data-role="fieldcontain">
+			<legend>Search by name field:</legend>
+			<input type="checkbox" name="checkbox-2" id="chckName" />
+			<label for="chckName">By name</label>
+		</div>
+
+		<div id="divSearchResult">
+			<p id="revenueSingle" />
+		</div>
+
+		<br />
+		<form id="formRange" data-bind="submit:getData">
+			@Html.ValidationSummary(true)
+			<fieldset>
+				<legend>Revenue</legend>
+				<div class="editor-label">
+					@Html.LabelFor(model => model.From)
+				</div>
+				<div class="editor-field">
+					@Html.EditorFor(model => model.From)
+					@Html.ValidationMessageFor(model => model.From)
+				</div>
+				<div class="editor-label">
+					@Html.LabelFor(model => model.To)
+				</div>
+				<div class="editor-field">
+					@Html.EditorFor(model => model.To)
+					@Html.ValidationMessageFor(model => model.To)
+				</div>
+				<p>
+					<button type="submit" data-icon="info" data-ajax="false">Get</button>
+				</p>
+			</fieldset>
+		</form>
+
+	</div>
+</div>
+
+<div class="divLoading">
+	<img id="loader" src="@Scripts.Url("~/Images/ajax-loader.gif")" data-bind="visible: requested()" />
+</div>
+
+<div data-bind="visible: loadedTotal()">
+	<p id="TotalMsg"></p>
+</div>
+
+<div data-role="footer" id="divRevenuesContent" data-bind="visible: loaded()">
+	<header>
+		<h3>Revenues</h3>
+	</header>
+	<div>
+		<ul id="revenues" data-bind="visible: loaded, foreach: revenues" data-role="listview" data-inset="true">
+			<li data-role="list-divider">Expense</li>
+			<li>
+				<h1 data-bind="text: Name"></h1>
+				<div>
+					<span data-bind="text: Amount || 'Amount?'"></span>
+				</div>
+				<div>
+					<span data-bind="text: Description"></span>
+				</div>
+				<div>
+					<span data-bind="dateString: Time"></span>
+				</div>
+			</li>
+		</ul>
+		<a class="top" data-ajax="false" data-role="button" data-bind="visible: loaded()" href="#expenseFormDiv">Back to top</a>
+	</div>
+</div>

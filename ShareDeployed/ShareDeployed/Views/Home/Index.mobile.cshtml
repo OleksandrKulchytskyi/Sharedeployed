@@ -1,0 +1,13 @@
+﻿@{
+	ViewBag.Title = "Mobile Page";
+}
+<div id="info">
+	<h3>Manage your expenses and revenues</h3>
+</div>
+<img width="320px" height="200px" src="@Url.Content("~/Images/Expenses1.jpg")" alt="Expenses and Revenues" />
+<ul id="menu" data-role="listview" data-inset="true">
+	<li>@Html.ActionLink("Home", "Index", "Home")</li>
+	<li>@Html.ActionLink("Expenses", "Expenses", "Home")</li>
+	<li>@Html.ActionLink("Revenues", "Revenues", "Home")</li>
+	<li>@Html.ActionLink("Words", "Index", "Words")</li>
+</ul>

@@ -1,0 +1,30 @@
+﻿<Window x:Class="ShareDeployed.Mailgrabber.View.ManageGroupView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Groups management" Height="300" Width="450" 
+		DataContext="{Binding Source={StaticResource Locator}, Path=GroupManageVM}" ShowInTaskbar="False"
+		WindowStyle="ToolWindow" WindowStartupLocation="CenterOwner">
+	<Grid>
+		<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Path=UserGroups}"
+				  SelectedItem="{Binding Path=SelectedGroup, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+				  CanUserAddRows="False" CanUserDeleteRows="False">
+			<DataGrid.Columns>
+				<DataGridTextColumn Binding="{Binding Path=Name}" Header="Name" Width="70"/>
+				<DataGridTextColumn Binding="{Binding Path=Topic}" Header="Topic" Width="120"/>
+				<DataGridTextColumn Binding="{Binding Path=InviteCode}" Header="Invitation code" Width="115"/>
+				<DataGridTemplateColumn Header="Manage" Width="130">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate >
+							<StackPanel Orientation="Horizontal">
+								<Button Content="Default" Width="50"
+										Command="{Binding DataContext.MakeDefaultGroupCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"/>
+								<Button Content="Delete" Width="50"
+										Command="{Binding DataContext.DeleteGroupCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"/>
+							</StackPanel>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+			</DataGrid.Columns>
+		</DataGrid>
+	</Grid>
+</Window>

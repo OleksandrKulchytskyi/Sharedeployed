@@ -1,0 +1,138 @@
+﻿@model ShareDeployed.Common.Models.Expense
+@section Scripts
+{
+	@Scripts.Render("~/bundles/knockout")
+	@Scripts.Render("~/bundles/jqueryval")
+	@*@Scripts.Render("~/bundles/jqueryui")*@
+	<script type="text/javascript">
+		function NewExpenseViewModel() {
+
+			var self = this;
+			self.uploaded = ko.observable(false);
+			self.failed = ko.observable(false);
+
+			$('#Id').val('0');
+			$('#UserId').val('0');
+			$("#Time").datepicker({ dateFormat: "yy-mm-dd" }).datepicker("setDate", "0");
+
+			self.clearFun = function () {
+				$('#UserId').val('');
+				$('#Name').val('');
+				$('#Time').val('');
+				$('#Amount').val('');
+				$('#IsRequired').removeAttr("checked");
+				$('#Description').val('');
+			}
+
+			self.beginUpload = function (formElement) {
+				jQuery.support.cors = true;
+
+				$(formElement).validate();
+				if ($(formElement).valid()) {
+					self.uploaded(true);
+
+					var isChecked = $('#IsRequired').attr('checked') ? true : false;
+
+					var expense = {};
+					expense.Id = $("#Id").val();
+					expense.UserId = $("#Id").val();
+					expense.Name = $("#Name").val();
+					expense.Time = $("#Time").val();
+					expense.Amount = $("#Amount").val();
+					expense.IsRequired = isChecked;
+					expense.Description = $("#Description").val();
+
+					var jqxhr = $.post('/api/expense/complex', expense)//$('#addExpenseForm').serialize())
+								.success(function () {
+									self.uploaded(false);
+									var loc = jqxhr.getResponseHeader('Location');
+									var a = $('<a/>', { href: loc, text: loc });
+									$('#message').html(a);
+								})
+								.error(function () {
+									self.uploaded(false); self.failed(true);
+									$('#message').html("Error posting the update.");
+								});
+				}
+			}
+		}
+
+		ko.applyBindings(new NewExpenseViewModel());
+	</script>
+}
+
+@{
+	if (Model != null)
+	{
+		Model.Time = DateTime.Now;
+	}
+}
+<form id="addExpenseForm" data-bind="submit: beginUpload">
+	@Html.ValidationSummary(true)
+
+	<fieldset>
+		<legend>Revenue</legend>
+		@*@Html.EditorForModel()*@
+
+		<div class="editor-label">
+			@Html.LabelFor(model => model.Id)
+		</div>
+		<div class="editor-field">
+			@Html.EditorFor(model => model.Id)
+			@Html.ValidationMessageFor(model => model.Id)
+		</div>
+
+		<div class="editor-label">
+			@Html.LabelFor(model => model.UserId)
+		</div>
+		<div class="editor-field">
+			@Html.EditorFor(model => model.UserId)
+			@Html.ValidationMessageFor(model => model.UserId)
+		</div>
+		<div class="editor-label">
+			@Html.LabelFor(model => model.Name)
+		</div>
+		<div class="editor-field">
+			@Html.EditorFor(model => model.Name)
+			@Html.ValidationMessageFor(model => model.Name)
+		</div>
+		<div class="editor-label">
+			@Html.LabelFor(model => model.Time)
+		</div>
+		<div class="editor-field">
+			@Html.EditorFor(model => model.Time)
+			@Html.ValidationMessageFor(model => model.Time)
+		</div>
+		<div class="editor-label">
+			@Html.LabelFor(model => model.Amount)
+		</div>
+		<div class="editor-field">
+			@Html.EditorFor(model => model.Amount)
+			@Html.ValidationMessageFor(model => model.Amount)
+		</div>
+		<div class="editor-label">
+			@Html.LabelFor(model => model.IsRequired)
+		</div>
+		<div class="editor-field">
+			@Html.EditorFor(model => model.IsRequired)
+			@Html.ValidationMessageFor(model => model.IsRequired)
+		</div>
+		<div class="editor-label">
+			@Html.LabelFor(model => model.Description)
+		</div>
+		<div class="editor-field">
+			@Html.EditorFor(model => model.Description)
+			@Html.ValidationMessageFor(model => model.Description)
+		</div>
+
+		<p>
+			<input type="submit" value="Save" />
+			<button id="btClear" data-bind="click: clearFun">Clear</button>
+		</p>
+		<div id="message"></div>
+		<img src="@Scripts.Url("~/Images/ajax-loader.gif")" data-bind="visible: uploaded()" />
+		<p data-bind="visible: failed()">
+			Fail to submit data!!!
+		</p>
+	</fieldset>
+</form>
