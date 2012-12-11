@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ShareDeployed.Common.Outlook;
+using ShareDeployed.Outlook;
 using System.Collections.Generic;
 
 namespace ShareDeployed.Test
@@ -11,7 +11,7 @@ namespace ShareDeployed.Test
 		[TestMethod]
 		public void TestOutlookModule()
 		{
-			using (OutlookManager manager = new Common.Outlook.OutlookManager())
+			using (OutlookManager manager = new Outlook.OutlookManager())
 			{
 				List<OutlookMailInfo> expected = null;
 				List<OutlookMailInfo> actual = null;

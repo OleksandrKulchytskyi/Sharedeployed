@@ -173,6 +173,10 @@
       <Project>{967e6a63-b6c6-4b95-95d7-009ca1ce4f3d}</Project>
       <Name>ShareDeployed.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ShareDeployed.Outlook\ShareDeployed.Outlook.csproj">
+      <Project>{510f87e1-f628-45e6-aa4d-999cdd86f4c4}</Project>
+      <Name>ShareDeployed.Outlook</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Text.ico" />

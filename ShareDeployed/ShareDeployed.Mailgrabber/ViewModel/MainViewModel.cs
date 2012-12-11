@@ -28,7 +28,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 		Task _outlookInitTask = null;
 		Task _afterloginTask = null;
 		CancellationTokenSource _cts = null;
-		Common.Outlook.OutlookManager _outlookManager = null;
+		ShareDeployed.Outlook.OutlookManager _outlookManager = null;
 
 		#region Properties
 		private bool _isLogged;
@@ -129,7 +129,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 			bool isHandlerRegistered = false;
 			try
 			{
-				_outlookManager = new Common.Outlook.OutlookManager();
+				_outlookManager = new Outlook.OutlookManager();
 				_outlookManager.SetFoldersToMonitor(System.Configuration.ConfigurationManager.AppSettings["MAPIFolders"].Split(
 													new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
 
@@ -254,7 +254,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 		}
 		#endregion
 
-		void outlookManager_MailReceived(object sender, Common.Outlook.NewMailReceivedEventArgs e)
+		void outlookManager_MailReceived(object sender, Outlook.NewMailReceivedEventArgs e)
 		{
 			if (e != null)
 			{

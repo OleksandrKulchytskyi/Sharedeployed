@@ -1,0 +1,27 @@
+INFO  2012-12-11 16:44:33,598   195ms MvcApplication         Application_Start  - Application_Start()
+INFO  2012-12-11 16:44:46,053 12650ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2012-12-11 16:45:14,094 40691ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2012-12-11 16:47:19,163 165761ms MvcApplication         Application_End    - Application_End()
+INFO  2012-12-11 16:47:31,045    80ms MvcApplication         Application_Start  - Application_Start()
+INFO  2012-12-11 16:47:40,618  9653ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2012-12-11 16:48:11,379 40414ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2012-12-11 16:53:11,819 340854ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2012-12-11 16:55:26,239 475274ms MvcApplication         Application_End    - Application_End()
+INFO  2012-12-11 16:55:43,731    89ms MvcApplication         Application_Start  - Application_Start()
+INFO  2012-12-11 16:55:52,940  9297ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2012-12-11 16:56:24,006 40364ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2012-12-11 16:58:05,061 141418ms MvcApplication         Application_End    - Application_End()
+INFO  2012-12-11 16:58:16,373    80ms MvcApplication         Application_Start  - Application_Start()
+INFO  2012-12-11 16:58:25,798  9504ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2012-12-11 16:58:56,654 40361ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2012-12-11 16:59:28,094 71800ms MvcApplication         Application_End    - Application_End()
+INFO  2012-12-11 16:59:35,721    50ms MvcApplication         Application_Start  - Application_Start()
+INFO  2012-12-11 16:59:44,411  8739ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2012-12-11 16:59:56,710 21039ms MvcApplication         Application_End    - Application_End()
+INFO  2012-12-11 17:00:08,459    78ms MvcApplication         Application_Start  - Application_Start()
+INFO  2012-12-11 17:00:18,343  9961ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2012-12-11 17:00:26,793 18412ms MvcApplication         Application_End    - Application_End()
+INFO  2012-12-11 17:00:39,458    79ms MvcApplication         Application_Start  - Application_Start()
+INFO  2012-12-11 17:00:48,759  9379ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2012-12-11 17:01:19,726 40347ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2012-12-11 17:01:57,158 77778ms MvcApplication         Application_End    - Application_End()

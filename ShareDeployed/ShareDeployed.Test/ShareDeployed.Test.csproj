@@ -80,6 +80,10 @@
       <Project>{b92d4469-4a30-41a9-966a-d859084ead1d}</Project>
       <Name>ShareDeployed.DataAccess</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ShareDeployed.Outlook\ShareDeployed.Outlook.csproj">
+      <Project>{510f87e1-f628-45e6-aa4d-999cdd86f4c4}</Project>
+      <Name>ShareDeployed.Outlook</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ShareDeployed\ShareDeployed.csproj">
       <Project>{f7b4ed77-bf88-4d99-9bfc-0f530fdd668d}</Project>
       <Name>ShareDeployed</Name>

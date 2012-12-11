@@ -83,6 +83,9 @@
 				</ul>
 			</div>
 			<div id="MsgResponseDialog" style="display: none">
+				<div id="responseContainer">
+					<textarea id="responseValue" data-bind="value:ResponseText"></textarea>
+				</div>
 			</div>
   }
 	</footer>
@@ -192,7 +195,7 @@
 
 			self.IsResponseOpened = ko.observable(false);
 			self.MailToResponse = ko.observable(null);
-			self.ResponseText = ko.observable(null);
+			self.ResponseText = ko.observable('');
 
 			self.SetResponseDialogState = function (state) {
 				self.IsResponseOpened(state);
@@ -225,14 +228,26 @@
 				}
 			};
 
-			self.onResponseToMsg= function (msgToResponse) {
+			self.onResponseToMsg = function (msgToResponse) {
 				if (self.MessangeR() !== undefined) {
 
 					if ($("#CheckMessagesDialog").dialog("isOpen") === true) {
 						$("#CheckMessagesDialog").dialog("close");
 					}
-
+					self.MailToResponse(msgToResponse);
 					$("#MsgResponseDialog").dialog("open");
+				}
+			};
+
+			self.SendResponseToMsg = function () {
+				if (self.MessangeR() !== undefined) {
+
+					if ($("#MsgResponseDialog").dialog("isOpen") === true) {
+						$("#MsgResponseDialog").dialog("close");
+					}
+					var text = self.ResponseText();
+					self.MessangeR().server.responseToMessage(self.MailToResponse().Id(), text);
+					self.ResponseText('');
 				}
 			};
 
@@ -313,12 +328,15 @@
 				autoOpen: false, modal: true,
 				width: 480, height: 430,
 				hide: "explode", show: "blind",
-				title:"Mail response",
+				title: "Mail response",
 				closeOnEscape: true,
 				buttons: {
-					"Close": function () {
+					"Cancel": function () {
 						MsgsVM.SetResponseDialogState(false);
 						$(this).dialog("close");
+					},
+					"Send": function () {
+						MsgsVM.SendResponseToMsg();
 					}
 				},
 				open: function (event, ui) {
