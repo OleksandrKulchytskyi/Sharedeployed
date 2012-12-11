@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>jquery.cookie</id>
+    <version>1.0</version>
+    <title>jQuery Cookie plugin</title>
+    <authors>Klaus Hartl</authors>
+    <owners>Klaus Hartl</owners>
+    <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
+    <projectUrl>http://plugins.jquery.com/project/Cookie</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A simple, lightweight utility plugin for reading, writing and deleting cookies.</description>
+    <summary>A simple, lightweight utility plugin for reading, writing and deleting cookies.</summary>
+    <tags>jquery plugins</tags>
+    <dependencies>
+      <dependency id="jquery" version="1.4.4" />
+    </dependencies>
+  </metadata>
+</package>
