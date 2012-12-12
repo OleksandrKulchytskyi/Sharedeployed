@@ -11,6 +11,8 @@ namespace ShareDeployed.Repositories
 		IQueryable<MessangerGroup> Groups { get; }
 		IQueryable<MessangerUser> Users { get; }
 		IQueryable<User> SharedUsers { get; }
+		IQueryable<MessangerApplication> Application { get; }
+		IQueryable<MessageResponse> Response { get; }
 
 		IQueryable<MessangerUser> GetOnlineUsers(MessangerGroup room);
 
@@ -31,6 +33,8 @@ namespace ShareDeployed.Repositories
 
 		MessangerClient GetClientById(string clientId, bool includeUser = false);
 
+		MessangerApplication GetApplicationByAppId(string appId);
+
 		void AddUserGroup(MessangerUser user, MessangerGroup room);
 		void RemoveUserGroup(MessangerUser user, MessangerGroup room);
 
@@ -38,6 +42,12 @@ namespace ShareDeployed.Repositories
 		void Add(Message message);
 		void Add(MessangerGroup room);
 		void Add(MessangerUser user);
+		void Add(MessangerApplication app);
+		void Add(MessageResponse response);
+
+		void Update(MessangerApplication application);
+		void Update(Message message);
+
 		void Remove(MessangerClient client);
 		void Remove(MessangerGroup room);
 		void Remove(MessangerUser user);

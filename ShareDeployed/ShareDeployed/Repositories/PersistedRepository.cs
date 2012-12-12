@@ -54,6 +54,16 @@ namespace ShareDeployed.Repositories
 			}
 		}
 
+		public IQueryable<MessangerApplication> Application
+		{
+			get { return _dbMessanger.Application; }
+		}
+
+		public IQueryable<MessageResponse> Response
+		{
+			get { return _dbMessanger.MessageResponse; }
+		}
+
 		public IQueryable<Common.Models.MessangerUser> GetOnlineUsers(Common.Models.MessangerGroup group)
 		{
 			return _dbMessanger.Entry(group).Collection(r => r.Users).Query().Online();
@@ -247,6 +257,42 @@ namespace ShareDeployed.Repositories
 			}
 		}
 
+		public void Add(MessangerApplication app)
+		{
+			if (app == null)
+				throw new ArgumentNullException("app");
+
+			try
+			{
+				_dbMessanger.Application.Add(app);
+				_dbMessanger.SaveChanges();
+			}
+			catch (DbEntityValidationException ex)
+			{
+				string data = LogValidationErrors(ex);
+				ex.Data.Add("EntityValidationErrors", data);
+				throw;
+			}
+		}
+
+		public void Add(MessageResponse response)
+		{
+			if (response == null)
+				throw new ArgumentNullException("response");
+
+			try
+			{
+				_dbMessanger.MessageResponse.Add(response);
+				_dbMessanger.SaveChanges();
+			}
+			catch (DbEntityValidationException ex)
+			{
+				string data = LogValidationErrors(ex);
+				ex.Data.Add("EntityValidationErrors", data);
+				throw;
+			}
+		}
+
 		public void Add(Common.Models.MessangerGroup group)
 		{
 			if (group == null)
@@ -267,8 +313,17 @@ namespace ShareDeployed.Repositories
 
 		public void Add(Common.Models.MessangerUser user)
 		{
-			_dbMessanger.Users.Add(user);
-			_dbMessanger.SaveChanges();
+			try
+			{
+				_dbMessanger.Users.Add(user);
+				_dbMessanger.SaveChanges();
+			}
+			catch (DbEntityValidationException ex)
+			{
+				string data = LogValidationErrors(ex);
+				ex.Data.Add("EntityValidationErrors", data);
+				throw;
+			}
 		}
 
 		public void Remove(Common.Models.MessangerClient client)
@@ -350,6 +405,67 @@ namespace ShareDeployed.Repositories
 		public DbSet<T> GetDbSet<T>() where T : class
 		{
 			return _dbMessanger.Set<T>();
+		}
+
+		public MessangerApplication GetApplicationByAppId(string appId)
+		{
+			return _dbMessanger.Application.FirstOrDefault(x => x.AppId.Equals(appId, StringComparison.OrdinalIgnoreCase));
+		}
+
+		public void Update(MessangerApplication application)
+		{
+			try
+			{
+				DbEntityEntry<MessangerApplication> entry = _dbMessanger.Entry(application);
+				if (entry.State == System.Data.EntityState.Detached)
+				{
+					MessangerApplication attachedEntity = _dbMessanger.Set<MessangerApplication>().Find(application.Key);
+
+					if (attachedEntity == null)
+						entry.State = System.Data.EntityState.Modified;
+					else
+						_dbMessanger.Entry(attachedEntity).CurrentValues.SetValues(application);
+				}
+				_dbMessanger.SaveChanges();
+			}
+			catch (DbEntityValidationException ex)
+			{
+				string data = LogValidationErrors(ex);
+				ex.Data.Add("EntityValidationErrors", data);
+				throw;
+			}
+			catch (Exception ex)
+			{
+				throw;
+			}
+		}
+
+		public void Update(Message message)
+		{
+			try
+			{
+				DbEntityEntry<Message> entry = _dbMessanger.Entry(message);
+				if (entry.State == System.Data.EntityState.Detached)
+				{
+					Message attachedEntity = _dbMessanger.Set<Message>().Find(message.Key);
+
+					if (attachedEntity == null)
+						entry.State = System.Data.EntityState.Modified;
+					else
+						_dbMessanger.Entry(attachedEntity).CurrentValues.SetValues(message);
+				}
+				_dbMessanger.SaveChanges();
+			}
+			catch (DbEntityValidationException ex)
+			{
+				string data = LogValidationErrors(ex);
+				ex.Data.Add("EntityValidationErrors", data);
+				throw;
+			}
+			catch (Exception ex)
+			{
+				throw;
+			}
 		}
 
 		public void Dispose()

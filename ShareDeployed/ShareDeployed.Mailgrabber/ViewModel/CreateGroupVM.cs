@@ -56,7 +56,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 			};
 
 			string reason;
-			var result = HttpClientHelper.PosteWithErrorInfo<string, Common.Models.MessangerGroup>(System.Configuration.ConfigurationManager.AppSettings["baseUrl"],
+			var result = HttpClientHelper.PostWithErrorInfo<string, Common.Models.MessangerGroup>(System.Configuration.ConfigurationManager.AppSettings["baseUrl"],
 			string.Format("/api/messangergroup/PostGroupExtended?userIdentity={0}", NewGroup.CreatorIdentity), newGroup, out reason);
 			if (string.IsNullOrEmpty(result))
 				MessageBox.Show(reason, "Error", System.Windows.MessageBoxButton.OK, MessageBoxImage.Error);

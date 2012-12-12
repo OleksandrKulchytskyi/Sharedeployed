@@ -13,11 +13,14 @@ namespace ShareDeployed.Mailgrabber
 	public partial class App : Application
 	{
 		public static string AppId;
+		public static string AppMsgsLinkPath;
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			string rootPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 			string appDataFile = System.IO.Path.Combine(rootPath, "appData.data");
+			AppMsgsLinkPath = System.IO.Path.Combine(rootPath, "msgLinks.data");
+
 			if (System.IO.File.Exists(appDataFile))
 			{
 				using(var sr=new System.IO.StreamReader(appDataFile))
@@ -28,6 +31,7 @@ namespace ShareDeployed.Mailgrabber
 						if (line.IndexOf("AppId",  StringComparison.OrdinalIgnoreCase)!=-1)
 						{
 							AppId = line.Split('=')[1];
+							break;
 						}
 					}
 				}

@@ -11,8 +11,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Formatting;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,6 +25,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 		private WindowState m_storedWindowState = WindowState.Normal;
 		Task _outlookInitTask = null;
 		Task _afterloginTask = null;
+		Task _responseReceiver = null;
 		CancellationTokenSource _cts = null;
 		ShareDeployed.Outlook.OutlookManager _outlookManager = null;
 
@@ -84,6 +83,14 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 			set { _groupToSend = value; RaisePropertyChanged(() => GroupToSend); }
 		}
 
+		private MessangerApplication _curAppInst;
+
+		public MessangerApplication ServerApp
+		{
+			get { return _curAppInst; }
+			set { _curAppInst = value; RaisePropertyChanged(() => ServerApp); }
+		}
+
 		private bool _enableGroups;
 		public bool EnableGroupsMenu
 		{
@@ -92,6 +99,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 		}
 
 		#endregion
+
 		/// <summary>
 		/// Initializes a new instance of the MainViewModel class.
 		/// </summary>
@@ -104,8 +112,48 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 
 			InitializeIconTray();
 			_cts = new CancellationTokenSource();
-			_outlookInitTask = new Task(new Action(ProcessNewMails), _cts.Token, TaskCreationOptions.LongRunning);
 			_afterloginTask = new Task(InitializeLogdUser);
+			_outlookInitTask = new Task(new Action(ProcessNewMails), _cts.Token, TaskCreationOptions.LongRunning);
+			_responseReceiver = new Task(OnReceiveResponse, _cts.Token, TaskCreationOptions.LongRunning);
+		}
+
+		private void OnReceiveResponse()
+		{
+			bool isFirst = true;
+			while (!_cts.IsCancellationRequested)
+			{
+				if (isFirst)
+				{
+					Thread.Sleep(TimeSpan.FromSeconds(25));
+					isFirst = false;
+				}
+				else
+					Thread.Sleep(TimeSpan.FromMinutes(5));
+
+				if (_cts.IsCancellationRequested)
+					break;
+
+				var data = HttpClientHelper.GetSimple<IEnumerable<Common.Models.Message>>(System.Configuration.ConfigurationManager.AppSettings["baseUrl"],
+																string.Format("api/application/GetResponses?appId={0}&onlyNew=1", ServerApp.AppId));
+				if (data != null)
+				{
+					foreach (Common.Models.Message msg in data)
+					{ 
+						if(msg.Response!=null)
+						{
+							var link = Infrastructure.LinkManager.Instance.GetByMsgKey(msg.Key);
+							if(link!=null)
+							{
+								var mail=_outlookManager.GetEmailByItEntryId(link.EntryId);
+								
+							}
+						}
+					}
+				}
+				
+				if (_cts.IsCancellationRequested)
+					break;
+			}
 		}
 
 		private void Messagesinitializer()
@@ -146,18 +194,6 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 					_outlookManager = null;
 				}
 			}
-			//bool isFirst = true;
-			//while (!_cts.IsCancellationRequested)
-			//{
-			//	if (isFirst)
-			//	{
-			//		isFirst = false;
-			//		Thread.Sleep(TimeSpan.FromSeconds(5));
-			//	}
-
-			//	_outlookManager.SimulateMailRecieving();
-			//	Thread.Sleep(TimeSpan.FromSeconds(10));
-			//}
 		}
 
 		#region broadcasted message handler
@@ -188,6 +224,8 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 
 		private void InitializeLogdUser()
 		{
+			Task.Factory.StartNew(InitAppOnServer);
+
 			MessangerUser user = HttpClientHelper.GetSimple<MessangerUser>(System.Configuration.ConfigurationManager.AppSettings["baseUrl"],
 																string.Format("/api/messangeruser/GetByIdentity?userIdentity={0}", LoginResult.UserIdentity));
 			if (user != null)
@@ -210,6 +248,50 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 				{
 					GroupToSend = userGroups.FirstOrDefault(x => x.Name.Equals("admin", StringComparison.OrdinalIgnoreCase));
 				});
+		}
+
+		private void InitAppOnServer()
+		{
+			string reason;
+			var appInst = HttpClientHelper.GetSimple<MessangerApplication>(System.Configuration.ConfigurationManager.AppSettings["baseUrl"],
+												string.Format("/api/application/GetById?appId={0}", App.AppId));
+			if (appInst != null)
+			{
+				appInst.LastLoggedIn = DateTime.Now;
+				appInst.MachineName = Environment.MachineName;
+				var data = HttpClientHelper.PutWithErrorInfo<string, MessangerApplication>(System.Configuration.ConfigurationManager.AppSettings["baseUrl"],
+												 "/api/application/PutApplication", appInst, out reason);
+				if (!string.IsNullOrEmpty(reason))
+				{
+
+				}
+				else
+				{
+					ServerApp = appInst;
+					_responseReceiver.Start();
+				}
+			}
+			else
+			{
+				var newAppinst = new MessangerApplication()
+				{
+					AppId = App.AppId,
+					MachineName = Environment.MachineName,
+					LastLoggedIn = DateTime.Now
+				};
+				var data = HttpClientHelper.PostWithErrorInfo<string, MessangerApplication>(System.Configuration.ConfigurationManager.AppSettings["baseUrl"],
+													"api/application/PostApplication", newAppinst, out reason);
+				if (!string.IsNullOrEmpty(reason))
+				{
+
+				}
+				else
+				{
+					ServerApp = newAppinst;
+					_responseReceiver.Start();
+				}
+			}
+
 		}
 
 		private void ProcessNonAuth(Message.NotAuthorizedMessage msg)
@@ -268,6 +350,10 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 					message.When = DateTime.Now;
 					message.IsNew = true;
 					message.UserKey = LoggedUser.Key;
+					//this hint was applied for linking application and its sent messages
+					if (ServerApp != null && !string.IsNullOrEmpty(ServerApp.AppId))
+						message.AppKey = ServerApp.Key;
+
 					if (GroupToSend != null)
 						message.GroupKey = GroupToSend.Key;
 
@@ -278,6 +364,13 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 
 					var result = HttpClientHelper.PostSimple<string, Common.Models.Message>(System.Configuration.ConfigurationManager.AppSettings["baseUrl"],
 																				"/api/messanger/postmessage/", message);
+					if(!string.IsNullOrEmpty(result))
+					{
+						int key;
+						int.TryParse(result, out key);
+						Infrastructure.LinkManager.Instance.Add(e.EntryID, key);
+						Infrastructure.LinkManager.Instance.SaveToFile(App.AppMsgsLinkPath);
+					}
 
 				});
 			}

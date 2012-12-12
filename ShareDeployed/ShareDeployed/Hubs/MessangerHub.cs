@@ -188,12 +188,19 @@ namespace ShareDeployed.Hubs
 
 		public void ResponseToMessage(string msgId, string responseText)
 		{
-			var message = _repository.GetMessagesById(msgId);
-			if (message == null)
-				return;
-
-			if (message.Group != null )
+			try
 			{
+				var message = _repository.GetMessagesById(msgId);
+				if (message == null)
+					return;
+
+				message.Response = new MessageResponse() { ResponseText = responseText };
+
+				_repository.Update(message);
+			}
+			catch (Exception ex)
+			{
+				MvcApplication.Logger.Error("MessangerHub.ResponseToMessage", ex);
 			}
 		}
 

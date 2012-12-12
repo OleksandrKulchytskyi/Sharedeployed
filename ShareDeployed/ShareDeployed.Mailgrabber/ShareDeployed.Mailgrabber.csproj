@@ -91,6 +91,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\BoolToVisibility.cs" />
     <Compile Include="Helpers\HttpClientHelper.cs" />
+    <Compile Include="Infrastructure\LinkManager.cs" />
     <Compile Include="LocalStateContainer.cs" />
     <Compile Include="Message\ChangeGroupMessage.cs" />
     <Compile Include="Message\LoginMessage.cs" />
@@ -100,6 +101,7 @@
     <Compile Include="Model\LoginModel.cs" />
     <Compile Include="Model\LoginResult.cs" />
     <Compile Include="Model\NewGroupModel.cs" />
+    <Compile Include="Model\OutlookToServerLink.cs" />
     <Compile Include="ViewModel\CreateGroupVM.cs" />
     <Compile Include="ViewModel\GroupManageVM.cs" />
     <Compile Include="ViewModel\LoginVM.cs" />

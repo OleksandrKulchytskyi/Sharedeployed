@@ -116,6 +116,32 @@ namespace ShareDeployed.Controllers.Api
 			return message;
 		}
 
+		[HttpPost]
+		[Filters.ValidateModelState()]
+		public HttpResponseMessage PostMessageResponse(string msgId, [FromBody] MessageResponse response)
+		{
+
+			try
+			{
+				var repoMsg = _repository.GetMessagesById(msgId);
+				if (repoMsg == null)
+					throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.NotFound));
+
+				repoMsg.Response = response;
+
+				_repository.Update(repoMsg);
+				throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.Created));
+			}
+			catch (Exception ex)
+			{
+				MvcApplication.Logger.Error(ex);
+				if (!(ex is HttpResponseException))
+					throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError));
+				throw;
+			}
+
+		}
+
 		protected override void Dispose(bool disposing)
 		{
 			if (_repository != null)

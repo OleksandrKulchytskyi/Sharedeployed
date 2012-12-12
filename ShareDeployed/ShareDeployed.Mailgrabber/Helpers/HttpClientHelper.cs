@@ -77,7 +77,7 @@ namespace ShareDeployed.Mailgrabber.Helpers
 			}
 		}
 
-		public static Out PosteWithErrorInfo<Out, In>(string baseUrl, string remainUrl, In input, out string reason) where Out : class
+		public static Out PostWithErrorInfo<Out, In>(string baseUrl, string remainUrl, In input, out string reason) where Out : class
 		{
 			reason = string.Empty;
 			try
@@ -142,6 +142,45 @@ namespace ShareDeployed.Mailgrabber.Helpers
 			{
 				Mailgrabber.ViewModel.ViewModelLocator.Logger.Error("HttpClientHelper", ex);
 				return false;
+			}
+		}
+
+		public static Out PutWithErrorInfo<Out, In>(string baseUrl, string remainUrl, In input, out string reason) where Out : class
+		{
+			reason = string.Empty;
+			try
+			{
+				using (HttpClient client = new HttpClient())
+				{
+					client.BaseAddress = new Uri(baseUrl);
+					client.Timeout = TimeSpan.FromMinutes(2);
+
+					using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, remainUrl))
+					{
+						request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+						MediaTypeFormatter mediaForm = new JsonMediaTypeFormatter();
+						request.Content = new ObjectContent<In>(input, mediaForm);
+
+						using (HttpResponseMessage response = client.SendAsync(request).Result)
+						{
+							if (response.IsSuccessStatusCode)
+							{
+								if (typeof(Out) == typeof(string))
+									return response.Content.ReadAsStringAsync().Result as Out;
+								else
+									return response.Content.ReadAsAsync<Out>().Result;
+							}
+							else
+								reason = response.ReasonPhrase;
+							return default(Out);
+						}
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Mailgrabber.ViewModel.ViewModelLocator.Logger.Error("HttpClientHelper", ex);
+				return default(Out);
 			}
 		}
 	}

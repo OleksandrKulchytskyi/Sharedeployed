@@ -192,6 +192,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\AuthConfig.cs" />
+    <Compile Include="Controllers\Api\ApplicationController.cs" />
     <Compile Include="Controllers\Api\MessangerController.cs" />
     <Compile Include="Controllers\Api\MessangerGroupController.cs" />
     <Compile Include="Controllers\Api\MessangerUserController.cs" />

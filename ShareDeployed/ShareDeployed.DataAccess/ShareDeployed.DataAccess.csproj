@@ -60,6 +60,8 @@
     <Compile Include="Interfaces\IRepository.cs" />
     <Compile Include="Interfaces\IUnityOfWork.cs" />
     <Compile Include="Mappings\MessageMap.cs" />
+    <Compile Include="Mappings\MessageResponseMap.cs" />
+    <Compile Include="Mappings\MessangerAppMap.cs" />
     <Compile Include="Mappings\MessangerClientMap.cs" />
     <Compile Include="Mappings\MessangerGroupMap.cs" />
     <Compile Include="Mappings\MessangerUserMap.cs" />
@@ -99,6 +101,10 @@
     <Compile Include="Migrations\201212041402185_DeleteReadMessagesTable.cs" />
     <Compile Include="Migrations\201212041402185_DeleteReadMessagesTable.Designer.cs">
       <DependentUpon>201212041402185_DeleteReadMessagesTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201212121014540_AddAppAndResponseTables.cs" />
+    <Compile Include="Migrations\201212121014540_AddAppAndResponseTables.Designer.cs">
+      <DependentUpon>201212121014540_AddAppAndResponseTables.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\MigrationConfig.cs" />

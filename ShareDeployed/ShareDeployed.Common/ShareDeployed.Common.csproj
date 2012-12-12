@@ -66,6 +66,8 @@
     <Compile Include="Models\ClientState.cs" />
     <Compile Include="Models\Expense.cs" />
     <Compile Include="Models\Message.cs" />
+    <Compile Include="Models\MessageResponse.cs" />
+    <Compile Include="Models\MessangerApplication.cs" />
     <Compile Include="Models\MessangerGroup.cs" />
     <Compile Include="Models\MessangerClient.cs" />
     <Compile Include="Models\MessangerUser.cs" />

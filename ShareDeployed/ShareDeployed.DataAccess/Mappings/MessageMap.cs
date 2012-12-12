@@ -27,11 +27,16 @@ namespace ShareDeployed.DataAccess.Mappings
 			this.Property(m => m.When).HasColumnName("When");
 			this.Property(m => m.GroupKey).HasColumnName("Room_Key");
 			this.Property(m => m.UserKey).HasColumnName("User_Key");
+			this.Property(m => m.AppKey).HasColumnName("App_Key");
 
 			// Relationships
 			this.HasOptional(m => m.Group).WithMany(r => r.Messages).HasForeignKey(m => m.GroupKey);
 
 			this.HasOptional(m => m.User).WithMany().HasForeignKey(m => m.UserKey);
+
+			this.HasOptional(x => x.Application).WithMany(a => a.SentMessages).HasForeignKey(m => m.AppKey);
+
+			this.HasOptional(x => x.Response).WithRequired().WillCascadeOnDelete();
 		}
 	}
 }

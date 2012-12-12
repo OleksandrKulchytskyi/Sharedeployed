@@ -41,5 +41,12 @@ namespace ShareDeployed.Common.Models
 
 		//Users that were read this message
 		public virtual ICollection<MessangerUser> UsersWhoRead { get; set; }
+
+		public virtual MessangerApplication Application { get; set; }
+		public int? AppKey { get; set; }
+
+		public virtual MessageResponse Response { get; set; }
+		public int? ResponseKey { get; set; }
+
 	}
 }

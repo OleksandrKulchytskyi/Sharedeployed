@@ -10,6 +10,12 @@ namespace ShareDeployed.Outlook
 	{
 		public NewMailReceivedEventArgs() : base() { }
 
+		public NewMailReceivedEventArgs(string subject, string body, string fromEmail, string fromUser, string entryId)
+			: this(subject, body, fromEmail, fromUser)
+		{
+			EntryID = entryId;
+		}
+
 		public NewMailReceivedEventArgs(string subject, string body, string fromEmail, string fromUser)
 		{
 			Subject = subject;
@@ -30,6 +36,7 @@ namespace ShareDeployed.Outlook
 		public string FromUser { get; private set; }
 		public string Subject { get; private set; }
 		public string Body { get; private set; }
+		public string EntryID { get; private set; }
 	}
 
 	public sealed class OutlookManager : IDisposable
@@ -177,6 +184,7 @@ namespace ShareDeployed.Outlook
 				throw new ArgumentNullException("entryId");
 
 			MailItem item = m_outlookApp.Session.GetItemFromID(entryId, Type.Missing) as MailItem;
+
 			if (item != null)
 			{
 				return MailInfoFromMailItem(item);
@@ -215,7 +223,7 @@ namespace ShareDeployed.Outlook
 		#region events generators
 		private void OnNewMailReceived(MailItem item)
 		{
-			OnMailReceivedExt(new NewMailReceivedEventArgs(item.Subject, item.Body, item.SenderEmailAddress, item.SenderName));
+			OnMailReceivedExt(new NewMailReceivedEventArgs(item.Subject, item.Body, item.SenderEmailAddress, item.SenderName, item.EntryID));
 		}
 
 		private void OnMailReceivedExt(NewMailReceivedEventArgs args)
@@ -280,6 +288,48 @@ namespace ShareDeployed.Outlook
 			Console.Write("Message Body: ");
 			myMail.Body = Console.ReadLine();
 			// Send it!
+		}
+
+		public void SendMessage(string toeMail, string subject, string body)
+		{
+			try
+			{
+				//Create the new message by using the simplest approach.
+				Microsoft.Office.Interop.Outlook.MailItem oMsg = (Microsoft.Office.Interop.Outlook.MailItem)m_outlookApp.
+																CreateItem(Microsoft.Office.Interop.Outlook.OlItemType.olMailItem);
+
+				//Add a recipient.
+				Microsoft.Office.Interop.Outlook.Recipient oRecip = (Microsoft.Office.Interop.Outlook.Recipient)oMsg.Recipients.Add(toeMail);
+				oRecip.Resolve();
+
+				//Set the basic properties.
+				oMsg.Subject = "This is the subject of the test message";
+				oMsg.Body = "This is the text in the message.";
+
+				//Add an attachment.
+				//String sSource = "C:\\setupxlg.txt";
+				//String sDisplayName = "MyFirstAttachment";
+				//int iPosition = (int)oMsg.Body.Length + 1;
+				//int iAttachType = (int)Microsoft.Office.Interop.Outlook.OlAttachmentType.olByValue;
+				//Microsoft.Office.Interop.Outlook.Attachment oAttach = oMsg.Attachments.Add(sSource, iAttachType, iPosition, sDisplayName);
+
+				// If you want to, display the message. oMsg.Display(true);  //modal
+
+				//Send the message.
+				oMsg.Save();
+				oMsg.Send();
+
+				//Explicitly release objects.
+				oRecip = null;
+				//oAttach = null;
+				oMsg = null;
+			}
+			catch (System.Exception e)
+			{
+				if (e.Message != null)
+					Console.WriteLine(e.Message);
+				throw;
+			}
 		}
 
 		private void SearchInBoxBySubject(string subj)

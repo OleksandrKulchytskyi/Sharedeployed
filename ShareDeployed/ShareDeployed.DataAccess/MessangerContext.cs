@@ -60,6 +60,8 @@ namespace ShareDeployed.DataAccess
 			modelBuilder.Configurations.Add(new MessageMap());
 			modelBuilder.Configurations.Add(new MessangerGroupMap());
 			modelBuilder.Configurations.Add(new MessangerUserMap());
+			modelBuilder.Configurations.Add(new MessangerAppMap());
+			modelBuilder.Configurations.Add(new MessageResponseMap());
 
 			base.OnModelCreating(modelBuilder);
 		}
@@ -68,6 +70,8 @@ namespace ShareDeployed.DataAccess
 		public DbSet<Message> Messages { get; set; }
 		public DbSet<MessangerGroup> Groups { get; set; }
 		public DbSet<MessangerUser> Users { get; set; }
+		public DbSet<MessangerApplication> Application { get;set;}
+		public DbSet<MessageResponse> MessageResponse { get; set; }
 
 		#region IContext
 		bool isAuditEnabled = false;
