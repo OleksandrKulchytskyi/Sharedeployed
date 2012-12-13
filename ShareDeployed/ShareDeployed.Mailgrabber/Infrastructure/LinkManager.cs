@@ -48,5 +48,28 @@ namespace ShareDeployed.Mailgrabber.Infrastructure
 				sw.Flush();
 			}
 		}
+
+		internal void LoadFromFile(string fname)
+		{
+			if (!File.Exists(fname))
+				return;
+
+			using (StreamReader sr = new StreamReader(fname))
+			{
+				bool isFirstLine = true;
+				string line;
+				while((line=sr.ReadLine())!=null)
+				{
+					if(isFirstLine)
+					{
+						isFirstLine = false;
+						continue;
+					}
+					string[] data=line.Split(',');
+
+					_container.Add(new OutlookToServerLink() { EntryId = data[0], Key = int.Parse(data[1]), MsgId = data[2] });
+				}
+			}
+		}
 	}
 }

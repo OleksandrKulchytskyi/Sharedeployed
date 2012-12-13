@@ -15,6 +15,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShareDeployed.RoutingHelper
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShareDeployed.Outlook", "ShareDeployed.Outlook\ShareDeployed.Outlook.csproj", "{510F87E1-F628-45E6-AA4D-999CDD86F4C4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Automation", "Automation", "{1134DA5A-1E69-4A64-BB31-9EAFC9FF0408}"
+	ProjectSection(SolutionItems) = preProject
+		CleanBuildFiles.bat = CleanBuildFiles.bat
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 8

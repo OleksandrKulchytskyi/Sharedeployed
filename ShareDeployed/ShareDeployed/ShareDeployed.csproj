@@ -196,6 +196,7 @@
     <Compile Include="Controllers\Api\MessangerController.cs" />
     <Compile Include="Controllers\Api\MessangerGroupController.cs" />
     <Compile Include="Controllers\Api\MessangerUserController.cs" />
+    <Compile Include="Controllers\Api\ResponseController.cs" />
     <Compile Include="Controllers\Api\UserRolesController.cs" />
     <Compile Include="Controllers\TraceController.cs" />
     <Compile Include="DependencyResolvers\MvcDependencyResolver.cs" />

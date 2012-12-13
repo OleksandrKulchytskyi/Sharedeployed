@@ -468,6 +468,34 @@ namespace ShareDeployed.Repositories
 			}
 		}
 
+		public void Update(MessageResponse response)
+		{
+			try
+			{
+				DbEntityEntry<MessageResponse> entry = _dbMessanger.Entry(response);
+				if (entry.State == System.Data.EntityState.Detached)
+				{
+					MessageResponse attachedEntity = _dbMessanger.Set<MessageResponse>().Find(response.Key);
+
+					if (attachedEntity == null)
+						entry.State = System.Data.EntityState.Modified;
+					else
+						_dbMessanger.Entry(attachedEntity).CurrentValues.SetValues(response);
+				}
+				_dbMessanger.SaveChanges();
+			}
+			catch (DbEntityValidationException ex)
+			{
+				string data = LogValidationErrors(ex);
+				ex.Data.Add("EntityValidationErrors", data);
+				throw;
+			}
+			catch (Exception ex)
+			{
+				throw;
+			}
+		}
+
 		public void Dispose()
 		{
 			Dispose(true);

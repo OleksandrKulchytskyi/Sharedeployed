@@ -47,6 +47,7 @@ namespace ShareDeployed.Repositories
 
 		void Update(MessangerApplication application);
 		void Update(Message message);
+		void Update(MessageResponse response);
 
 		void Remove(MessangerClient client);
 		void Remove(MessangerGroup room);

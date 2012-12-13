@@ -17,11 +17,19 @@ namespace ShareDeployed.Filters
 			{
 				actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.BadRequest, actionContext.ModelState);
 
-				string messages = string.Join("; ", actionContext.ModelState.Values
-										.SelectMany(x => x.Errors)
-										.Select(x => x.ErrorMessage));
+				var keys = actionContext.ModelState.Keys.Select(x => x);
+				var errors = actionContext.ModelState.Values.Select(x => x.Errors);
 
-				MvcApplication.Logger.Warn(String.Format("{0} {1} {2}", "Error in ModelState", Environment.NewLine, messages));
+				var combined = keys.Zip(errors, (keyName, error) =>
+				{
+					return string.Format("{0}: {1}", keyName, string.Join("; ", error.Select(x => x.ErrorMessage)));
+				});
+
+				//string messages = string.Join("; ", actionContext.ModelState.Values.SelectMany(x => x.Errors).
+				//									Select(x => x.ErrorMessage));
+
+				string allMsgs = string.Join(Environment.NewLine, combined);
+				MvcApplication.Logger.Warn(String.Format("Error in ModelState {0} {1}", Environment.NewLine, allMsgs));
 			}
 		}
 	}

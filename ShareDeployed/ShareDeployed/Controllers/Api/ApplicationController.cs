@@ -56,6 +56,7 @@ namespace ShareDeployed.Controllers.Api
 
 				return (from item in _repository.GetDbSet<Message>()
 						where item.AppKey == app.Key && item.Response != null
+						&& !item.Response.IsSent
 						orderby item.When
 						select item).AsEnumerable();
 			}

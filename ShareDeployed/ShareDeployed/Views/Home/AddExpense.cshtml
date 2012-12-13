@@ -15,6 +15,12 @@
 			$('#Id').val('0');
 			$('#UserId').val('0');
 			$("#Time").datepicker({ dateFormat: "yy-mm-dd" }).datepicker("setDate", "0");
+			var cookieObj;
+			var cookieVal = $.cookie("messanger.state");
+			if (cookieVal !== undefined && cookieVal !== null) {
+				cookieObj = $.parseJSON(cookieVal);
+				$('#UserId').val(cookieObj.aspUserId);
+			}
 
 			self.clearFun = function () {
 				$('#UserId').val('');
@@ -36,24 +42,35 @@
 
 					var expense = {};
 					expense.Id = $("#Id").val();
-					expense.UserId = $("#Id").val();
+					expense.UserId = $("#UserId").val();
 					expense.Name = $("#Name").val();
 					expense.Time = $("#Time").val();
 					expense.Amount = $("#Amount").val();
 					expense.IsRequired = isChecked;
 					expense.Description = $("#Description").val();
 
-					var jqxhr = $.post('/api/expense/complex', expense)//$('#addExpenseForm').serialize())
-								.success(function () {
-									self.uploaded(false);
-									var loc = jqxhr.getResponseHeader('Location');
-									var a = $('<a/>', { href: loc, text: loc });
-									$('#message').html(a);
-								})
-								.error(function () {
-									self.uploaded(false); self.failed(true);
-									$('#message').html("Error posting the update.");
-								});
+					var jqxhr = $.ajax({
+						url: '/api/expense/complex',
+						type: "POST",
+						cache: false,
+						contentType: 'application/json; charset=utf-8',
+						data: JSON.stringify(expense),
+						headers: {
+							"UserId": cookieObj.aspUserId,
+							"AuthToken": "11111"
+							//"Content-Type": "application/json; charset=utf-8"
+						},
+
+						success: function (jsonStr) {
+							self.uploaded(false);
+							var loc = jqxhr.getResponseHeader('Location');
+							var a = $('<a/>', { href: loc, text: loc });
+							$('#message').html(a);
+						}
+					}).fail(function () {
+						self.uploaded(false); self.failed(true);
+						$('#message').html("Error posting the update.");
+					});
 				}
 			}
 		}

@@ -21,6 +21,11 @@ namespace ShareDeployed.Mailgrabber
 			string appDataFile = System.IO.Path.Combine(rootPath, "appData.data");
 			AppMsgsLinkPath = System.IO.Path.Combine(rootPath, "msgLinks.data");
 
+			if (System.IO.File.Exists(AppMsgsLinkPath))
+			{
+				Infrastructure.LinkManager.Instance.LoadFromFile(AppMsgsLinkPath);
+			}
+
 			if (System.IO.File.Exists(appDataFile))
 			{
 				using(var sr=new System.IO.StreamReader(appDataFile))

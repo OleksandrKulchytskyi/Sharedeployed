@@ -303,8 +303,8 @@ namespace ShareDeployed.Outlook
 				oRecip.Resolve();
 
 				//Set the basic properties.
-				oMsg.Subject = "This is the subject of the test message";
-				oMsg.Body = "This is the text in the message.";
+				oMsg.Subject = subject;
+				oMsg.Body = body;
 
 				//Add an attachment.
 				//String sSource = "C:\\setupxlg.txt";

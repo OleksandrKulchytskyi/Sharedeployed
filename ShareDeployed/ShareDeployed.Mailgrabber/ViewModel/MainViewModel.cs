@@ -120,6 +120,8 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 		private void OnReceiveResponse()
 		{
 			bool isFirst = true;
+			int delay = int.Parse(System.Configuration.ConfigurationManager.AppSettings["responseCheckDelay"]);
+
 			while (!_cts.IsCancellationRequested)
 			{
 				if (isFirst)
@@ -128,7 +130,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 					isFirst = false;
 				}
 				else
-					Thread.Sleep(TimeSpan.FromMinutes(5));
+					Thread.Sleep(TimeSpan.FromMinutes(delay));
 
 				if (_cts.IsCancellationRequested)
 					break;
@@ -138,19 +140,31 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 				if (data != null)
 				{
 					foreach (Common.Models.Message msg in data)
-					{ 
-						if(msg.Response!=null)
+					{
+						if (msg.Response != null)
 						{
 							var link = Infrastructure.LinkManager.Instance.GetByMsgKey(msg.Key);
-							if(link!=null)
+							if (link != null)
 							{
-								var mail=_outlookManager.GetEmailByItEntryId(link.EntryId);
-								
+								var mail = _outlookManager.GetEmailByItEntryId(link.EntryId);
+								try
+								{
+									string reason;
+									_outlookManager.SendMessage(msg.FromEmail, msg.Subject, msg.Response.ResponseText);
+									var postRes = HttpClientHelper.PostWithErrorInfo<string, MessageResponse>(System.Configuration.ConfigurationManager.AppSettings["baseUrl"],
+																string.Format("api/response/MarkAsSent?key={0}", msg.Response.Key), msg.Response, out reason);
+									if (string.IsNullOrEmpty(reason))
+									{
+
+									}
+								}
+								catch (Exception ex) { ViewModelLocator.Logger.Error("Fail to send msg within Outlook", ex); }
+
 							}
 						}
 					}
 				}
-				
+
 				if (_cts.IsCancellationRequested)
 					break;
 			}
@@ -287,6 +301,8 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 				}
 				else
 				{
+					if (!string.IsNullOrEmpty(data) && !char.IsLetter(data[0]))
+						newAppinst.Key = int.Parse(data);
 					ServerApp = newAppinst;
 					_responseReceiver.Start();
 				}
@@ -364,7 +380,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 
 					var result = HttpClientHelper.PostSimple<string, Common.Models.Message>(System.Configuration.ConfigurationManager.AppSettings["baseUrl"],
 																				"/api/messanger/postmessage/", message);
-					if(!string.IsNullOrEmpty(result))
+					if (!string.IsNullOrEmpty(result))
 					{
 						int key;
 						int.TryParse(result, out key);
