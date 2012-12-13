@@ -36,7 +36,32 @@ namespace ShareDeployed.DataAccess.Implementation
 
 		public int Commit()
 		{
-			return _context.Commit();
+			bool saveFailed = false;
+			int rowsAffected = 0;
+			const int retryCount = 2;
+			System.Data.Entity.Infrastructure.DbUpdateConcurrencyException exInst = null;
+			int retries = 0;
+			do
+			{
+				retries++;
+				try
+				{
+					rowsAffected = _context.Commit();
+					saveFailed = false;
+				}
+				catch (System.Data.Entity.Infrastructure.DbUpdateConcurrencyException ex)
+				{
+					exInst = ex;
+					saveFailed = true;
+					ex.Entries.ToList<System.Data.Entity.Infrastructure.DbEntityEntry>().ForEach(
+						(entry) => entry.OriginalValues.SetValues(entry.GetDatabaseValues()));
+				}
+			} while (saveFailed && retries!=retryCount );
+
+			if (retries == 2)
+				throw exInst;
+
+			return rowsAffected;
 		}
 
 		public System.Data.Common.DbTransaction BeginTransaction()
