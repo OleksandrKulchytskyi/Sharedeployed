@@ -19,9 +19,12 @@ namespace ShareDeployed.Controllers.Api
 		}
 
 		[HttpGet]
-		public IQueryable<MessangerApplication> GetAll()
+		public IEnumerable<MessangerApplication> GetAll()
 		{
-			return _repository.Application;
+			IEnumerable<MessangerApplication> apps=null;
+			this._repository.RunWithNoLazy(() => apps = _repository.Application.AsEnumerable());
+			return apps;
+
 		}
 
 		[HttpGet]
@@ -30,9 +33,14 @@ namespace ShareDeployed.Controllers.Api
 		{
 			try
 			{
-				var app = _repository.Application.FirstOrDefault(x => x.AppId.Equals(appId, StringComparison.OrdinalIgnoreCase));
-				if (app == null)
-					throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.NotFound));
+				MessangerApplication app = null;
+				_repository.RunWithNoLazy(() =>
+				{
+					app = _repository.Application.FirstOrDefault(x => x.AppId.Equals(appId, StringComparison.OrdinalIgnoreCase));
+					if (app == null)
+						throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.NotFound));
+				});
+
 				return app;
 			}
 			catch (Exception ex)

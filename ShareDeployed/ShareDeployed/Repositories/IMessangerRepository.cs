@@ -61,5 +61,7 @@ namespace ShareDeployed.Repositories
 		bool AuthenticateUserShared(string uid, string pass, out int userId);
 
 		System.Data.Entity.DbSet<T> GetDbSet<T>() where T:class;
+
+		void RunWithNoLazy(Action action);
 	}
 }

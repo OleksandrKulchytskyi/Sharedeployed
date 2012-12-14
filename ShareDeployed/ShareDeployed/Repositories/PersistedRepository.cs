@@ -193,6 +193,20 @@ namespace ShareDeployed.Repositories
 			}
 		}
 
+		public void RunWithNoLazy(Action action)
+		{
+			bool old = _dbMessanger.Configuration.LazyLoadingEnabled;
+			try
+			{
+				_dbMessanger.Configuration.LazyLoadingEnabled = false;
+				action();
+			}
+			finally
+			{
+				_dbMessanger.Configuration.LazyLoadingEnabled = old;
+			}
+		}
+
 		public MessangerClient GetClientById(string clientId, bool includeUser = false)
 		{
 			if (includeUser)
