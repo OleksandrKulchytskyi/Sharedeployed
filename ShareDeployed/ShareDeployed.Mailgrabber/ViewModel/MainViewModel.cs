@@ -158,7 +158,10 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 
 									}
 								}
-								catch (Exception ex) { ViewModelLocator.Logger.Error("Fail to send msg within Outlook", ex); }
+								catch (Exception ex)
+								{
+									ViewModelLocator.Logger.Error("Fail to send msg within Outlook", ex);
+								}
 
 							}
 						}

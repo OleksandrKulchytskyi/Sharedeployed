@@ -89,6 +89,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Behaviour\PassworBoxBehavior.cs" />
     <Compile Include="Converters\BoolToVisibility.cs" />
     <Compile Include="Helpers\HttpClientHelper.cs" />
     <Compile Include="Infrastructure\LinkManager.cs" />
