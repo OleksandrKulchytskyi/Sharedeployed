@@ -19,9 +19,14 @@ namespace ShareDeployed.Controllers.Api
 		}
 
 		[ActionName("GetAll")]
-		public IQueryable<MessageResponse> GetAll()
+		public IEnumerable<MessageResponse> GetAll()
 		{
-			return _repository.Response;
+			IEnumerable<MessageResponse> data = null;
+			_repository.RunWithNoLazy(() =>
+			{
+				data = _repository.Response;
+			});
+			return data;
 		}
 
 		[HttpPost]
@@ -29,7 +34,7 @@ namespace ShareDeployed.Controllers.Api
 		{
 			try
 			{
-				var response=_repository.Response.FirstOrDefault(x => x.Key == key);
+				var response = _repository.Response.FirstOrDefault(x => x.Key == key);
 				if (response == null)
 					return new HttpResponseMessage(HttpStatusCode.NotFound);
 
@@ -38,7 +43,7 @@ namespace ShareDeployed.Controllers.Api
 				_repository.Update(response);
 				return new HttpResponseMessage(HttpStatusCode.OK);
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError)
 				{
