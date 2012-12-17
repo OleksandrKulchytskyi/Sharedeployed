@@ -1,37 +1,47 @@
-INFO  2012-12-12 17:03:57,191    85ms MvcApplication         Application_Start  - Application_Start()
-INFO  2012-12-12 17:04:10,253 13147ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
-ERROR 2012-12-12 17:04:12,385 15279ms MvcApplication         .ctor              - SimpleMembershipInitializer
-System.InvalidOperationException: The "WebSecurity.InitializeDatabaseConnection" method can be called only once.
-   at WebMatrix.WebData.WebSecurity.InitializeRoleProvider(SimpleRoleProvider simpleRoles, DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean createTables)
-   at WebMatrix.WebData.WebSecurity.InitializeProviders(DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
-   at WebMatrix.WebData.WebSecurity.InitializeDatabaseConnection(String connectionStringName, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
-   at ShareDeployed.Filters.InitializeSimpleMembershipAttribute.SimpleMembershipInitializer2..ctor() in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Filters\InitializeSimpleMembershipAttribute.cs:line 68
-INFO  2012-12-12 17:04:37,470 40364ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
-INFO  2012-12-12 17:09:37,467 340361ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
-INFO  2012-12-12 17:13:57,733 600627ms MvcApplication         Sweep              - Begin sweep process
-INFO  2012-12-12 17:14:37,451 640345ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
-INFO  2012-12-12 17:16:37,091 759985ms MvcApplication         Application_End    - Application_End()
-INFO  2012-12-12 18:05:21,797    91ms MvcApplication         Application_Start  - Application_Start()
-INFO  2012-12-12 18:05:34,773 13067ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
-ERROR 2012-12-12 18:05:36,641 14935ms MvcApplication         .ctor              - SimpleMembershipInitializer
-System.InvalidOperationException: The "WebSecurity.InitializeDatabaseConnection" method can be called only once.
-   at WebMatrix.WebData.WebSecurity.InitializeRoleProvider(SimpleRoleProvider simpleRoles, DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean createTables)
-   at WebMatrix.WebData.WebSecurity.InitializeProviders(DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
-   at WebMatrix.WebData.WebSecurity.InitializeDatabaseConnection(String connectionStringName, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
-   at ShareDeployed.Filters.InitializeSimpleMembershipAttribute.SimpleMembershipInitializer2..ctor() in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Filters\InitializeSimpleMembershipAttribute.cs:line 68
-INFO  2012-12-12 18:06:02,127 40421ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
-INFO  2012-12-12 18:09:18,587 236881ms MvcApplication         Application_End    - Application_End()
-INFO  2012-12-12 18:09:24,266    51ms MvcApplication         Application_Start  - Application_Start()
-INFO  2012-12-12 18:09:41,750 17535ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
-INFO  2012-12-12 18:09:42,390 18175ms MvcApplication         Application_End    - Application_End()
-INFO  2012-12-12 18:09:49,144    88ms MvcApplication         Application_Start  - Application_Start()
-INFO  2012-12-12 18:10:00,813 11757ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
-ERROR 2012-12-12 18:10:03,231 14175ms MvcApplication         shipInitialization - PersistedRepository.DoMembershipInitialization
-System.InvalidOperationException: The "WebSecurity.InitializeDatabaseConnection" method can be called only once.
-   at WebMatrix.WebData.WebSecurity.InitializeRoleProvider(SimpleRoleProvider simpleRoles, DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean createTables)
-   at WebMatrix.WebData.WebSecurity.InitializeProviders(DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
-   at WebMatrix.WebData.WebSecurity.InitializeDatabaseConnection(String connectionStringName, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
-   at ShareDeployed.Repositories.PersistedRepository.DoMembershipInitialization() in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\PersistedRepository.cs:line 172
-INFO  2012-12-12 18:10:29,435 40379ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
-INFO  2012-12-12 18:15:29,430 340374ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
-INFO  2012-12-12 18:16:34,050 404994ms MvcApplication         Application_End    - Application_End()
+INFO  2012-12-14 22:09:59,400   152ms MvcApplication         Application_Start  - Application_Start()
+INFO  2012-12-14 22:10:14,540 15291ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2012-12-14 22:10:39,730 40481ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2012-12-14 22:15:39,739 340490ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2012-12-14 22:19:59,727 600478ms MvcApplication         Sweep              - Begin sweep process
+INFO  2012-12-14 22:20:39,744 640495ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2012-12-14 22:25:00,279 901030ms MvcApplication         Application_End    - Application_End()
+INFO  2012-12-14 22:25:09,821   135ms MvcApplication         Application_Start  - Application_Start()
+INFO  2012-12-14 22:25:56,407 46720ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2012-12-14 22:26:20,822 71135ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2012-12-14 22:31:20,831 371144ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2012-12-14 22:35:40,822 631135ms MvcApplication         Sweep              - Begin sweep process
+INFO  2012-12-14 22:36:20,835 671148ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2012-12-14 22:41:20,841 971154ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2012-12-14 22:45:40,832 1231145ms MvcApplication         Sweep              - Begin sweep process
+INFO  2012-12-14 22:46:20,849 1271162ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2012-12-14 22:51:20,852 1571165ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2012-12-14 22:55:40,843 1831156ms MvcApplication         Sweep              - Begin sweep process
+INFO  2012-12-14 22:56:20,860 1871173ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2012-12-14 22:57:39,285 1949598ms MvcApplication         Application_End    - Application_End()
+INFO  2012-12-14 22:57:52,940   157ms MvcApplication         Application_Start  - Application_Start()
+INFO  2012-12-14 23:00:45,780 172996ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2012-12-14 23:01:08,645 195862ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2012-12-14 23:02:15,991 263208ms MvcApplication         Application_End    - Application_End()
+INFO  2012-12-15 21:37:18,473   105ms MvcApplication         Application_Start  - Application_Start()
+INFO  2012-12-15 21:37:36,369 18001ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+ERROR 2012-12-15 21:37:49,738 31369ms MvcApplication         shipInitialization - PersistedRepository.DoMembershipInitialization
+System.InvalidOperationException: ћетод "WebSecurity.InitializeDatabaseConnection" можно вызвать только один раз.
+   в WebMatrix.WebData.WebSecurity.InitializeMembershipProvider(SimpleMembershipProvider simpleMembership, DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean createTables)
+   в WebMatrix.WebData.WebSecurity.InitializeProviders(DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   в WebMatrix.WebData.WebSecurity.InitializeDatabaseConnection(String connectionStringName, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   в ShareDeployed.Repositories.PersistedRepository.DoMembershipInitialization() в d:\MyProjects\ShareDeployed\ShareDeployed\Repositories\PersistedRepository.cs:строка 172
+ERROR 2012-12-15 21:37:58,816 40448ms MvcApplication         GetById            - System.Web.Http.HttpResponseException: Processing of the HTTP request resulted in an exception. Please see the HTTP response returned by the 'Response' property of this exception for details.
+   в ShareDeployed.Controllers.Api.ApplicationController.<>c__DisplayClass6.<GetById>b__3() в d:\MyProjects\ShareDeployed\ShareDeployed\Controllers\Api\ApplicationController.cs:строка 41
+   в ShareDeployed.Repositories.PersistedRepository.RunWithNoLazy(Action action) в d:\MyProjects\ShareDeployed\ShareDeployed\Repositories\PersistedRepository.cs:строка 202
+   в ShareDeployed.Controllers.Api.ApplicationController.GetById(String appId) в d:\MyProjects\ShareDeployed\ShareDeployed\Controllers\Api\ApplicationController.cs:строка 37
+INFO  2012-12-15 21:37:58,832 40464ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+ERROR 2012-12-15 21:40:57,795 219426ms MvcApplication         shipInitialization - PersistedRepository.DoMembershipInitialization
+System.InvalidOperationException: ћетод "WebSecurity.InitializeDatabaseConnection" можно вызвать только один раз.
+   в WebMatrix.WebData.WebSecurity.InitializeMembershipProvider(SimpleMembershipProvider simpleMembership, DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean createTables)
+   в WebMatrix.WebData.WebSecurity.InitializeProviders(DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   в WebMatrix.WebData.WebSecurity.InitializeDatabaseConnection(String connectionStringName, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   в ShareDeployed.Repositories.PersistedRepository.DoMembershipInitialization() в d:\MyProjects\ShareDeployed\ShareDeployed\Repositories\PersistedRepository.cs:строка 172
+INFO  2012-12-15 21:42:58,844 340475ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2012-12-15 21:47:18,830 600462ms MvcApplication         Sweep              - Begin sweep process
+INFO  2012-12-15 21:47:58,849 640480ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2012-12-15 21:49:23,390 725021ms MvcApplication         Application_End    - Application_End()
