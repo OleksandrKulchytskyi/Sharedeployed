@@ -21,19 +21,17 @@ namespace ShareDeployed.Mailgrabber
 			string appDataFile = System.IO.Path.Combine(rootPath, "appData.data");
 			AppMsgsLinkPath = System.IO.Path.Combine(rootPath, "msgLinks.data");
 
-			if (System.IO.File.Exists(AppMsgsLinkPath))
-			{
-				Infrastructure.LinkManager.Instance.LoadFromFile(AppMsgsLinkPath);
-			}
+			//load messages links 
+			Infrastructure.LinkManager.Instance.LoadFromFileAsync(AppMsgsLinkPath);
 
 			if (System.IO.File.Exists(appDataFile))
 			{
-				using(var sr=new System.IO.StreamReader(appDataFile))
+				using (var sr = new System.IO.StreamReader(appDataFile))
 				{
 					string line;
-					while((line=sr.ReadLine())!=null)
+					while ((line = sr.ReadLine()) != null)
 					{
-						if (line.IndexOf("AppId",  StringComparison.OrdinalIgnoreCase)!=-1)
+						if (line.IndexOf("AppId", StringComparison.OrdinalIgnoreCase) != -1)
 						{
 							AppId = line.Split('=')[1];
 							break;
@@ -43,7 +41,7 @@ namespace ShareDeployed.Mailgrabber
 			}
 			else
 			{
-				AppId=Guid.NewGuid().ToString("d");
+				AppId = Guid.NewGuid().ToString("d");
 				System.IO.File.WriteAllText(appDataFile, string.Format("AppId={0}", AppId));
 			}
 

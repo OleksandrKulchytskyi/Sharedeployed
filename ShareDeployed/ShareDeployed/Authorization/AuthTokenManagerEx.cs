@@ -209,6 +209,7 @@ namespace ShareDeployed.Authorization
 			if (_cts != null)
 			{
 				StopCleaning();
+				_cts.Dispose();
 				_cts = null;
 			}
 

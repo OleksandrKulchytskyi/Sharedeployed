@@ -12,9 +12,15 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Reactive.Concurrency;
+
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Configuration;
 
 namespace ShareDeployed.Mailgrabber.ViewModel
 {
@@ -98,6 +104,22 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 			set { _enableGroups = value; RaisePropertyChanged(() => EnableGroupsMenu); }
 		}
 
+		private DateTime _LastObserved;
+		public DateTime LastObserved
+		{
+			get
+			{
+				return _LastObserved;
+			}
+			set
+			{
+				if (_LastObserved != value)
+				{
+					_LastObserved = value;
+					RaisePropertyChanged(() => LastObserved);
+				}
+			}
+		}
 		#endregion
 
 		/// <summary>
@@ -112,6 +134,11 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 
 			InitializeIconTray();
 			_cts = new CancellationTokenSource();
+			_cts.Token.Register(() =>
+			{
+				Mailgrabber.ViewModel.ViewModelLocator.Logger.Info("Cancellation request was made");
+			});
+
 			_afterloginTask = new Task(InitializeLogdUser);
 			_outlookInitTask = new Task(new Action(ProcessNewMails), _cts.Token, TaskCreationOptions.LongRunning);
 			_responseReceiver = new Task(OnReceiveResponse, _cts.Token, TaskCreationOptions.LongRunning);
@@ -119,58 +146,48 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 
 		private void OnReceiveResponse()
 		{
-			bool isFirst = true;
-			int delay = int.Parse(System.Configuration.ConfigurationManager.AppSettings["responseCheckDelay"]);
+			int delay = int.Parse(ConfigurationManager.AppSettings["responseCheckDelay"]);
+			int counter = 0;
 
-			while (!_cts.IsCancellationRequested)
-			{
-				if (isFirst)
-				{
-					Thread.Sleep(TimeSpan.FromSeconds(25));
-					isFirst = false;
-				}
-				else
-					Thread.Sleep(TimeSpan.FromMinutes(delay));
+			var timer = Observable.Interval(TimeSpan.FromMinutes(delay)).ObserveOn(System.Reactive.Concurrency.Scheduler.NewThread);
+			timer.SubscribeOn(Scheduler.NewThread).Subscribe((interval) => DoResponse(interval),
+															ex => ViewModel.ViewModelLocator.Logger.Error("Error in retrieving responses", ex),
+															_cts.Token);
+		}
 
-				if (_cts.IsCancellationRequested)
-					break;
-
-				var data = HttpClientHelper.GetSimple<IEnumerable<Common.Models.Message>>(System.Configuration.ConfigurationManager.AppSettings["baseUrl"],
+		private void DoResponse(long interval)
+		{
+			var data = HttpClientHelper.GetSimple<IEnumerable<Common.Models.Message>>(ConfigurationManager.AppSettings["baseUrl"],
 																string.Format("api/application/GetResponses?appId={0}&onlyNew=1", ServerApp.AppId));
-				if (data != null)
+			if (data == null)
+				return;
+
+			foreach (Common.Models.Message msg in data)
+			{
+				if (msg.Response == null)
+					continue;
+
+				var link = Infrastructure.LinkManager.Instance.GetByMsgKey(msg.Key);
+				if (link != null)
 				{
-					foreach (Common.Models.Message msg in data)
+					try
 					{
-						if (msg.Response != null)
+						string reason;
+						_outlookManager.SendMessage(msg.FromEmail, msg.Subject, msg.Response.ResponseText);
+						var postRes = HttpClientHelper.PostWithErrorInfo<string, MessageResponse>(ConfigurationManager.AppSettings["baseUrl"],
+													string.Format("api/response/MarkAsSent?key={0}", msg.Response.Key), msg.Response, out reason);
+						if (string.IsNullOrEmpty(reason))
 						{
-							var link = Infrastructure.LinkManager.Instance.GetByMsgKey(msg.Key);
-							if (link != null)
-							{
-								var mail = _outlookManager.GetEmailByItEntryId(link.EntryId);
-								try
-								{
-									string reason;
-									_outlookManager.SendMessage(msg.FromEmail, msg.Subject, msg.Response.ResponseText);
-									var postRes = HttpClientHelper.PostWithErrorInfo<string, MessageResponse>(System.Configuration.ConfigurationManager.AppSettings["baseUrl"],
-																string.Format("api/response/MarkAsSent?key={0}", msg.Response.Key), msg.Response, out reason);
-									if (string.IsNullOrEmpty(reason))
-									{
-
-									}
-								}
-								catch (Exception ex)
-								{
-									ViewModelLocator.Logger.Error("Fail to send msg within Outlook", ex);
-								}
-
-							}
 						}
 					}
+					catch (Exception ex)
+					{
+						ViewModelLocator.Logger.Error("Fail to send msg within Outlook", ex);
+					}
 				}
-
-				if (_cts.IsCancellationRequested)
-					break;
 			}
+
+			GalaSoft.MvvmLight.Threading.DispatcherHelper.InvokeAsync(() => LastObserved = DateTime.Now);
 		}
 
 		private void Messagesinitializer()
@@ -195,7 +212,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 			try
 			{
 				_outlookManager = new Outlook.OutlookManager();
-				_outlookManager.SetFoldersToMonitor(System.Configuration.ConfigurationManager.AppSettings["MAPIFolders"].Split(
+				_outlookManager.SetFoldersToMonitor(ConfigurationManager.AppSettings["MAPIFolders"].Split(
 													new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
 
 				_outlookManager.MailReceived += outlookManager_MailReceived;
@@ -243,7 +260,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 		{
 			Task.Factory.StartNew(InitAppOnServer);
 
-			MessangerUser user = HttpClientHelper.GetSimple<MessangerUser>(System.Configuration.ConfigurationManager.AppSettings["baseUrl"],
+			MessangerUser user = HttpClientHelper.GetSimple<MessangerUser>(ConfigurationManager.AppSettings["baseUrl"],
 																string.Format("/api/messangeruser/GetByIdentity?userIdentity={0}", LoginResult.UserIdentity));
 			if (user != null)
 				GalaSoft.MvvmLight.Threading.DispatcherHelper.InvokeAsync(() =>
@@ -252,7 +269,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 						EnableGroupsMenu = true;
 					});
 
-			List<MessangerGroup> userGroups = HttpClientHelper.GetSimple<List<MessangerGroup>>(System.Configuration.ConfigurationManager.AppSettings["baseUrl"],
+			List<MessangerGroup> userGroups = HttpClientHelper.GetSimple<List<MessangerGroup>>(ConfigurationManager.AppSettings["baseUrl"],
 																string.Format("/api/messangeruser/GetUserGoups?userIdentity={0}&allGroups=1", LoginResult.UserIdentity));
 			if (userGroups != null)
 				GalaSoft.MvvmLight.Threading.DispatcherHelper.InvokeAsync(() =>
@@ -270,13 +287,13 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 		private void InitAppOnServer()
 		{
 			string reason;
-			var appInst = HttpClientHelper.GetSimple<MessangerApplication>(System.Configuration.ConfigurationManager.AppSettings["baseUrl"],
+			var appInst = HttpClientHelper.GetSimple<MessangerApplication>(ConfigurationManager.AppSettings["baseUrl"],
 												string.Format("/api/application/GetById?appId={0}", App.AppId));
 			if (appInst != null)
 			{
 				appInst.LastLoggedIn = DateTime.Now;
 				appInst.MachineName = Environment.MachineName;
-				var data = HttpClientHelper.PutWithErrorInfo<string, MessangerApplication>(System.Configuration.ConfigurationManager.AppSettings["baseUrl"],
+				var data = HttpClientHelper.PutWithErrorInfo<string, MessangerApplication>(ConfigurationManager.AppSettings["baseUrl"],
 												 "/api/application/PutApplication", appInst, out reason);
 				if (!string.IsNullOrEmpty(reason))
 				{
@@ -296,7 +313,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 					MachineName = Environment.MachineName,
 					LastLoggedIn = DateTime.Now
 				};
-				var data = HttpClientHelper.PostWithErrorInfo<string, MessangerApplication>(System.Configuration.ConfigurationManager.AppSettings["baseUrl"],
+				var data = HttpClientHelper.PostWithErrorInfo<string, MessangerApplication>(ConfigurationManager.AppSettings["baseUrl"],
 													"api/application/PostApplication", newAppinst, out reason);
 				if (!string.IsNullOrEmpty(reason))
 				{
@@ -381,7 +398,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 						NewMails.Add(message);
 					});
 
-					var result = HttpClientHelper.PostSimple<string, Common.Models.Message>(System.Configuration.ConfigurationManager.AppSettings["baseUrl"],
+					var result = HttpClientHelper.PostSimple<string, Common.Models.Message>(ConfigurationManager.AppSettings["baseUrl"],
 																				"/api/messanger/postmessage/", message);
 					if (!string.IsNullOrEmpty(result))
 					{
@@ -419,7 +436,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 					client.Headers.Add("authToken", data.AuthToken);
 					client.Headers.Add("logonType", "1");
 
-					byte[] bytes = client.DownloadData(System.Configuration.ConfigurationManager.AppSettings["loginUrl"]);
+					byte[] bytes = client.DownloadData(ConfigurationManager.AppSettings["loginUrl"]);
 					string response = Encoding.Default.GetString(bytes);
 					if (!string.IsNullOrEmpty(response))
 					{
@@ -595,7 +612,6 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 			Messenger.Reset();
 
 			Dispose();
-
 			base.Cleanup();
 		}
 
@@ -612,11 +628,35 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 					_cts.Cancel();
 				_cts.Dispose();
 			}
+
 			if (_outlookInitTask != null && _outlookInitTask.Status != TaskStatus.Created)
+			{
 				_outlookInitTask.Dispose();
+				_outlookInitTask = null;
+			}
 
 			if (_afterloginTask != null && _afterloginTask.Status != TaskStatus.Created)
+			{
 				_afterloginTask.Dispose();
+				_afterloginTask = null;
+			}
+
+			if (_responseReceiver != null && _responseReceiver.Status != TaskStatus.Created)
+			{
+
+				try
+				{
+					if (_responseReceiver.Status == TaskStatus.Running)
+						_responseReceiver.Wait(540);
+				}
+				catch { }
+
+				if (_responseReceiver.Status != TaskStatus.Running)
+				{
+					_responseReceiver.Dispose();
+					_responseReceiver = null;
+				}
+			}
 
 			if (_outlookManager != null)
 			{

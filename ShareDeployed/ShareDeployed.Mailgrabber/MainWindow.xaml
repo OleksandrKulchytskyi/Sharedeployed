@@ -51,6 +51,9 @@
 				<Separator></Separator>
 				<StatusBarItem Content="{Binding GroupToSend.Name, UpdateSourceTrigger=PropertyChanged, StringFormat='{}Default group: {0}'}"
 							   Visibility="{Binding IsLogged,Converter={StaticResource BoolToVisibility}}"></StatusBarItem>
+				<Separator></Separator>
+				<StatusBarItem Content="{Binding LastObserved, UpdateSourceTrigger=PropertyChanged, StringFormat='{}Last observed: {0}'}"
+							   Visibility="{Binding IsLogged,Converter={StaticResource BoolToVisibility}}"></StatusBarItem>
 			</StatusBar>
 			<ListBox ItemsSource="{Binding Path=NewMails,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 				<ListBox.ItemTemplate>
@@ -59,9 +62,10 @@
 							<TextBlock>
 								<TextBlock.Text>
 									<MultiBinding StringFormat="{}When:{0}; Subject: {1}; From: {2};">
-										<Binding Path="When" />
 										<Binding Path="Subject" />
 										<Binding Path="From"/>
+										
+										<Binding Path="When" />
 									</MultiBinding>
 								</TextBlock.Text>
 							</TextBlock>
