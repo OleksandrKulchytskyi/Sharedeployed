@@ -8,6 +8,8 @@ namespace ShareDeployed.Repositories
 {
 	public interface IMessangerRepository : IDisposable
 	{
+		Guid SessionId { get; }
+
 		IQueryable<MessangerGroup> Groups { get; }
 		IQueryable<MessangerUser> Users { get; }
 		IQueryable<User> SharedUsers { get; }
@@ -63,5 +65,6 @@ namespace ShareDeployed.Repositories
 		System.Data.Entity.DbSet<T> GetDbSet<T>() where T:class;
 
 		void RunWithNoLazy(Action action);
+		void SetLazyLoadingFlag(bool flag);
 	}
 }

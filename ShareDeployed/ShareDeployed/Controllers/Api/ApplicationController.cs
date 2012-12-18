@@ -19,27 +19,23 @@ namespace ShareDeployed.Controllers.Api
 		}
 
 		[HttpGet]
+		[Filters.DisableLazyloadingFilter()]
 		public IEnumerable<MessangerApplication> GetAll()
 		{
-			IEnumerable<MessangerApplication> apps=null;
-			this._repository.RunWithNoLazy(() => apps = _repository.Application.AsEnumerable());
-			return apps;
-
+			return _repository.Application.AsEnumerable();
 		}
 
 		[HttpGet]
 		[ActionName("GetById")]
+		[Filters.DisableLazyloadingFilter()]
 		public MessangerApplication GetById(string appId)
 		{
 			try
 			{
 				MessangerApplication app = null;
-				_repository.RunWithNoLazy(() =>
-				{
-					app = _repository.Application.FirstOrDefault(x => x.AppId.Equals(appId, StringComparison.OrdinalIgnoreCase));
-					if (app == null)
-						throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.NotFound));
-				});
+				app = _repository.Application.FirstOrDefault(x => x.AppId.Equals(appId, StringComparison.OrdinalIgnoreCase));
+				if (app == null)
+					throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.NotFound));
 
 				return app;
 			}
@@ -54,6 +50,7 @@ namespace ShareDeployed.Controllers.Api
 
 		[HttpGet]
 		[ActionName("GetResponses")]
+		[Filters.DisableLazyloadingFilter()]
 		public IEnumerable<Message> GetResponses(string appId, int onlyNew)
 		{
 			try

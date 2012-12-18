@@ -19,14 +19,10 @@ namespace ShareDeployed.Controllers.Api
 		}
 
 		[ActionName("GetAll")]
+		[Filters.DisableLazyloadingFilter()]
 		public IEnumerable<MessageResponse> GetAll()
 		{
-			IEnumerable<MessageResponse> data = null;
-			_repository.RunWithNoLazy(() =>
-			{
-				data = _repository.Response;
-			});
-			return data;
+			return _repository.Response;
 		}
 
 		[HttpPost]

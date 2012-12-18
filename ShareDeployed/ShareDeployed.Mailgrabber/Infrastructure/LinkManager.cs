@@ -15,26 +15,34 @@ namespace ShareDeployed.Mailgrabber.Infrastructure
 {
 	internal class LinkManager : SingletonBase<LinkManager>
 	{
-		private readonly System.Collections.Concurrent.ConcurrentBag<Model.OutlookToServerLink> _container;
+		private readonly System.Collections.Concurrent.ConcurrentDictionary<int, Model.OutlookToServerLink> _container;
 
 		private LinkManager()
 		{
-			_container = new ConcurrentBag<OutlookToServerLink>();
+			_container = new ConcurrentDictionary<int, OutlookToServerLink>();
 		}
 
 		public void Add(string entryId, int Key, string msgId = null)
 		{
-			_container.Add(new OutlookToServerLink() { EntryId = entryId, Key = Key, MsgId = msgId });
+			if (!_container.ContainsKey(Key))
+				_container.TryAdd(Key, new OutlookToServerLink() { EntryId = entryId, Key = Key, MsgId = msgId });
+		}
+
+		public void Remove(int msgKey)
+		{
+			OutlookToServerLink link;
+			if (_container.ContainsKey(msgKey))
+				_container.TryRemove(msgKey, out link);
 		}
 
 		public IEnumerable<OutlookToServerLink> GetAll()
 		{
-			return _container.AsEnumerable();
+			return _container.Values.AsEnumerable();
 		}
 
 		public OutlookToServerLink GetByMsgKey(int key)
 		{
-			return _container.FirstOrDefault(x => x.Key == key);
+			return _container[key];
 		}
 
 		public void SaveToFile(string fname)
@@ -45,7 +53,7 @@ namespace ShareDeployed.Mailgrabber.Infrastructure
 			using (StreamWriter sw = new StreamWriter(fname))
 			{
 				sw.WriteLine(string.Format("EntryId, Key, MsgId"));
-				foreach (var item in _container)
+				foreach (var item in _container.Values)
 				{
 					sw.WriteLine(string.Format("{0},{1},{2}", item.EntryId, item.Key, item.MsgId == null ? string.Empty : item.MsgId));
 				}
@@ -72,7 +80,9 @@ namespace ShareDeployed.Mailgrabber.Infrastructure
 					}
 					string[] data = line.Split(',');
 
-					_container.Add(new OutlookToServerLink() { EntryId = data[0], Key = int.Parse(data[1]), MsgId = data[2] });
+					int key = int.Parse(data[1]);
+					if (!_container.ContainsKey(key))
+						_container.TryAdd(key, new OutlookToServerLink() { EntryId = data[0], Key = key, MsgId = data[2] });
 				}
 			}
 		}
@@ -85,9 +95,10 @@ namespace ShareDeployed.Mailgrabber.Infrastructure
 			{
 				string[] data = line.Split(',');
 
-				_container.Add(new OutlookToServerLink() { EntryId = data[0], Key = int.Parse(data[1]), MsgId = data[2] });
+				int key = int.Parse(data[1]);
+				if (!_container.ContainsKey(key))
+					_container.TryAdd(key, new OutlookToServerLink() { EntryId = data[0], Key = key, MsgId = data[2] });
 			},
-			ex => MessageBox.Show(ex.Message),
 			() => MessageBox.Show("Loading complete"));
 		}
 

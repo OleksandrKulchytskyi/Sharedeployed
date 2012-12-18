@@ -61,7 +61,7 @@
 						<StackPanel Orientation="Vertical">
 							<TextBlock>
 								<TextBlock.Text>
-									<MultiBinding StringFormat="{}When:{0}; Subject: {1}; From: {2};">
+									<MultiBinding StringFormat="{}Subject: {0};  From: {1};  When:{2};">
 										<Binding Path="Subject" />
 										<Binding Path="From"/>
 										

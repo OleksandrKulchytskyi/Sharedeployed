@@ -1,4 +1,6 @@
 ﻿using Ninject;
+using Ninject.Activation;
+using Ninject.Parameters;
 using Ninject.Syntax;
 using System;
 using System.Collections.Generic;
@@ -11,34 +13,40 @@ namespace ShareDeployed.DependencyResolvers
 {
 	public class NinjectDependencyScope : IDependencyScope
 	{
-		private IResolutionRoot resolver;
+		private IResolutionRoot resolutionRoot;
 		bool _dispoded = false;
 
-		internal NinjectDependencyScope(IResolutionRoot resolver)
+		internal NinjectDependencyScope(IResolutionRoot kernel)
 		{
-			Contract.Assert(resolver != null);
-
-			this.resolver = resolver;
+			Contract.Assert(kernel != null);
+			this.resolutionRoot = kernel;
 		}
 
 		public object GetService(Type serviceType)
 		{
-			if (resolver == null)
+			if (resolutionRoot == null && _dispoded)
 				throw new ObjectDisposedException("this", "This scope has already been disposed");
 
-			return resolver.TryGet(serviceType);
+			return resolutionRoot.Resolve(this.CreateRequest(serviceType)).FirstOrDefault();
+			//return resolutionRoot.TryGet(serviceType);
 		}
 
 		public IEnumerable<object> GetServices(Type serviceType)
 		{
-			if (resolver == null)
+			if (resolutionRoot == null && _dispoded)
 				throw new ObjectDisposedException("this", "This scope has already been disposed");
 
-			return resolver.GetAll(serviceType);
+			return resolutionRoot.Resolve(this.CreateRequest(serviceType)).ToList();
+			//return resolutionRoot.GetAll(serviceType);
+		}
+
+		private IRequest CreateRequest(Type reqType)
+		{
+			return resolutionRoot.CreateRequest(reqType, null, new Parameter[0], true, true);
 		}
 
 		#region IDisposable
-		
+
 		public void Dispose()
 		{
 			Dispose(true);
@@ -53,15 +61,15 @@ namespace ShareDeployed.DependencyResolvers
 
 				if (disposing)
 				{
-					IDisposable disposable = resolver as IDisposable;
+					IDisposable disposable = resolutionRoot as IDisposable;
 					if (disposable != null && !_dispoded)
 					{
 						disposable.Dispose();
-						resolver = null;
+						resolutionRoot = null;
 					}
 				}
 			}
-		} 
+		}
 		#endregion
 	}
 

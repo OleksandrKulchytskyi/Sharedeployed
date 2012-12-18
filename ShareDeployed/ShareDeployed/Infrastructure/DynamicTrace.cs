@@ -46,6 +46,7 @@ namespace ShareDeployed.Infrastructure
 			return true; //obsolete
 		}
 
+		[System.Diagnostics.DebuggerStepThrough()]
 		public void Trace(HttpRequestMessage request, string category, TraceLevel level, Action<TraceRecord> traceAction)
 		{
 			if (level != TraceLevel.Off && _logLevels.Contains(level.ToString(), StringComparer.OrdinalIgnoreCase))

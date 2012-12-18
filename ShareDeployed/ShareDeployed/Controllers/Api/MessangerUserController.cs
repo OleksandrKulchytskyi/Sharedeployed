@@ -19,6 +19,7 @@ namespace ShareDeployed.Controllers.Api
 				throw new ArgumentNullException("repository");
 
 			_repository = repository;
+			System.Diagnostics.Trace.WriteLine("(MessangerUserController) Scoped repository ID: " + (_repository.SessionId));
 		}
 
 		[HttpGet()]
@@ -40,11 +41,13 @@ namespace ShareDeployed.Controllers.Api
 
 		[HttpGet()]
 		[ActionName("GetById")]
+		[Filters.DisableLazyloadingFilter()]
 		public MessangerUser GetById(string userId)
 		{
 			try
 			{
-				var user = _repository.GetUserById(userId);
+				MessangerUser user = null;
+				user = _repository.GetUserById(userId);
 				if (user == null)
 					throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.NotFound));
 				return user;
@@ -60,11 +63,13 @@ namespace ShareDeployed.Controllers.Api
 
 		[HttpGet()]
 		[ActionName("GetByIdentity")]
+		[Filters.DisableLazyloadingFilter()]
 		public MessangerUser GetByIdentity(string userIdentity)
 		{
 			try
 			{
-				var user = _repository.GetUserByIdentity(userIdentity);
+				MessangerUser user = null;
+				user = _repository.GetUserByIdentity(userIdentity);
 				if (user == null)
 					throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.NotFound));
 				return user;
@@ -80,15 +85,20 @@ namespace ShareDeployed.Controllers.Api
 
 		[HttpGet()]
 		[ActionName("GetByIdentity")]
+		[Filters.DisableLazyloadingFilter()]
 		public List<MessangerGroup> GetUserGoups(string userIdentity, int allGroups)
 		{
 			try
 			{
-				var user = _repository.GetUserByIdentity(userIdentity);
+				MessangerUser user = null;
+				List<MessangerGroup> userGroups = null;
+
+				user = _repository.GetUserByIdentity(userIdentity);
 				if (user == null)
 					throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.NotFound) { ReasonPhrase = "User was not found" });
 
-				return _repository.Groups.Where(x => x.CreatorKey == user.Key).ToList();
+				userGroups = _repository.Groups.Where(x => x.CreatorKey == user.Key).ToList();
+				return userGroups;
 			}
 			catch (Exception ex)
 			{

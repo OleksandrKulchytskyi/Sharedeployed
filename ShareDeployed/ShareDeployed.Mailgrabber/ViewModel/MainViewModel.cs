@@ -34,6 +34,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 		Task _responseReceiver = null;
 		CancellationTokenSource _cts = null;
 		ShareDeployed.Outlook.OutlookManager _outlookManager = null;
+		ManualResetEvent _userLoadedEvent = null;
 
 		#region Properties
 		private bool _isLogged;
@@ -142,6 +143,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 			_afterloginTask = new Task(InitializeLogdUser);
 			_outlookInitTask = new Task(new Action(ProcessNewMails), _cts.Token, TaskCreationOptions.LongRunning);
 			_responseReceiver = new Task(OnReceiveResponse, _cts.Token, TaskCreationOptions.LongRunning);
+			_userLoadedEvent = new ManualResetEvent(false);
 		}
 
 		private void OnReceiveResponse()
@@ -161,7 +163,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 																string.Format("api/application/GetResponses?appId={0}&onlyNew=1", ServerApp.AppId));
 			if (data == null)
 				return;
-
+			bool wasChanged = false;
 			foreach (Common.Models.Message msg in data)
 			{
 				if (msg.Response == null)
@@ -176,9 +178,14 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 						_outlookManager.SendMessage(msg.FromEmail, msg.Subject, msg.Response.ResponseText);
 						var postRes = HttpClientHelper.PostWithErrorInfo<string, MessageResponse>(ConfigurationManager.AppSettings["baseUrl"],
 													string.Format("api/response/MarkAsSent?key={0}", msg.Response.Key), msg.Response, out reason);
-						if (string.IsNullOrEmpty(reason))
+						if (!string.IsNullOrEmpty(reason))
 						{
+							ViewModelLocator.Logger.Warn(reason);
+							continue;
 						}
+
+						Infrastructure.LinkManager.Instance.Remove(msg.Key);
+						wasChanged = true;
 					}
 					catch (Exception ex)
 					{
@@ -187,6 +194,9 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 				}
 			}
 
+			if (wasChanged)
+				Infrastructure.LinkManager.Instance.SaveToFile(App.AppMsgsLinkPath);
+			wasChanged = false;
 			GalaSoft.MvvmLight.Threading.DispatcherHelper.InvokeAsync(() => LastObserved = DateTime.Now);
 		}
 
@@ -208,22 +218,51 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 
 		void ProcessNewMails()
 		{
-			bool isHandlerRegistered = false;
 			try
 			{
 				_outlookManager = new Outlook.OutlookManager();
 				_outlookManager.SetFoldersToMonitor(ConfigurationManager.AppSettings["MAPIFolders"].Split(
 													new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
 
-				_outlookManager.MailReceived += outlookManager_MailReceived;
-				isHandlerRegistered = true;
+				Observable.FromEventPattern<Outlook.NewMailReceivedEventArgs>(_outlookManager, "MailReceived", Scheduler.ThreadPool).
+				Throttle(TimeSpan.FromSeconds(.7)).ObserveOn(Scheduler.ThreadPool).Subscribe(evt =>
+				{
+
+					var message = new Common.Models.Message();
+					message.From = evt.EventArgs.FromUser;
+					message.FromEmail = evt.EventArgs.FromEmail;
+					message.Content = evt.EventArgs.Body;
+					message.Subject = evt.EventArgs.Subject;
+					message.When = DateTime.Now;
+					message.IsNew = true;
+					message.UserKey = LoggedUser.Key;
+					//this hint was applied for linking application and its sent messages
+					if (ServerApp != null && !string.IsNullOrEmpty(ServerApp.AppId))
+						message.AppKey = ServerApp.Key;
+
+					if (GroupToSend != null)
+						message.GroupKey = GroupToSend.Key;
+
+					GalaSoft.MvvmLight.Threading.DispatcherHelper.InvokeAsync(() => NewMails.Add(message));
+
+					var result = HttpClientHelper.PostSimple<string, Common.Models.Message>(ConfigurationManager.AppSettings["baseUrl"],
+																				"/api/messanger/postmessage/", message);
+					if (!string.IsNullOrEmpty(result))
+					{
+						int key;
+						int.TryParse(result, out key);
+						Infrastructure.LinkManager.Instance.Add(evt.EventArgs.EntryID, key);
+						Infrastructure.LinkManager.Instance.SaveToFile(App.AppMsgsLinkPath);
+					}
+				},
+				ex => ViewModelLocator.Logger.Error("Error in mail pull workflow", ex)
+				, _cts.Token);
+
 			}
 			catch (Exception)
 			{
 				if (_outlookManager != null)
 				{
-					if (isHandlerRegistered)
-						_outlookManager.MailReceived -= outlookManager_MailReceived;
 					_outlookManager.Dispose();
 					_outlookManager = null;
 				}
@@ -260,32 +299,39 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 		{
 			Task.Factory.StartNew(InitAppOnServer);
 
-			MessangerUser user = HttpClientHelper.GetSimple<MessangerUser>(ConfigurationManager.AppSettings["baseUrl"],
-																string.Format("/api/messangeruser/GetByIdentity?userIdentity={0}", LoginResult.UserIdentity));
-			if (user != null)
-				GalaSoft.MvvmLight.Threading.DispatcherHelper.InvokeAsync(() =>
+			try
+			{
+				MessangerUser user = HttpClientHelper.GetSimple<MessangerUser>(ConfigurationManager.AppSettings["baseUrl"],
+																	string.Format("/api/messangeruser/GetByIdentity?userIdentity={0}", LoginResult.UserIdentity));
+				if (user != null)
+					GalaSoft.MvvmLight.Threading.DispatcherHelper.InvokeAsync(() =>
+						{
+							LoggedUser = user;
+							EnableGroupsMenu = true;
+						});
+
+				List<MessangerGroup> userGroups = HttpClientHelper.GetSimple<List<MessangerGroup>>(ConfigurationManager.AppSettings["baseUrl"],
+																	string.Format("/api/messangeruser/GetUserGoups?userIdentity={0}&allGroups=1", LoginResult.UserIdentity));
+				if (userGroups != null)
+					GalaSoft.MvvmLight.Threading.DispatcherHelper.InvokeAsync(() =>
 					{
-						LoggedUser = user;
-						EnableGroupsMenu = true;
+						UserGroups = new ObservableCollection<MessangerGroup>(userGroups);
 					});
 
-			List<MessangerGroup> userGroups = HttpClientHelper.GetSimple<List<MessangerGroup>>(ConfigurationManager.AppSettings["baseUrl"],
-																string.Format("/api/messangeruser/GetUserGoups?userIdentity={0}&allGroups=1", LoginResult.UserIdentity));
-			if (userGroups != null)
-				GalaSoft.MvvmLight.Threading.DispatcherHelper.InvokeAsync(() =>
-				{
-					UserGroups = new ObservableCollection<MessangerGroup>(userGroups);
-				});
-
-			if (userGroups != null && userGroups.Count > 0)
-				GalaSoft.MvvmLight.Threading.DispatcherHelper.InvokeAsync(() =>
-				{
-					GroupToSend = userGroups.FirstOrDefault(x => x.Name.Equals("admin", StringComparison.OrdinalIgnoreCase));
-				});
+				if (userGroups != null && userGroups.Count > 0)
+					GalaSoft.MvvmLight.Threading.DispatcherHelper.InvokeAsync(() =>
+						GroupToSend = userGroups.FirstOrDefault(x => x.Name.Equals("admin", StringComparison.OrdinalIgnoreCase)));
+			}
+			finally
+			{
+				if (_userLoadedEvent != null)
+					_userLoadedEvent.Set();
+			}
 		}
 
 		private void InitAppOnServer()
 		{
+			_userLoadedEvent.WaitOne();
 			string reason;
 			var appInst = HttpClientHelper.GetSimple<MessangerApplication>(ConfigurationManager.AppSettings["baseUrl"],
 												string.Format("/api/application/GetById?appId={0}", App.AppId));
@@ -297,7 +343,6 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 												 "/api/application/PutApplication", appInst, out reason);
 				if (!string.IsNullOrEmpty(reason))
 				{
-
 				}
 				else
 				{
@@ -317,7 +362,6 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 													"api/application/PostApplication", newAppinst, out reason);
 				if (!string.IsNullOrEmpty(reason))
 				{
-
 				}
 				else
 				{
@@ -328,6 +372,10 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 				}
 			}
 
+			if (this.LoggedUser != null && GroupToSend != null)
+			{
+
+			}
 		}
 
 		private void ProcessNonAuth(Message.NotAuthorizedMessage msg)
@@ -371,46 +419,6 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 			}
 		}
 		#endregion
-
-		void outlookManager_MailReceived(object sender, Outlook.NewMailReceivedEventArgs e)
-		{
-			if (e != null)
-			{
-				Task.Factory.StartNew(() =>
-				{
-					var message = new Common.Models.Message();
-					message.From = e.FromUser;
-					message.FromEmail = e.FromEmail;
-					message.Content = e.Body;
-					message.Subject = e.Subject;
-					message.When = DateTime.Now;
-					message.IsNew = true;
-					message.UserKey = LoggedUser.Key;
-					//this hint was applied for linking application and its sent messages
-					if (ServerApp != null && !string.IsNullOrEmpty(ServerApp.AppId))
-						message.AppKey = ServerApp.Key;
-
-					if (GroupToSend != null)
-						message.GroupKey = GroupToSend.Key;
-
-					GalaSoft.MvvmLight.Threading.DispatcherHelper.InvokeAsync(() =>
-					{
-						NewMails.Add(message);
-					});
-
-					var result = HttpClientHelper.PostSimple<string, Common.Models.Message>(ConfigurationManager.AppSettings["baseUrl"],
-																				"/api/messanger/postmessage/", message);
-					if (!string.IsNullOrEmpty(result))
-					{
-						int key;
-						int.TryParse(result, out key);
-						Infrastructure.LinkManager.Instance.Add(e.EntryID, key);
-						Infrastructure.LinkManager.Instance.SaveToFile(App.AppMsgsLinkPath);
-					}
-
-				});
-			}
-		}
 
 		#region Commands declaration
 
@@ -619,8 +627,13 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 		{
 			if (_disposed)
 				return;
-
 			_disposed = true;
+
+			if (_userLoadedEvent != null)
+			{
+				_userLoadedEvent.Dispose();
+				_userLoadedEvent = null;
+			}
 
 			if (_cts != null)
 			{
@@ -660,7 +673,6 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 
 			if (_outlookManager != null)
 			{
-				_outlookManager.MailReceived -= outlookManager_MailReceived;
 				_outlookManager.Dispose();
 				_outlookManager = null;
 			}

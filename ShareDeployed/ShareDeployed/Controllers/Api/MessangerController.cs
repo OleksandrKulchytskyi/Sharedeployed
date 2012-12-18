@@ -42,6 +42,7 @@ namespace ShareDeployed.Controllers.Api
 
 		[HttpGet()]
 		[ActionName("Get")]
+		[Filters.DisableLazyloadingFilter()]
 		public Common.Models.Message Get(string id)
 		{
 			try

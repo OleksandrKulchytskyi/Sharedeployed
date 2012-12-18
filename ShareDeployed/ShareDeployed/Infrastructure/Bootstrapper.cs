@@ -3,6 +3,7 @@ using Microsoft.AspNet.SignalR.Hubs;
 using Ninject;
 using ShareDeployed.Common.Caching;
 using ShareDeployed.DataAccess;
+using ShareDeployed.Extension;
 using ShareDeployed.Repositories;
 using ShareDeployed.Services;
 using ShareDeployed.ViewModels;
@@ -15,8 +16,6 @@ using System.Threading;
 using System.Web.Hosting;
 using System.Web.Http;
 using System.Web.Routing;
-using ShareDeployed.Extension;
-using ShareDeployed.DataAccess.Helper;
 
 namespace ShareDeployed.Infrastructure
 {
@@ -27,7 +26,7 @@ namespace ShareDeployed.Infrastructure
 		private static bool _broadcasting;
 		private static Timer _timerClaen;
 		private static Timer _timerBroadcats;
-		
+
 		private static readonly TimeSpan _sweepInterval = TimeSpan.FromMinutes(10);
 		private static readonly TimeSpan _broadcatsInterval = TimeSpan.FromMinutes(int.Parse(ConfigurationManager.AppSettings["broadcastTime"]));
 		private const string SqlClient = "System.Data.SqlClient";
@@ -105,7 +104,7 @@ namespace ShareDeployed.Infrastructure
 			var repositoryFactory = new Func<Repositories.IMessangerRepository>(() => kernel.Get<IMessangerRepository>());
 
 			_timerClaen = new Timer(_ => Sweep(repositoryFactory, _resolver), null, _sweepInterval, _sweepInterval);
-			
+
 			_timerBroadcats = new Timer(_ => BroadCastNewMessages(repositoryFactory, _resolver), null,
 								TimeSpan.FromSeconds(40), _broadcatsInterval);
 
@@ -135,6 +134,34 @@ namespace ShareDeployed.Infrastructure
 			RouteTable.Routes.MapHttpRoute(name: "MessagesV1", routeTemplate: "api/v1/{controller}/{room}");
 			RouteTable.Routes.MapHttpRoute(name: "DefaultFrontPageApi", routeTemplate: "api",
 											defaults: new { controller = "ApiFrontPage" });
+		}
+
+		public static void DoMigrations()
+		{
+			var conString = ConfigurationManager.ConnectionStrings["Messanger"];
+
+			if (String.IsNullOrEmpty(conString.ProviderName) ||
+				!conString.ProviderName.Equals(SqlClient, StringComparison.OrdinalIgnoreCase))
+				return;
+
+			// Only run migrations for SQL server (Sql ce not supported as yet)
+			var settings = new ShareDeployed.DataAccess.Migrations.MigrationConfiguration();
+			var migrator = new DbMigrator(settings);
+			migrator.Update();
+		}
+
+		public static void DoSomeeMigrations()
+		{
+			var conString = ConfigurationManager.ConnectionStrings["Somee"];
+
+			if (String.IsNullOrEmpty(conString.ProviderName) ||
+				!conString.ProviderName.Equals(SqlClient, StringComparison.OrdinalIgnoreCase))
+				return;
+
+			// Only run migrations for SQL server (Sql ce not supported as yet)
+			var settings = new ShareDeployed.Migrations.Configuration();
+			var migrator = new DbMigrator(settings);
+			migrator.Update();
 		}
 
 		private static void Sweep(Func<Repositories.IMessangerRepository> repositoryFactory, IDependencyResolver resolver)
@@ -201,34 +228,6 @@ namespace ShareDeployed.Infrastructure
 					hubContext.Clients.Group(roomGroup.Group.Name).markInactive(roomGroup.Users).Wait();
 				}
 			}
-		}
-
-		public static void DoMigrations()
-		{
-			var conString = ConfigurationManager.ConnectionStrings["Messanger"];
-
-			if (String.IsNullOrEmpty(conString.ProviderName) ||
-				!conString.ProviderName.Equals(SqlClient, StringComparison.OrdinalIgnoreCase))
-				return;
-
-			// Only run migrations for SQL server (Sql ce not supported as yet)
-			var settings = new ShareDeployed.DataAccess.Migrations.MigrationConfiguration();
-			var migrator = new DbMigrator(settings);
-			migrator.Update();
-		}
-
-		public static void DoSomeeMigrations()
-		{
-			var conString = ConfigurationManager.ConnectionStrings["Somee"];
-
-			if (String.IsNullOrEmpty(conString.ProviderName) ||
-				!conString.ProviderName.Equals(SqlClient, StringComparison.OrdinalIgnoreCase))
-				return;
-
-			// Only run migrations for SQL server (Sql ce not supported as yet)
-			var settings = new ShareDeployed.Migrations.Configuration();
-			var migrator = new DbMigrator(settings);
-			migrator.Update();
 		}
 
 		private static void BroadCastNewMessages(Func<Repositories.IMessangerRepository> repositoryFactory, IDependencyResolver resolver)

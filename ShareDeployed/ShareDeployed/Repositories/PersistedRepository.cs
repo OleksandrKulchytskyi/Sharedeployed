@@ -18,6 +18,13 @@ namespace ShareDeployed.Repositories
 	public class PersistedRepository : IMessangerRepository
 	{
 		bool _disposed = false;
+
+		private readonly Lazy<Guid> _id = new Lazy<Guid>(() => Guid.NewGuid());
+		public Guid SessionId
+		{
+			get { return _id.Value; }
+		}
+
 		private readonly MessangerContext _dbMessanger;
 		private readonly ShareDeployedContext _dbShared;
 
@@ -181,15 +188,21 @@ namespace ShareDeployed.Repositories
 
 		private void RunNonLazy(Action action)
 		{
-			bool old = _dbMessanger.Configuration.LazyLoadingEnabled;
+			bool lazyOld = _dbMessanger.Configuration.LazyLoadingEnabled;
+			//bool proxyOld = _dbMessanger.Configuration.ProxyCreationEnabled;
+			//bool detectChangesOld = _dbMessanger.Configuration.AutoDetectChangesEnabled;
 			try
 			{
 				_dbMessanger.Configuration.LazyLoadingEnabled = false;
+				//_dbMessanger.Configuration.ProxyCreationEnabled = false;
+				//_dbMessanger.Configuration.AutoDetectChangesEnabled = false;
 				action();
 			}
 			finally
 			{
-				_dbMessanger.Configuration.LazyLoadingEnabled = old;
+				_dbMessanger.Configuration.LazyLoadingEnabled = lazyOld;
+				//_dbMessanger.Configuration.ProxyCreationEnabled = proxyOld;
+				//_dbMessanger.Configuration.AutoDetectChangesEnabled = detectChangesOld;
 			}
 		}
 
@@ -198,12 +211,21 @@ namespace ShareDeployed.Repositories
 			bool old = _dbMessanger.Configuration.LazyLoadingEnabled;
 			try
 			{
-				_dbMessanger.Configuration.LazyLoadingEnabled = false;
+				SetLazyLoadingFlag(false);
 				action();
 			}
 			finally
 			{
-				_dbMessanger.Configuration.LazyLoadingEnabled = old;
+				SetLazyLoadingFlag(old);
+			}
+		}
+
+		public void SetLazyLoadingFlag(bool flag)
+		{
+			if (_dbMessanger != null && _dbMessanger.Configuration.LazyLoadingEnabled != flag)
+			{
+				_dbMessanger.Configuration.LazyLoadingEnabled = flag;
+				_dbMessanger.Configuration.ProxyCreationEnabled = flag;
 			}
 		}
 
@@ -510,6 +532,7 @@ namespace ShareDeployed.Repositories
 			}
 		}
 
+		#region Disposable
 		public void Dispose()
 		{
 			Dispose(true);
@@ -533,5 +556,6 @@ namespace ShareDeployed.Repositories
 				_disposed = true;
 			}
 		}
+		#endregion
 	}
 }

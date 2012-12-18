@@ -31,6 +31,7 @@ namespace ShareDeployed.Controllers.Api
 
 		[HttpGet()]
 		[ActionName("GetByName")]
+		[Filters.DisableLazyloadingFilter()]
 		public MessangerGroup GetByName(string groupName)
 		{
 			try
