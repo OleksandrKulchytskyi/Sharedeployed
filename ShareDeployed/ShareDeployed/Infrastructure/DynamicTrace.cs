@@ -15,11 +15,11 @@ namespace ShareDeployed.Infrastructure
 		private readonly Lazy<Dictionary<TraceLevel, Action<string>>> loggingMap = new
 			Lazy<Dictionary<TraceLevel, Action<string>>>(() => new Dictionary<TraceLevel, Action<string>> 
 			{ 
-				{TraceLevel.Info, LogManager.GetCurrentClassLogger().Info},
-				{TraceLevel.Debug, LogManager.GetCurrentClassLogger().Debug},
-				{TraceLevel.Error, LogManager.GetCurrentClassLogger().Error},
-				{TraceLevel.Fatal, LogManager.GetCurrentClassLogger().Fatal},
-				{TraceLevel.Warn, LogManager.GetCurrentClassLogger().Warn}
+				{ TraceLevel.Info, LogManager.GetCurrentClassLogger().Info },
+				{ TraceLevel.Debug, LogManager.GetCurrentClassLogger().Debug },
+				{ TraceLevel.Error, LogManager.GetCurrentClassLogger().Error },
+				{ TraceLevel.Fatal, LogManager.GetCurrentClassLogger().Fatal },
+				{ TraceLevel.Warn, LogManager.GetCurrentClassLogger().Warn }
 			});
 
 		private Dictionary<TraceLevel, Action<string>> _nlogLogger
@@ -30,6 +30,17 @@ namespace ShareDeployed.Infrastructure
 			}
 		}
 
+		private readonly Lazy<string[]> logLevelsLazy = new
+			Lazy<string[]>(() => System.Configuration.ConfigurationManager.AppSettings["logLevels"].Split(','));
+
+		private string[] _logLevels
+		{
+			get
+			{
+				return logLevelsLazy.Value;
+			}
+		}
+
 		public bool IsEnabled(string category, TraceLevel level)
 		{
 			return true; //obsolete
@@ -37,7 +48,7 @@ namespace ShareDeployed.Infrastructure
 
 		public void Trace(HttpRequestMessage request, string category, TraceLevel level, Action<TraceRecord> traceAction)
 		{
-			if (level != TraceLevel.Off)
+			if (level != TraceLevel.Off && _logLevels.Contains(level.ToString(), StringComparer.OrdinalIgnoreCase))
 			{
 				TraceRecord record = new TraceRecord(request, category, level);
 				traceAction(record);
