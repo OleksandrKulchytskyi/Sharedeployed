@@ -24,11 +24,12 @@ namespace ShareDeployed.Controllers.Api
 
 		[HttpGet()]
 		[ActionName("GetAll")]
-		public IQueryable<MessangerUser> GetAll()
+		[Filters.DisableLazyloadingFilter(false,false)]
+		public IEnumerable<MessangerUser> GetAll()
 		{
 			try
 			{
-				return _repository.Users;
+				return _repository.Users.AsEnumerable();
 			}
 			catch (Exception ex)
 			{
@@ -41,7 +42,7 @@ namespace ShareDeployed.Controllers.Api
 
 		[HttpGet()]
 		[ActionName("GetById")]
-		[Filters.DisableLazyloadingFilter()]
+		[Filters.DisableLazyloadingFilter(false,false)]
 		public MessangerUser GetById(string userId)
 		{
 			try
@@ -63,7 +64,7 @@ namespace ShareDeployed.Controllers.Api
 
 		[HttpGet()]
 		[ActionName("GetByIdentity")]
-		[Filters.DisableLazyloadingFilter()]
+		[Filters.DisableLazyloadingFilter(false,false)]
 		public MessangerUser GetByIdentity(string userIdentity)
 		{
 			try

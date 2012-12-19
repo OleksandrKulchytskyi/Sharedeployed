@@ -4,7 +4,7 @@ using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Windows;
-
+using ShareDeployed.Mailgrabber.Helpers;
 namespace ShareDeployed.Mailgrabber
 {
 	/// <summary>
@@ -14,6 +14,30 @@ namespace ShareDeployed.Mailgrabber
 	{
 		public static string AppId;
 		public static string AppMsgsLinkPath;
+		List<Exception> exList = null;
+
+		public App()
+		{
+			exList = new List<Exception>();
+			this.DispatcherUnhandledException += new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
+		}
+
+		void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+		{
+			if (ViewModel.ViewModelLocator.Logger != null)
+			{
+				if (exList.Count > 0)
+				{
+					foreach (var exc in exList)
+						ViewModel.ViewModelLocator.Logger.Fatal("DispatcherUnhandledException", e.Exception);
+					exList.Clear();
+				}
+
+				ViewModel.ViewModelLocator.Logger.Fatal("DispatcherUnhandledException", e.Exception);
+			}
+			else
+				exList.Add(e.Exception); ;
+		}
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
@@ -55,6 +79,11 @@ namespace ShareDeployed.Mailgrabber
 			{
 				(data as ViewModel.ViewModelLocator).Cleanup();
 			}
+
+			exList.Clear();
+			exList = null;
+
+			this.DispatcherUnhandledException -= App_DispatcherUnhandledException;
 			base.OnExit(e);
 		}
 	}

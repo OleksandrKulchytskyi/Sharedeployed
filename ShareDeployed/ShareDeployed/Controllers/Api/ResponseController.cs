@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Data.Entity;
 
 namespace ShareDeployed.Controllers.Api
 {
@@ -19,10 +20,28 @@ namespace ShareDeployed.Controllers.Api
 		}
 
 		[ActionName("GetAll")]
-		[Filters.DisableLazyloadingFilter()]
+		[Filters.DisableLazyloadingFilter(false,false)]
 		public IEnumerable<MessageResponse> GetAll()
 		{
-			return _repository.Response;
+			return _repository.Response.AsEnumerable();
+		}
+
+		[ActionName("GetResponseMessage")]
+		[Filters.DisableLazyloadingFilter(false,false)]
+		public Message GetResponseMessage(int respKey)
+		{
+			try
+			{
+				var message = (from item in _repository.Message.Include(x => x.Response)
+							   where item.ResponseKey == respKey
+							   select item).FirstOrDefault();
+				return message;
+			}
+			catch (Exception ex)
+			{
+				MvcApplication.Logger.Error("GetResponseMessage", ex);
+				throw new HttpResponseException(HttpStatusCode.InternalServerError);
+			}
 		}
 
 		[HttpPost]

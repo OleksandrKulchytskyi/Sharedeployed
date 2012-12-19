@@ -8,19 +8,17 @@ using ShareDeployed.Mailgrabber.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
-
 using System.Reactive;
-using System.Reactive.Linq;
 using System.Reactive.Concurrency;
-
+using System.Reactive.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Configuration;
 
 namespace ShareDeployed.Mailgrabber.ViewModel
 {
@@ -29,12 +27,12 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 		bool _disposed = false;
 		private System.Windows.Forms.NotifyIcon m_notifyIcon = null;
 		private WindowState m_storedWindowState = WindowState.Normal;
-		Task _outlookInitTask = null;
-		Task _afterloginTask = null;
-		Task _responseReceiver = null;
-		CancellationTokenSource _cts = null;
-		ShareDeployed.Outlook.OutlookManager _outlookManager = null;
-		ManualResetEvent _userLoadedEvent = null;
+		private Task _outlookInitTask = null;
+		private Task _afterloginTask = null;
+		private Task _responseReceiver = null;
+		private CancellationTokenSource _cts = null;
+		private ShareDeployed.Outlook.OutlookManager _outlookManager = null;
+		private ManualResetEvent _userLoadedEvent = null;
 
 		#region Properties
 		private bool _isLogged;
@@ -149,7 +147,6 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 		private void OnReceiveResponse()
 		{
 			int delay = int.Parse(ConfigurationManager.AppSettings["responseCheckDelay"]);
-			int counter = 0;
 
 			var timer = Observable.Interval(TimeSpan.FromMinutes(delay)).ObserveOn(System.Reactive.Concurrency.Scheduler.NewThread);
 			timer.SubscribeOn(Scheduler.NewThread).Subscribe((interval) => DoResponse(interval),
@@ -332,6 +329,8 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 		private void InitAppOnServer()
 		{
 			_userLoadedEvent.WaitOne();
+			_userLoadedEvent.Reset();
+
 			string reason;
 			var appInst = HttpClientHelper.GetSimple<MessangerApplication>(ConfigurationManager.AppSettings["baseUrl"],
 												string.Format("/api/application/GetById?appId={0}", App.AppId));
@@ -367,15 +366,15 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 				{
 					if (!string.IsNullOrEmpty(data) && !char.IsLetter(data[0]))
 						newAppinst.Key = int.Parse(data);
+
 					ServerApp = newAppinst;
 					_responseReceiver.Start();
 				}
 			}
+			//if (this.LoggedUser != null && GroupToSend != null)
+			//{
 
-			if (this.LoggedUser != null && GroupToSend != null)
-			{
-
-			}
+			//}
 		}
 
 		private void ProcessNonAuth(Message.NotAuthorizedMessage msg)
@@ -680,7 +679,6 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 			DisposeTrayIcon();
 
 			GC.SuppressFinalize(this);
-
 			GC.Collect();
 		}
 	}

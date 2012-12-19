@@ -15,6 +15,7 @@ namespace ShareDeployed.Repositories
 		IQueryable<User> SharedUsers { get; }
 		IQueryable<MessangerApplication> Application { get; }
 		IQueryable<MessageResponse> Response { get; }
+		IQueryable<Message> Message { get; }
 
 		IQueryable<MessangerUser> GetOnlineUsers(MessangerGroup room);
 
@@ -65,6 +66,6 @@ namespace ShareDeployed.Repositories
 		System.Data.Entity.DbSet<T> GetDbSet<T>() where T:class;
 
 		void RunWithNoLazy(Action action);
-		void SetLazyLoadingFlag(bool flag);
+		void SetDbContextOprions(bool lazyFlag, bool proxyFlag=true, bool trackFlag=true);
 	}
 }

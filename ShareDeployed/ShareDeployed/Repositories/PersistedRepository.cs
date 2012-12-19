@@ -71,6 +71,11 @@ namespace ShareDeployed.Repositories
 			get { return _dbMessanger.MessageResponse; }
 		}
 
+		public IQueryable<Message> Message
+		{
+			get { return _dbMessanger.Messages; }
+		}
+
 		public IQueryable<Common.Models.MessangerUser> GetOnlineUsers(Common.Models.MessangerGroup group)
 		{
 			return _dbMessanger.Entry(group).Collection(r => r.Users).Query().Online();
@@ -211,21 +216,22 @@ namespace ShareDeployed.Repositories
 			bool old = _dbMessanger.Configuration.LazyLoadingEnabled;
 			try
 			{
-				SetLazyLoadingFlag(false);
+				SetDbContextOprions(false);
 				action();
 			}
 			finally
 			{
-				SetLazyLoadingFlag(old);
+				SetDbContextOprions(old);
 			}
 		}
 
-		public void SetLazyLoadingFlag(bool flag)
+		public void SetDbContextOprions(bool lazyFlag, bool proxyFlag = true, bool trackFlag = true)
 		{
-			if (_dbMessanger != null && _dbMessanger.Configuration.LazyLoadingEnabled != flag)
+			if (_dbMessanger != null)
 			{
-				_dbMessanger.Configuration.LazyLoadingEnabled = flag;
-				_dbMessanger.Configuration.ProxyCreationEnabled = flag;
+				_dbMessanger.Configuration.LazyLoadingEnabled = lazyFlag;
+				_dbMessanger.Configuration.ProxyCreationEnabled = proxyFlag;
+				_dbMessanger.Configuration.AutoDetectChangesEnabled = trackFlag;
 			}
 		}
 

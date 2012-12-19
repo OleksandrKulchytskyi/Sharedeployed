@@ -9,6 +9,22 @@ namespace ShareDeployed.Filters
 	public class DisableLazyloadingFilter : ActionFilterAttribute
 	{
 		IMessangerRepository _repository;
+		public bool ProxyCreation { get; private set; }
+		public bool DetectChanges { get; private set; }
+
+		public DisableLazyloadingFilter()
+			: base()
+		{
+			ProxyCreation = true;
+			DetectChanges = true;
+		}
+
+		public DisableLazyloadingFilter(bool proxyCreation, bool detectChanges)
+			: this()
+		{
+			this.DetectChanges = detectChanges;
+			this.ProxyCreation = proxyCreation;
+		}
 
 		public override void OnActionExecuting(System.Web.Http.Controllers.HttpActionContext actionContext)
 		{
@@ -19,7 +35,7 @@ namespace ShareDeployed.Filters
 					_repository = actionContext.Request.GetDependencyScope().GetService(typeof(IMessangerRepository)) as IMessangerRepository;
 					if (_repository != null)
 					{
-						_repository.SetLazyLoadingFlag(false);
+						_repository.SetDbContextOprions(false, this.ProxyCreation, DetectChanges);
 						System.Diagnostics.Trace.WriteLine("Scoped repository ID: " + (_repository.SessionId));
 					}
 				}
@@ -35,7 +51,7 @@ namespace ShareDeployed.Filters
 		{
 			if (_repository != null)
 			{
-				_repository.SetLazyLoadingFlag(true);
+				_repository.SetDbContextOprions(true);
 			}
 			base.OnActionExecuted(actionExecutedContext);
 		}

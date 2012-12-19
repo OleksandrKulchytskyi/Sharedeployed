@@ -25,11 +25,12 @@ namespace ShareDeployed.Controllers.Api
 
 		[HttpGet()]
 		[ActionName("GetNew")]
-		public IQueryable<Common.Models.Message> GetNew()
+		[Filters.DisableLazyloadingFilter(false,false)]
+		public IEnumerable<Common.Models.Message> GetNew()
 		{
 			try
 			{
-				return _repository.GetAllNewMessges();
+				return _repository.GetAllNewMessges().AsEnumerable();
 			}
 			catch (Exception ex)
 			{
@@ -42,7 +43,7 @@ namespace ShareDeployed.Controllers.Api
 
 		[HttpGet()]
 		[ActionName("Get")]
-		[Filters.DisableLazyloadingFilter()]
+		[Filters.DisableLazyloadingFilter(false,false)]
 		public Common.Models.Message Get(string id)
 		{
 			try

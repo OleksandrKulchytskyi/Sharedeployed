@@ -9,11 +9,15 @@ using GalaSoft.MvvmLight.Command;
 using System.Net;
 using Newtonsoft.Json;
 using System.Configuration;
+using System.Reactive.Linq;
+using System.Reactive.Concurrency;
 
 namespace ShareDeployed.Mailgrabber.ViewModel
 {
 	public class LoginVM : ViewModelBase
 	{
+		IDisposable subscription = null;
+
 		public LoginVM()
 			: base()
 		{
@@ -48,20 +52,29 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 			IsLoginButtonPressed = true;
 			if (LoginData == null)
 				return;
-			WebClient client = new WebClient();
-			client.Headers.Add("uid", LoginData.LoginName);
-			client.Headers.Add("pass", LoginData.Password);
-			client.Headers.Add("logonType", "0");
+			WebClient webClient = new WebClient();
+			webClient.Headers.Add("uid", LoginData.LoginName);
+			webClient.Headers.Add("pass", LoginData.Password);
+			webClient.Headers.Add("logonType", "0");
 
 			byte[] data = null;
-			try
+
+			var eventStream = Observable.FromEventPattern<DownloadDataCompletedEventArgs>(webClient, "DownloadDataCompleted").SubscribeOn(Scheduler.NewThread)
+				// When the event fires, just select the data and make an IObservable<byte[]> instead
+			.Select(newData => newData.EventArgs.Result);
+
+			subscription = eventStream.ObserveOn(System.Threading.SynchronizationContext.Current).Subscribe(OnDatareceived,
+				ex => { System.Windows.MessageBox.Show(ex.Message); ViewModel.ViewModelLocator.Logger.Error("", ex); });
+
+			webClient.DownloadDataAsync(new Uri(ConfigurationManager.AppSettings["loginUrl"]));
+		}
+
+		void OnDatareceived(byte[] data)
+		{
+			if (subscription != null)
 			{
-				data = client.DownloadData(ConfigurationManager.AppSettings["loginUrl"]);
-			}
-			catch(System.Net.WebException)
-			{
-				System.Windows.MessageBox.Show("Fail to authenticate");
-				return;
+				subscription.Dispose();
+				subscription = null;
 			}
 
 			string response = Encoding.Default.GetString(data);

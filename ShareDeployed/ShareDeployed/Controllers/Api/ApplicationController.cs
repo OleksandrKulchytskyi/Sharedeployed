@@ -19,15 +19,16 @@ namespace ShareDeployed.Controllers.Api
 		}
 
 		[HttpGet]
-		[Filters.DisableLazyloadingFilter()]
+		[Filters.DisableLazyloadingFilter(false, false)]
 		public IEnumerable<MessangerApplication> GetAll()
 		{
-			return _repository.Application.AsEnumerable();
+			var applications= _repository.Application.AsEnumerable();
+			return applications;
 		}
 
 		[HttpGet]
 		[ActionName("GetById")]
-		[Filters.DisableLazyloadingFilter()]
+		[Filters.DisableLazyloadingFilter(false, false)]
 		public MessangerApplication GetById(string appId)
 		{
 			try
