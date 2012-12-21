@@ -64,7 +64,7 @@
 
 				var urlTotal = "/api/Revenue/GetTotal?v1=" + $('#To').val() + "&v2=" + $('#From').val()
 				$.ajax({
-					typr: "GET",
+					type: "GET",
 					url: urlTotal,
 					headers: { "UserId": self.userId(), "AuthToken": "11111" },
 					success: function (jsonStr) {
@@ -80,7 +80,7 @@
 				var url = "/api/Revenue/ByRange?from=" + $('#From').val() + "&to=" + $('#To').val()
 
 				$.ajax({
-					typr: "GET",
+					type: "GET",
 					url: url,
 					headers: { "UserId": self.userId(), "AuthToken": "11111" },
 					success: function (jsonStr) {
@@ -105,7 +105,7 @@
 
 			if (byId == true) {
 				$.ajax({
-					typr: "GET",
+					type: "GET",
 					url: "/api/revenue/byid/" + id,
 					headers: { "UserId": uid, "AuthToken": "11111" },
 					success: function (jsonStr) {
@@ -120,7 +120,7 @@
 
 			if (byName == true) {
 				$.ajax({
-					typr: "GET",
+					type: "GET",
 					url: "/api/revenue?name=" + id,
 					headers: { "UserId": uid, "AuthToken": "11111" },
 					success: function (jsonStr) {

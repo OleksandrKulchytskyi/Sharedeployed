@@ -42,9 +42,10 @@ namespace ShareDeployed.Controllers.Api
 			}
 			catch (Exception ex)
 			{
-				MvcApplication.Logger.Error(ex);
 				if (!(ex is HttpResponseException))
 					throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError));
+				
+				MvcApplication.Logger.Error(ex);
 				throw;
 			}
 		}
@@ -113,9 +114,9 @@ namespace ShareDeployed.Controllers.Api
 				}
 				catch (Exception ex)
 				{
-					MvcApplication.Logger.Error(ex);
 					if (!(ex is HttpResponseException))
 						throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError));
+					MvcApplication.Logger.Error(ex);
 					throw;
 				}
 			}

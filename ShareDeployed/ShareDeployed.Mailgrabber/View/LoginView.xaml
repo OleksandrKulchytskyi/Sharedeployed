@@ -6,7 +6,8 @@
 		xmlns:cmd="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF4"
         Title="Login" Height="200" Width="300"
 		WindowStartupLocation="CenterOwner" WindowStyle="ToolWindow"
-		DataContext="{Binding Source={StaticResource Locator}, Path=LoginVM}" ShowInTaskbar="False">
+		DataContext="{Binding Source={StaticResource Locator}, Path=LoginVM}" ShowInTaskbar="False"
+		FocusManager.FocusedElement="{Binding ElementName=txtLogin}">
 	<i:Interaction.Triggers>
 		<i:EventTrigger EventName="Closing">
 			<cmd:EventToCommand Command="{Binding ClosingCommand}"/>
@@ -24,7 +25,8 @@
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 		<TextBlock Text="Login:" VerticalAlignment="Center"/>
-		<TextBox Text="{Binding LoginData.LoginName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" VerticalAlignment="Center" />
+		<TextBox Text="{Binding LoginData.LoginName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" VerticalAlignment="Center" 
+				 x:Name="txtLogin"/>
 
 		<TextBlock Text="Password:" VerticalAlignment="Center" Grid.Row="1"/>
 		<PasswordBox PasswordChar="*" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center">

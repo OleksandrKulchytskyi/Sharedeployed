@@ -11,7 +11,92 @@ namespace ShareDeployed.Common.Extensions
 {
 	public static class TaskAsyncHelper
 	{
+		private abstract class VoidResult { }
+
 		private static readonly Task _emptyTask = MakeEmpty();
+
+		public static Task<TResult> ToTask<TResult>(this IEnumerable<Task> tasks)
+		{
+			var taskScheduler = SynchronizationContext.Current == null
+					? TaskScheduler.Default : TaskScheduler.FromCurrentSynchronizationContext();
+			var taskEnumerator = tasks.GetEnumerator();
+			var completionSource = new TaskCompletionSource<TResult>();
+
+			// Clean up the enumerator when the task completes.
+			completionSource.Task.ContinueWith(t => taskEnumerator.Dispose(), taskScheduler);
+
+			ToTaskDoOneStep(taskEnumerator, taskScheduler, completionSource, null);
+			return completionSource.Task;
+		}
+
+		private static void ToTaskDoOneStep<TResult>(IEnumerator<Task> taskEnumerator, TaskScheduler taskScheduler,
+													 TaskCompletionSource<TResult> completionSource, Task completedTask)
+		{
+			// Check status of previous nested task (if any), and stop if Canceled or Faulted.
+			TaskStatus status;
+			if (completedTask == null)
+			{
+				// This is the first task from the iterator; skip status check.
+			}
+			else if ((status = completedTask.Status) == TaskStatus.Canceled)
+			{
+				completionSource.SetCanceled();
+				return;
+			}
+			else if (status == TaskStatus.Faulted)
+			{
+				completionSource.SetException(completedTask.Exception);
+				return;
+			}
+
+			// Find the next Task in the iterator; handle cancellation and other exceptions.
+			Boolean haveMore;
+			try
+			{
+				haveMore = taskEnumerator.MoveNext();
+
+			}
+			catch (OperationCanceledException cancExc)
+			{
+				completionSource.SetCanceled();
+				return;
+			}
+			catch (Exception exc)
+			{
+				completionSource.SetException(exc);
+				return;
+			}
+
+			if (!haveMore)
+			{
+				// No more tasks; set the result (if any) from the last completed task (if any).
+				// We know it's not Canceled or Faulted because we checked at the start of this method.
+				if (typeof(TResult) == typeof(VoidResult))
+				{        // No result
+					completionSource.SetResult(default(TResult));
+				}
+				else if (!(completedTask is Task<TResult>))
+				{     // Wrong result
+					completionSource.SetException(new InvalidOperationException(
+						"Asynchronous iterator " + taskEnumerator +
+							" requires a final result task of type " + typeof(Task<TResult>).FullName +
+							(completedTask == null ? ", but none was provided." :
+								"; the actual task type was " + completedTask.GetType().FullName)));
+
+				}
+				else
+				{
+					completionSource.SetResult(((Task<TResult>)completedTask).Result);
+				}
+			}
+			else
+			{
+				// When the nested task completes, continue by performing this function again.
+				taskEnumerator.Current.ContinueWith(nextTask => ToTaskDoOneStep(
+																taskEnumerator, taskScheduler, completionSource, nextTask),
+													taskScheduler);
+			}
+		}
 
 		private static Task MakeEmpty()
 		{

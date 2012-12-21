@@ -71,7 +71,7 @@
 
 			if (chkAll == true) {
 				$.ajax({
-					typr: "GET",
+					type: "GET",
 					url: "/api/Words/GetAll/",
 					headers: { "UserId": self.userId(), "AuthToken": "11111" },
 					success: function (jsonStr) {
@@ -88,7 +88,7 @@
 			else {
 				var url = "/api/Words/GetByComplexity?complex=" + (chkComplexity == true ? 1 : 0).toString();
 				$.ajax({
-					typr: "GET",
+					type: "GET",
 					url: url,
 					headers: { "UserId": self.userId(), "AuthToken": "11111" },
 					success: function (jsonStr) {

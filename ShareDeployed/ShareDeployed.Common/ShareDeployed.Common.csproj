@@ -57,6 +57,8 @@
     <Compile Include="Extensions\SingletonBase.cs" />
     <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="Extensions\TaskAsyncHelper.cs" />
+    <Compile Include="Helper\GenericWeakReference.cs" />
+    <Compile Include="Helper\LazyWeakReference.cs" />
     <Compile Include="Infrastructure\CookieAwareWebClient.cs">
       <SubType>Component</SubType>
     </Compile>

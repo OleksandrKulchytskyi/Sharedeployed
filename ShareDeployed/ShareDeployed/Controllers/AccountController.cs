@@ -43,6 +43,15 @@ namespace ShareDeployed.Controllers
 			{
 				FormsAuthentication.SetAuthCookie(model.UserName, model.RememberMe);
 				
+				if(Request.Cookies["ASP.NET_SessionId"]!=null)
+				{
+					var cookie = Request.Cookies["ASP.NET_SessionId"];
+					if(Session.SessionID!= cookie.Value)
+					{
+						
+					}
+				}
+				
 				var authClient = WebHelper.GetClientIndetification();
 
 				int userId = -1;
@@ -149,7 +158,9 @@ namespace ShareDeployed.Controllers
 				Authorization.AuthTokenManagerEx.Instance.RemoveClientInfo(new ClientInfo() { UserName = userName, Id = userId });
 			}
 			WebSecurity.Logout();
+			
 			Session.Abandon();
+			Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", ""));
 
 			return RedirectToAction("Index", "Home");
 		}

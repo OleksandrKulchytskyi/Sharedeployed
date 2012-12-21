@@ -74,7 +74,7 @@
 					//	});
 
 					$.ajax({
-						typr: "GET",
+						type: "GET",
 						url: urlTotal,
 						headers: { "UserId": self.userId(), "AuthToken": "11111" },
 						success: function (jsonStr) {
@@ -100,7 +100,7 @@
 					//	});
 
 					$.ajax({
-						typr: "GET",
+						type: "GET",
 						url: url,
 						headers: { "UserId": self.userId(), "AuthToken": "11111" },
 						success: function (jsonStr) {
@@ -135,7 +135,7 @@
 				//	});
 
 				$.ajax({
-					typr: "GET",
+					type: "GET",
 					url: "/api/expense/byid/" + id,
 					headers: { "UserId": uid, "AuthToken": "11111" },
 					success: function (jsonStr) {
@@ -160,7 +160,7 @@
 				//	});
 
 				$.ajax({
-					typr: "GET",
+					type: "GET",
 					url: "/api/expense?name=" + id,
 					headers: { "UserId": uid, "AuthToken": "11111" },
 					success: function (jsonStr) {

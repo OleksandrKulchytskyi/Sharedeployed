@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using ShareDeployed.Mailgrabber.Model;
 using ShareDeployed.Common.Extensions;
+using ShareDeployed.Common.Helper;
 using GalaSoft.MvvmLight.Command;
 using System.Net;
 using Newtonsoft.Json;
@@ -50,23 +51,28 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 		private void DoLogin()
 		{
 			IsLoginButtonPressed = true;
-			if (LoginData == null)
-				return;
+			if (LoginData == null) return;
+
 			WebClient webClient = new WebClient();
 			webClient.Headers.Add("uid", LoginData.LoginName);
 			webClient.Headers.Add("pass", LoginData.Password);
 			webClient.Headers.Add("logonType", "0");
-
-			byte[] data = null;
-
-			var eventStream = Observable.FromEventPattern<DownloadDataCompletedEventArgs>(webClient, "DownloadDataCompleted").SubscribeOn(Scheduler.NewThread)
-				// When the event fires, just select the data and make an IObservable<byte[]> instead
-			.Select(newData => newData.EventArgs.Result);
+			GenericWeakReference<WebClient> weakClient = new GenericWeakReference<WebClient>(webClient);
+			
+			var eventStream = Observable.FromEventPattern<DownloadDataCompletedEventArgs>(weakClient.Target, "DownloadDataCompleted").
+				SubscribeOn(Scheduler.NewThread).Select(newData => newData.EventArgs.Result);
 
 			subscription = eventStream.ObserveOn(System.Threading.SynchronizationContext.Current).Subscribe(OnDatareceived,
-				ex => { System.Windows.MessageBox.Show(ex.Message); ViewModel.ViewModelLocator.Logger.Error("", ex); });
+				//on error
+				ex =>
+				{
+					System.Windows.MessageBox.Show(ex.Message);
+					ViewModel.ViewModelLocator.Logger.Error(string.Empty, ex);
+				});
 
 			webClient.DownloadDataAsync(new Uri(ConfigurationManager.AppSettings["loginUrl"]));
+			weakClient.Dispose();
+			weakClient = null;
 		}
 
 		void OnDatareceived(byte[] data)

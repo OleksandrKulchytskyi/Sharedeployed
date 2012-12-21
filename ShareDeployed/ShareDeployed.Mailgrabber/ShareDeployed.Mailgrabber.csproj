@@ -108,6 +108,7 @@
     <Compile Include="Converters\BoolToVisibility.cs" />
     <Compile Include="Helpers\ApplicationHelper.cs" />
     <Compile Include="Helpers\HttpClientHelper.cs" />
+    <Compile Include="Helpers\WeakEventHandlerAdvanced.cs" />
     <Compile Include="Helpers\WeakEventHelper.cs" />
     <Compile Include="Infrastructure\LinkManager.cs" />
     <Compile Include="LocalStateContainer.cs" />
