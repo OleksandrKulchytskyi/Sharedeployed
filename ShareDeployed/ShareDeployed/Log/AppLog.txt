@@ -113,3 +113,675 @@ System.InvalidOperationException: The "WebSecurity.InitializeDatabaseConnection"
    at ShareDeployed.Filters.InitializeSimpleMembershipAttribute.SimpleMembershipInitializer2..ctor() in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Filters\InitializeSimpleMembershipAttribute.cs:line 68
 INFO  2012-12-20 18:09:48,454 40273ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
 INFO  2012-12-20 18:10:28,131 79950ms MvcApplication         Application_End    - Application_End()
+INFO  2013-01-08 12:57:07,585   232ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 12:57:25,061 17708ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-08 12:58:52,303   229ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 12:59:08,024 15950ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-08 12:59:41,223 49149ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 13:01:07,855   231ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 13:01:23,495 15871ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-08 13:01:51,440 43816ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+ERROR 2013-01-08 13:03:48,711 161087ms MvcApplication         Application_Error  - Application_Error
+SecureSession.InvalidSessionException: Access Denied
+   at SecureSession.SecureSessionModule.OnBeginRequest(Object sender, EventArgs e) in d:\Projects\My\SharedDeploy\ShareDeployed\SecureSessionModule\SecureSessionModule.cs:line 50
+   at System.Web.HttpApplication.SyncEventExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+ERROR 2013-01-08 13:03:49,930 162306ms MvcApplication         Application_Error  - Application_Error
+SecureSession.InvalidSessionException: Access Denied
+   at SecureSession.SecureSessionModule.OnBeginRequest(Object sender, EventArgs e) in d:\Projects\My\SharedDeploy\ShareDeployed\SecureSessionModule\SecureSessionModule.cs:line 50
+   at System.Web.HttpApplication.SyncEventExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+INFO  2013-01-08 13:04:34,490   218ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 13:04:47,961 13689ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-08 13:05:18,037 43765ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+ERROR 2013-01-08 13:05:18,131 43859ms MvcApplication         Application_Error  - Application_Error
+SecureSession.InvalidSessionException: Access Denied
+   at SecureSession.SecureSessionModule.OnBeginRequest(Object sender, EventArgs e) in d:\Projects\My\SharedDeploy\ShareDeployed\SecureSessionModule\SecureSessionModule.cs:line 50
+   at System.Web.HttpApplication.SyncEventExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+INFO  2013-01-08 13:07:13,415   217ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 13:07:26,011 12813ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-08 13:08:04,428   220ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 13:08:17,417 13209ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-08 13:09:02,503 58295ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 13:13:19,735   225ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 13:13:38,049 18539ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-08 13:14:01,114 41604ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 13:26:38,462   220ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 13:26:51,207 12965ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-08 13:27:18,797 40555ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+ERROR 2013-01-08 13:29:41,173 182931ms MvcApplication         Application_Error  - Application_Error
+System.Web.HttpException (0x80004005): File does not exist.
+   at System.Web.StaticFileHandler.GetFileInfo(String virtualPathWithPathInfo, String physicalPath, HttpResponse response)
+   at System.Web.StaticFileHandler.ProcessRequestInternal(HttpContext context, String overrideVirtualPath)
+   at System.Web.DefaultHttpHandler.BeginProcessRequest(HttpContext context, AsyncCallback callback, Object state)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+INFO  2013-01-08 13:33:02,399   215ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 13:33:16,022 13838ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-08 13:33:42,740 40556ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 13:38:42,732 340548ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 13:43:02,705 600521ms MvcApplication         Sweep              - Begin sweep process
+INFO  2013-01-08 13:43:42,719 640535ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 13:48:42,713 940529ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 13:53:02,681 1200497ms MvcApplication         Sweep              - Begin sweep process
+INFO  2013-01-08 13:53:42,697 1240513ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 13:58:42,687 1540503ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 14:03:02,657 1800473ms MvcApplication         Sweep              - Begin sweep process
+INFO  2013-01-08 14:03:42,675 1840491ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 14:05:44,001   214ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 14:05:56,648 12861ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-08 14:06:24,325 40538ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 14:19:10,670   223ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 14:19:27,328 16881ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-08 14:19:51,038 40591ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+ERROR 2013-01-08 14:20:29,911 79464ms MvcApplication         Application_Error  - Application_Error
+System.AggregateException: One or more errors occurred. ---> System.AggregateException: One or more errors occurred. ---> System.AggregateException: One or more errors occurred. ---> System.InvalidOperationException: The model backing the 'UsersContext' context has changed since the database was created. Consider using Code First Migrations to update the database (http://go.microsoft.com/fwlink/?LinkId=238269).
+   at System.Data.Entity.CreateDatabaseIfNotExists`1.InitializeDatabase(TContext context)
+   at System.Data.Entity.Internal.InternalContext.<>c__DisplayClass8.<PerformDatabaseInitialization>b__6()
+   at System.Data.Entity.Internal.InternalContext.PerformInitializationAction(Action action)
+   at System.Data.Entity.Internal.InternalContext.PerformDatabaseInitialization()
+   at System.Data.Entity.Internal.LazyInternalContext.<InitializeDatabase>b__4(InternalContext c)
+   at System.Data.Entity.Internal.RetryAction`1.PerformAction(TInput input)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabaseAction(Action`1 action)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabase()
+   at System.Data.Entity.Internal.InternalContext.Initialize()
+   at System.Data.Entity.Internal.InternalContext.GetEntitySetAndBaseTypeForType(Type entityType)
+   at System.Data.Entity.Internal.Linq.InternalSet`1.Initialize()
+   at System.Data.Entity.Internal.Linq.InternalSet`1.get_InternalContext()
+   at System.Data.Entity.Infrastructure.DbQuery`1.System.Linq.IQueryable.get_Provider()
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source, Expression`1 predicate)
+   at ShareDeployed.Repositories.WebSecurityRepository.<.cctor>b__0(UsersContext db, String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 13
+   at ShareDeployed.Repositories.WebSecurityRepository.GetByName(String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 41
+   at ShareDeployed.Hubs.MessangerHub.OnConnected() in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Hubs\MessangerHub.cs:line 216
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipelineModule.<>c__DisplayClassb.<BuildConnect>b__9(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipeline.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<OnConnectedAsync>b__f(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<>c__DisplayClass23.<ExecuteHubEventAsync>b__1f(IHub instance)
+   at System.Linq.Enumerable.WhereSelectListIterator`2.MoveNext()
+   at System.Linq.Buffer`1..ctor(IEnumerable`1 source)
+   at System.Linq.Enumerable.ToArray[TSource](IEnumerable`1 source)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.ExecuteHubEventAsync(IRequest request, String connectionId, Func`2 action)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.OnConnectedAsync(IRequest request, String connectionId)
+   at Microsoft.AspNet.SignalR.PersistentConnection.<>c__DisplayClass6.<ProcessRequestAsync>b__2()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClassa.<ProcessRequestCore>b__5()
+   at Microsoft.AspNet.SignalR.TaskAsyncHelper.<>c__DisplayClass13`1.<Interleave>b__12()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClass11.<ProcessReceiveRequestWithoutTracking>b__10()
+   --- End of inner exception stack trace ---
+   --- End of inner exception stack trace ---
+   --- End of inner exception stack trace ---
+   at System.Threading.Tasks.Task.ThrowIfExceptional(Boolean includeTaskCanceledExceptions)
+   at System.Threading.Tasks.Task.Wait(Int32 millisecondsTimeout, CancellationToken cancellationToken)
+   at System.Threading.Tasks.Task.Wait()
+   at Microsoft.AspNet.SignalR.Hosting.AspNet.HttpTaskAsyncHandler.System.Web.IHttpAsyncHandler.EndProcessRequest(IAsyncResult result)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.OnAsyncHandlerCompletion(IAsyncResult ar)
+---> (Inner Exception #0) System.AggregateException: One or more errors occurred. ---> System.AggregateException: One or more errors occurred. ---> System.InvalidOperationException: The model backing the 'UsersContext' context has changed since the database was created. Consider using Code First Migrations to update the database (http://go.microsoft.com/fwlink/?LinkId=238269).
+   at System.Data.Entity.CreateDatabaseIfNotExists`1.InitializeDatabase(TContext context)
+   at System.Data.Entity.Internal.InternalContext.<>c__DisplayClass8.<PerformDatabaseInitialization>b__6()
+   at System.Data.Entity.Internal.InternalContext.PerformInitializationAction(Action action)
+   at System.Data.Entity.Internal.InternalContext.PerformDatabaseInitialization()
+   at System.Data.Entity.Internal.LazyInternalContext.<InitializeDatabase>b__4(InternalContext c)
+   at System.Data.Entity.Internal.RetryAction`1.PerformAction(TInput input)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabaseAction(Action`1 action)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabase()
+   at System.Data.Entity.Internal.InternalContext.Initialize()
+   at System.Data.Entity.Internal.InternalContext.GetEntitySetAndBaseTypeForType(Type entityType)
+   at System.Data.Entity.Internal.Linq.InternalSet`1.Initialize()
+   at System.Data.Entity.Internal.Linq.InternalSet`1.get_InternalContext()
+   at System.Data.Entity.Infrastructure.DbQuery`1.System.Linq.IQueryable.get_Provider()
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source, Expression`1 predicate)
+   at ShareDeployed.Repositories.WebSecurityRepository.<.cctor>b__0(UsersContext db, String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 13
+   at ShareDeployed.Repositories.WebSecurityRepository.GetByName(String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 41
+   at ShareDeployed.Hubs.MessangerHub.OnConnected() in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Hubs\MessangerHub.cs:line 216
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipelineModule.<>c__DisplayClassb.<BuildConnect>b__9(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipeline.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<OnConnectedAsync>b__f(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<>c__DisplayClass23.<ExecuteHubEventAsync>b__1f(IHub instance)
+   at System.Linq.Enumerable.WhereSelectListIterator`2.MoveNext()
+   at System.Linq.Buffer`1..ctor(IEnumerable`1 source)
+   at System.Linq.Enumerable.ToArray[TSource](IEnumerable`1 source)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.ExecuteHubEventAsync(IRequest request, String connectionId, Func`2 action)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.OnConnectedAsync(IRequest request, String connectionId)
+   at Microsoft.AspNet.SignalR.PersistentConnection.<>c__DisplayClass6.<ProcessRequestAsync>b__2()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClassa.<ProcessRequestCore>b__5()
+   at Microsoft.AspNet.SignalR.TaskAsyncHelper.<>c__DisplayClass13`1.<Interleave>b__12()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClass11.<ProcessReceiveRequestWithoutTracking>b__10()
+   --- End of inner exception stack trace ---
+   --- End of inner exception stack trace ---
+---> (Inner Exception #0) System.AggregateException: One or more errors occurred. ---> System.InvalidOperationException: The model backing the 'UsersContext' context has changed since the database was created. Consider using Code First Migrations to update the database (http://go.microsoft.com/fwlink/?LinkId=238269).
+   at System.Data.Entity.CreateDatabaseIfNotExists`1.InitializeDatabase(TContext context)
+   at System.Data.Entity.Internal.InternalContext.<>c__DisplayClass8.<PerformDatabaseInitialization>b__6()
+   at System.Data.Entity.Internal.InternalContext.PerformInitializationAction(Action action)
+   at System.Data.Entity.Internal.InternalContext.PerformDatabaseInitialization()
+   at System.Data.Entity.Internal.LazyInternalContext.<InitializeDatabase>b__4(InternalContext c)
+   at System.Data.Entity.Internal.RetryAction`1.PerformAction(TInput input)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabaseAction(Action`1 action)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabase()
+   at System.Data.Entity.Internal.InternalContext.Initialize()
+   at System.Data.Entity.Internal.InternalContext.GetEntitySetAndBaseTypeForType(Type entityType)
+   at System.Data.Entity.Internal.Linq.InternalSet`1.Initialize()
+   at System.Data.Entity.Internal.Linq.InternalSet`1.get_InternalContext()
+   at System.Data.Entity.Infrastructure.DbQuery`1.System.Linq.IQueryable.get_Provider()
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source, Expression`1 predicate)
+   at ShareDeployed.Repositories.WebSecurityRepository.<.cctor>b__0(UsersContext db, String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 13
+   at ShareDeployed.Repositories.WebSecurityRepository.GetByName(String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 41
+   at ShareDeployed.Hubs.MessangerHub.OnConnected() in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Hubs\MessangerHub.cs:line 216
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipelineModule.<>c__DisplayClassb.<BuildConnect>b__9(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipeline.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<OnConnectedAsync>b__f(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<>c__DisplayClass23.<ExecuteHubEventAsync>b__1f(IHub instance)
+   at System.Linq.Enumerable.WhereSelectListIterator`2.MoveNext()
+   at System.Linq.Buffer`1..ctor(IEnumerable`1 source)
+   at System.Linq.Enumerable.ToArray[TSource](IEnumerable`1 source)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.ExecuteHubEventAsync(IRequest request, String connectionId, Func`2 action)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.OnConnectedAsync(IRequest request, String connectionId)
+   at Microsoft.AspNet.SignalR.PersistentConnection.<>c__DisplayClass6.<ProcessRequestAsync>b__2()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClassa.<ProcessRequestCore>b__5()
+   at Microsoft.AspNet.SignalR.TaskAsyncHelper.<>c__DisplayClass13`1.<Interleave>b__12()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClass11.<ProcessReceiveRequestWithoutTracking>b__10()
+   --- End of inner exception stack trace ---
+---> (Inner Exception #0) System.InvalidOperationException: The model backing the 'UsersContext' context has changed since the database was created. Consider using Code First Migrations to update the database (http://go.microsoft.com/fwlink/?LinkId=238269).
+   at System.Data.Entity.CreateDatabaseIfNotExists`1.InitializeDatabase(TContext context)
+   at System.Data.Entity.Internal.InternalContext.<>c__DisplayClass8.<PerformDatabaseInitialization>b__6()
+   at System.Data.Entity.Internal.InternalContext.PerformInitializationAction(Action action)
+   at System.Data.Entity.Internal.InternalContext.PerformDatabaseInitialization()
+   at System.Data.Entity.Internal.LazyInternalContext.<InitializeDatabase>b__4(InternalContext c)
+   at System.Data.Entity.Internal.RetryAction`1.PerformAction(TInput input)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabaseAction(Action`1 action)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabase()
+   at System.Data.Entity.Internal.InternalContext.Initialize()
+   at System.Data.Entity.Internal.InternalContext.GetEntitySetAndBaseTypeForType(Type entityType)
+   at System.Data.Entity.Internal.Linq.InternalSet`1.Initialize()
+   at System.Data.Entity.Internal.Linq.InternalSet`1.get_InternalContext()
+   at System.Data.Entity.Infrastructure.DbQuery`1.System.Linq.IQueryable.get_Provider()
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source, Expression`1 predicate)
+   at ShareDeployed.Repositories.WebSecurityRepository.<.cctor>b__0(UsersContext db, String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 13
+   at ShareDeployed.Repositories.WebSecurityRepository.GetByName(String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 41
+   at ShareDeployed.Hubs.MessangerHub.OnConnected() in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Hubs\MessangerHub.cs:line 216
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipelineModule.<>c__DisplayClassb.<BuildConnect>b__9(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipeline.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<OnConnectedAsync>b__f(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<>c__DisplayClass23.<ExecuteHubEventAsync>b__1f(IHub instance)
+   at System.Linq.Enumerable.WhereSelectListIterator`2.MoveNext()
+   at System.Linq.Buffer`1..ctor(IEnumerable`1 source)
+   at System.Linq.Enumerable.ToArray[TSource](IEnumerable`1 source)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.ExecuteHubEventAsync(IRequest request, String connectionId, Func`2 action)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.OnConnectedAsync(IRequest request, String connectionId)
+   at Microsoft.AspNet.SignalR.PersistentConnection.<>c__DisplayClass6.<ProcessRequestAsync>b__2()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClassa.<ProcessRequestCore>b__5()
+   at Microsoft.AspNet.SignalR.TaskAsyncHelper.<>c__DisplayClass13`1.<Interleave>b__12()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClass11.<ProcessReceiveRequestWithoutTracking>b__10()<---
+<---
+<---
+
+INFO  2013-01-08 14:23:58,016   229ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 14:24:13,507 15720ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+ERROR 2013-01-08 14:24:29,307 31520ms MvcApplication         Application_Error  - Application_Error
+System.AggregateException: One or more errors occurred. ---> System.AggregateException: One or more errors occurred. ---> System.AggregateException: One or more errors occurred. ---> System.InvalidOperationException: The model backing the 'UsersContext' context has changed since the database was created. Consider using Code First Migrations to update the database (http://go.microsoft.com/fwlink/?LinkId=238269).
+   at System.Data.Entity.CreateDatabaseIfNotExists`1.InitializeDatabase(TContext context)
+   at System.Data.Entity.Internal.InternalContext.<>c__DisplayClass8.<PerformDatabaseInitialization>b__6()
+   at System.Data.Entity.Internal.InternalContext.PerformInitializationAction(Action action)
+   at System.Data.Entity.Internal.InternalContext.PerformDatabaseInitialization()
+   at System.Data.Entity.Internal.LazyInternalContext.<InitializeDatabase>b__4(InternalContext c)
+   at System.Data.Entity.Internal.RetryAction`1.PerformAction(TInput input)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabaseAction(Action`1 action)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabase()
+   at System.Data.Entity.Internal.InternalContext.Initialize()
+   at System.Data.Entity.Internal.InternalContext.GetEntitySetAndBaseTypeForType(Type entityType)
+   at System.Data.Entity.Internal.Linq.InternalSet`1.Initialize()
+   at System.Data.Entity.Internal.Linq.InternalSet`1.get_InternalContext()
+   at System.Data.Entity.Infrastructure.DbQuery`1.System.Linq.IQueryable.get_Provider()
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source, Expression`1 predicate)
+   at ShareDeployed.Repositories.WebSecurityRepository.<.cctor>b__0(UsersContext db, String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 13
+   at ShareDeployed.Repositories.WebSecurityRepository.GetByName(String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 41
+   at ShareDeployed.Hubs.MessangerHub.OnConnected() in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Hubs\MessangerHub.cs:line 216
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipelineModule.<>c__DisplayClassb.<BuildConnect>b__9(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipeline.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<OnConnectedAsync>b__f(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<>c__DisplayClass23.<ExecuteHubEventAsync>b__1f(IHub instance)
+   at System.Linq.Enumerable.WhereSelectListIterator`2.MoveNext()
+   at System.Linq.Buffer`1..ctor(IEnumerable`1 source)
+   at System.Linq.Enumerable.ToArray[TSource](IEnumerable`1 source)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.ExecuteHubEventAsync(IRequest request, String connectionId, Func`2 action)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.OnConnectedAsync(IRequest request, String connectionId)
+   at Microsoft.AspNet.SignalR.PersistentConnection.<>c__DisplayClass6.<ProcessRequestAsync>b__2()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClassa.<ProcessRequestCore>b__5()
+   at Microsoft.AspNet.SignalR.TaskAsyncHelper.<>c__DisplayClass13`1.<Interleave>b__12()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClass11.<ProcessReceiveRequestWithoutTracking>b__10()
+   --- End of inner exception stack trace ---
+   --- End of inner exception stack trace ---
+   --- End of inner exception stack trace ---
+   at System.Threading.Tasks.Task.ThrowIfExceptional(Boolean includeTaskCanceledExceptions)
+   at System.Threading.Tasks.Task.Wait(Int32 millisecondsTimeout, CancellationToken cancellationToken)
+   at System.Threading.Tasks.Task.Wait()
+   at Microsoft.AspNet.SignalR.Hosting.AspNet.HttpTaskAsyncHandler.System.Web.IHttpAsyncHandler.EndProcessRequest(IAsyncResult result)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.OnAsyncHandlerCompletion(IAsyncResult ar)
+---> (Inner Exception #0) System.AggregateException: One or more errors occurred. ---> System.AggregateException: One or more errors occurred. ---> System.InvalidOperationException: The model backing the 'UsersContext' context has changed since the database was created. Consider using Code First Migrations to update the database (http://go.microsoft.com/fwlink/?LinkId=238269).
+   at System.Data.Entity.CreateDatabaseIfNotExists`1.InitializeDatabase(TContext context)
+   at System.Data.Entity.Internal.InternalContext.<>c__DisplayClass8.<PerformDatabaseInitialization>b__6()
+   at System.Data.Entity.Internal.InternalContext.PerformInitializationAction(Action action)
+   at System.Data.Entity.Internal.InternalContext.PerformDatabaseInitialization()
+   at System.Data.Entity.Internal.LazyInternalContext.<InitializeDatabase>b__4(InternalContext c)
+   at System.Data.Entity.Internal.RetryAction`1.PerformAction(TInput input)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabaseAction(Action`1 action)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabase()
+   at System.Data.Entity.Internal.InternalContext.Initialize()
+   at System.Data.Entity.Internal.InternalContext.GetEntitySetAndBaseTypeForType(Type entityType)
+   at System.Data.Entity.Internal.Linq.InternalSet`1.Initialize()
+   at System.Data.Entity.Internal.Linq.InternalSet`1.get_InternalContext()
+   at System.Data.Entity.Infrastructure.DbQuery`1.System.Linq.IQueryable.get_Provider()
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source, Expression`1 predicate)
+   at ShareDeployed.Repositories.WebSecurityRepository.<.cctor>b__0(UsersContext db, String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 13
+   at ShareDeployed.Repositories.WebSecurityRepository.GetByName(String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 41
+   at ShareDeployed.Hubs.MessangerHub.OnConnected() in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Hubs\MessangerHub.cs:line 216
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipelineModule.<>c__DisplayClassb.<BuildConnect>b__9(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipeline.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<OnConnectedAsync>b__f(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<>c__DisplayClass23.<ExecuteHubEventAsync>b__1f(IHub instance)
+   at System.Linq.Enumerable.WhereSelectListIterator`2.MoveNext()
+   at System.Linq.Buffer`1..ctor(IEnumerable`1 source)
+   at System.Linq.Enumerable.ToArray[TSource](IEnumerable`1 source)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.ExecuteHubEventAsync(IRequest request, String connectionId, Func`2 action)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.OnConnectedAsync(IRequest request, String connectionId)
+   at Microsoft.AspNet.SignalR.PersistentConnection.<>c__DisplayClass6.<ProcessRequestAsync>b__2()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClassa.<ProcessRequestCore>b__5()
+   at Microsoft.AspNet.SignalR.TaskAsyncHelper.<>c__DisplayClass13`1.<Interleave>b__12()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClass11.<ProcessReceiveRequestWithoutTracking>b__10()
+   --- End of inner exception stack trace ---
+   --- End of inner exception stack trace ---
+---> (Inner Exception #0) System.AggregateException: One or more errors occurred. ---> System.InvalidOperationException: The model backing the 'UsersContext' context has changed since the database was created. Consider using Code First Migrations to update the database (http://go.microsoft.com/fwlink/?LinkId=238269).
+   at System.Data.Entity.CreateDatabaseIfNotExists`1.InitializeDatabase(TContext context)
+   at System.Data.Entity.Internal.InternalContext.<>c__DisplayClass8.<PerformDatabaseInitialization>b__6()
+   at System.Data.Entity.Internal.InternalContext.PerformInitializationAction(Action action)
+   at System.Data.Entity.Internal.InternalContext.PerformDatabaseInitialization()
+   at System.Data.Entity.Internal.LazyInternalContext.<InitializeDatabase>b__4(InternalContext c)
+   at System.Data.Entity.Internal.RetryAction`1.PerformAction(TInput input)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabaseAction(Action`1 action)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabase()
+   at System.Data.Entity.Internal.InternalContext.Initialize()
+   at System.Data.Entity.Internal.InternalContext.GetEntitySetAndBaseTypeForType(Type entityType)
+   at System.Data.Entity.Internal.Linq.InternalSet`1.Initialize()
+   at System.Data.Entity.Internal.Linq.InternalSet`1.get_InternalContext()
+   at System.Data.Entity.Infrastructure.DbQuery`1.System.Linq.IQueryable.get_Provider()
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source, Expression`1 predicate)
+   at ShareDeployed.Repositories.WebSecurityRepository.<.cctor>b__0(UsersContext db, String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 13
+   at ShareDeployed.Repositories.WebSecurityRepository.GetByName(String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 41
+   at ShareDeployed.Hubs.MessangerHub.OnConnected() in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Hubs\MessangerHub.cs:line 216
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipelineModule.<>c__DisplayClassb.<BuildConnect>b__9(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipeline.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<OnConnectedAsync>b__f(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<>c__DisplayClass23.<ExecuteHubEventAsync>b__1f(IHub instance)
+   at System.Linq.Enumerable.WhereSelectListIterator`2.MoveNext()
+   at System.Linq.Buffer`1..ctor(IEnumerable`1 source)
+   at System.Linq.Enumerable.ToArray[TSource](IEnumerable`1 source)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.ExecuteHubEventAsync(IRequest request, String connectionId, Func`2 action)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.OnConnectedAsync(IRequest request, String connectionId)
+   at Microsoft.AspNet.SignalR.PersistentConnection.<>c__DisplayClass6.<ProcessRequestAsync>b__2()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClassa.<ProcessRequestCore>b__5()
+   at Microsoft.AspNet.SignalR.TaskAsyncHelper.<>c__DisplayClass13`1.<Interleave>b__12()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClass11.<ProcessReceiveRequestWithoutTracking>b__10()
+   --- End of inner exception stack trace ---
+---> (Inner Exception #0) System.InvalidOperationException: The model backing the 'UsersContext' context has changed since the database was created. Consider using Code First Migrations to update the database (http://go.microsoft.com/fwlink/?LinkId=238269).
+   at System.Data.Entity.CreateDatabaseIfNotExists`1.InitializeDatabase(TContext context)
+   at System.Data.Entity.Internal.InternalContext.<>c__DisplayClass8.<PerformDatabaseInitialization>b__6()
+   at System.Data.Entity.Internal.InternalContext.PerformInitializationAction(Action action)
+   at System.Data.Entity.Internal.InternalContext.PerformDatabaseInitialization()
+   at System.Data.Entity.Internal.LazyInternalContext.<InitializeDatabase>b__4(InternalContext c)
+   at System.Data.Entity.Internal.RetryAction`1.PerformAction(TInput input)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabaseAction(Action`1 action)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabase()
+   at System.Data.Entity.Internal.InternalContext.Initialize()
+   at System.Data.Entity.Internal.InternalContext.GetEntitySetAndBaseTypeForType(Type entityType)
+   at System.Data.Entity.Internal.Linq.InternalSet`1.Initialize()
+   at System.Data.Entity.Internal.Linq.InternalSet`1.get_InternalContext()
+   at System.Data.Entity.Infrastructure.DbQuery`1.System.Linq.IQueryable.get_Provider()
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source, Expression`1 predicate)
+   at ShareDeployed.Repositories.WebSecurityRepository.<.cctor>b__0(UsersContext db, String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 13
+   at ShareDeployed.Repositories.WebSecurityRepository.GetByName(String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 41
+   at ShareDeployed.Hubs.MessangerHub.OnConnected() in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Hubs\MessangerHub.cs:line 216
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipelineModule.<>c__DisplayClassb.<BuildConnect>b__9(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipeline.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<OnConnectedAsync>b__f(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<>c__DisplayClass23.<ExecuteHubEventAsync>b__1f(IHub instance)
+   at System.Linq.Enumerable.WhereSelectListIterator`2.MoveNext()
+   at System.Linq.Buffer`1..ctor(IEnumerable`1 source)
+   at System.Linq.Enumerable.ToArray[TSource](IEnumerable`1 source)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.ExecuteHubEventAsync(IRequest request, String connectionId, Func`2 action)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.OnConnectedAsync(IRequest request, String connectionId)
+   at Microsoft.AspNet.SignalR.PersistentConnection.<>c__DisplayClass6.<ProcessRequestAsync>b__2()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClassa.<ProcessRequestCore>b__5()
+   at Microsoft.AspNet.SignalR.TaskAsyncHelper.<>c__DisplayClass13`1.<Interleave>b__12()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClass11.<ProcessReceiveRequestWithoutTracking>b__10()<---
+<---
+<---
+
+INFO  2013-01-08 14:24:38,361 40574ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 14:25:02,135   229ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 14:25:15,142 13236ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-08 14:25:44,285 42379ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 14:33:00,807   223ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 14:33:15,974 15390ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-08 14:33:41,134 40550ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 14:39:08,393 367809ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 14:39:55,806   215ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 14:40:08,411 12820ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-08 14:40:36,151 40560ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 14:42:52,938   222ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 14:43:07,972 15256ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-08 14:43:33,280 40564ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+ERROR 2013-01-08 14:44:07,562 74846ms MvcApplication         Application_Error  - Application_Error
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at ShareDeployed.MvcApplication.Session_End(Object sender, EventArgs e) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Global.asax.cs:line 115
+INFO  2013-01-08 14:47:39,528   227ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 14:47:54,211 14910ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-08 14:48:19,869 40568ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 14:49:06,626   229ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 14:49:21,927 15530ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-08 14:49:46,959 40562ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 15:04:08,234   229ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 15:04:23,336 15331ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-08 15:04:48,565 40560ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 15:09:48,555 340550ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 15:14:08,526 600521ms MvcApplication         Sweep              - Begin sweep process
+INFO  2013-01-08 15:14:48,544 640539ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 15:36:26,210   219ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 15:36:39,363 13372ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+ERROR 2013-01-08 15:36:49,934 23943ms MvcApplication         LogException       - MyCustomHandleError 
+System.Web.Mvc.HttpAntiForgeryException (0x80004005): The anti-forgery cookie token and form field token do not match.
+   at System.Web.Helpers.AntiXsrf.TokenValidator.ValidateTokens(HttpContextBase httpContext, IIdentity identity, AntiForgeryToken sessionToken, AntiForgeryToken fieldToken)
+   at System.Web.Helpers.AntiXsrf.AntiForgeryWorker.Validate(HttpContextBase httpContext)
+   at System.Web.Helpers.AntiForgery.Validate()
+   at System.Web.Mvc.ValidateAntiForgeryTokenAttribute.OnAuthorization(AuthorizationContext filterContext)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeAuthorizationFilters(ControllerContext controllerContext, IList`1 filters, ActionDescriptor actionDescriptor)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass25.<BeginInvokeAction>b__1e(AsyncCallback asyncCallback, Object asyncState)
+ERROR 2013-01-08 15:36:49,999 24008ms MvcApplication         Application_Error  - Application_Error
+System.Web.Mvc.HttpAntiForgeryException (0x80004005): The anti-forgery cookie token and form field token do not match.
+   at System.Web.Helpers.AntiXsrf.TokenValidator.ValidateTokens(HttpContextBase httpContext, IIdentity identity, AntiForgeryToken sessionToken, AntiForgeryToken fieldToken)
+   at System.Web.Helpers.AntiXsrf.AntiForgeryWorker.Validate(HttpContextBase httpContext)
+   at System.Web.Helpers.AntiForgery.Validate()
+   at System.Web.Mvc.ValidateAntiForgeryTokenAttribute.OnAuthorization(AuthorizationContext filterContext)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeAuthorizationFilters(ControllerContext controllerContext, IList`1 filters, ActionDescriptor actionDescriptor)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass25.<BeginInvokeAction>b__1e(AsyncCallback asyncCallback, Object asyncState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`1.Begin(AsyncCallback callback, Object state, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin[TResult](AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate`1 endDelegate, Object tag, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin[TResult](AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate`1 endDelegate, Object tag)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.BeginInvokeAction(ControllerContext controllerContext, String actionName, AsyncCallback callback, Object state)
+   at System.Web.Mvc.Controller.<>c__DisplayClass1d.<BeginExecuteCore>b__17(AsyncCallback asyncCallback, Object asyncState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`1.Begin(AsyncCallback callback, Object state, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin[TResult](AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate`1 endDelegate, Object tag, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin(AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate endDelegate, Object tag, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin(AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate endDelegate, Object tag)
+   at System.Web.Mvc.Controller.BeginExecuteCore(AsyncCallback callback, Object state)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`1.Begin(AsyncCallback callback, Object state, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin[TResult](AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate`1 endDelegate, Object tag, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin(AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate endDelegate, Object tag, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin(AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate endDelegate, Object tag)
+   at System.Web.Mvc.Controller.BeginExecute(RequestContext requestContext, AsyncCallback callback, Object state)
+   at System.Web.Mvc.Controller.System.Web.Mvc.Async.IAsyncController.BeginExecute(RequestContext requestContext, AsyncCallback callback, Object state)
+   at System.Web.Mvc.MvcHandler.<>c__DisplayClass8.<BeginProcessRequest>b__2(AsyncCallback asyncCallback, Object asyncState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`1.Begin(AsyncCallback callback, Object state, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin[TResult](AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate`1 endDelegate, Object tag, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin(AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate endDelegate, Object tag, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin(AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate endDelegate, Object tag)
+   at System.Web.Mvc.MvcHandler.BeginProcessRequest(HttpContextBase httpContext, AsyncCallback callback, Object state)
+   at System.Web.Mvc.MvcHandler.BeginProcessRequest(HttpContext httpContext, AsyncCallback callback, Object state)
+   at System.Web.Mvc.MvcHandler.System.Web.IHttpAsyncHandler.BeginProcessRequest(HttpContext context, AsyncCallback cb, Object extraData)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+INFO  2013-01-08 15:37:06,561 40570ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+ERROR 2013-01-08 15:37:07,137 41146ms MvcApplication         LogException       - MyCustomHandleError 
+System.Web.Mvc.HttpAntiForgeryException (0x80004005): The anti-forgery cookie token and form field token do not match.
+   at System.Web.Helpers.AntiXsrf.TokenValidator.ValidateTokens(HttpContextBase httpContext, IIdentity identity, AntiForgeryToken sessionToken, AntiForgeryToken fieldToken)
+   at System.Web.Helpers.AntiXsrf.AntiForgeryWorker.Validate(HttpContextBase httpContext)
+   at System.Web.Helpers.AntiForgery.Validate()
+   at System.Web.Mvc.ValidateAntiForgeryTokenAttribute.OnAuthorization(AuthorizationContext filterContext)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeAuthorizationFilters(ControllerContext controllerContext, IList`1 filters, ActionDescriptor actionDescriptor)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass25.<BeginInvokeAction>b__1e(AsyncCallback asyncCallback, Object asyncState)
+ERROR 2013-01-08 15:37:07,171 41180ms MvcApplication         Application_Error  - Application_Error
+System.Web.Mvc.HttpAntiForgeryException (0x80004005): The anti-forgery cookie token and form field token do not match.
+   at System.Web.Helpers.AntiXsrf.TokenValidator.ValidateTokens(HttpContextBase httpContext, IIdentity identity, AntiForgeryToken sessionToken, AntiForgeryToken fieldToken)
+   at System.Web.Helpers.AntiXsrf.AntiForgeryWorker.Validate(HttpContextBase httpContext)
+   at System.Web.Helpers.AntiForgery.Validate()
+   at System.Web.Mvc.ValidateAntiForgeryTokenAttribute.OnAuthorization(AuthorizationContext filterContext)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeAuthorizationFilters(ControllerContext controllerContext, IList`1 filters, ActionDescriptor actionDescriptor)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass25.<BeginInvokeAction>b__1e(AsyncCallback asyncCallback, Object asyncState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`1.Begin(AsyncCallback callback, Object state, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin[TResult](AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate`1 endDelegate, Object tag, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin[TResult](AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate`1 endDelegate, Object tag)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.BeginInvokeAction(ControllerContext controllerContext, String actionName, AsyncCallback callback, Object state)
+   at System.Web.Mvc.Controller.<>c__DisplayClass1d.<BeginExecuteCore>b__17(AsyncCallback asyncCallback, Object asyncState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`1.Begin(AsyncCallback callback, Object state, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin[TResult](AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate`1 endDelegate, Object tag, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin(AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate endDelegate, Object tag, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin(AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate endDelegate, Object tag)
+   at System.Web.Mvc.Controller.BeginExecuteCore(AsyncCallback callback, Object state)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`1.Begin(AsyncCallback callback, Object state, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin[TResult](AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate`1 endDelegate, Object tag, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin(AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate endDelegate, Object tag, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin(AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate endDelegate, Object tag)
+   at System.Web.Mvc.Controller.BeginExecute(RequestContext requestContext, AsyncCallback callback, Object state)
+   at System.Web.Mvc.Controller.System.Web.Mvc.Async.IAsyncController.BeginExecute(RequestContext requestContext, AsyncCallback callback, Object state)
+   at System.Web.Mvc.MvcHandler.<>c__DisplayClass8.<BeginProcessRequest>b__2(AsyncCallback asyncCallback, Object asyncState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`1.Begin(AsyncCallback callback, Object state, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin[TResult](AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate`1 endDelegate, Object tag, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin(AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate endDelegate, Object tag, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin(AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate endDelegate, Object tag)
+   at System.Web.Mvc.MvcHandler.BeginProcessRequest(HttpContextBase httpContext, AsyncCallback callback, Object state)
+   at System.Web.Mvc.MvcHandler.BeginProcessRequest(HttpContext httpContext, AsyncCallback callback, Object state)
+   at System.Web.Mvc.MvcHandler.System.Web.IHttpAsyncHandler.BeginProcessRequest(HttpContext context, AsyncCallback cb, Object extraData)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+ERROR 2013-01-08 15:37:28,277 62286ms MvcApplication         LogException       - MyCustomHandleError 
+System.Web.Mvc.HttpAntiForgeryException (0x80004005): The anti-forgery cookie token and form field token do not match.
+   at System.Web.Helpers.AntiXsrf.TokenValidator.ValidateTokens(HttpContextBase httpContext, IIdentity identity, AntiForgeryToken sessionToken, AntiForgeryToken fieldToken)
+   at System.Web.Helpers.AntiXsrf.AntiForgeryWorker.Validate(HttpContextBase httpContext)
+   at System.Web.Helpers.AntiForgery.Validate()
+   at System.Web.Mvc.ValidateAntiForgeryTokenAttribute.OnAuthorization(AuthorizationContext filterContext)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeAuthorizationFilters(ControllerContext controllerContext, IList`1 filters, ActionDescriptor actionDescriptor)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass25.<BeginInvokeAction>b__1e(AsyncCallback asyncCallback, Object asyncState)
+ERROR 2013-01-08 15:37:28,311 62320ms MvcApplication         Application_Error  - Application_Error
+System.Web.Mvc.HttpAntiForgeryException (0x80004005): The anti-forgery cookie token and form field token do not match.
+   at System.Web.Helpers.AntiXsrf.TokenValidator.ValidateTokens(HttpContextBase httpContext, IIdentity identity, AntiForgeryToken sessionToken, AntiForgeryToken fieldToken)
+   at System.Web.Helpers.AntiXsrf.AntiForgeryWorker.Validate(HttpContextBase httpContext)
+   at System.Web.Helpers.AntiForgery.Validate()
+   at System.Web.Mvc.ValidateAntiForgeryTokenAttribute.OnAuthorization(AuthorizationContext filterContext)
+   at System.Web.Mvc.ControllerActionInvoker.InvokeAuthorizationFilters(ControllerContext controllerContext, IList`1 filters, ActionDescriptor actionDescriptor)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass25.<BeginInvokeAction>b__1e(AsyncCallback asyncCallback, Object asyncState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`1.Begin(AsyncCallback callback, Object state, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin[TResult](AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate`1 endDelegate, Object tag, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin[TResult](AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate`1 endDelegate, Object tag)
+   at System.Web.Mvc.Async.AsyncControllerActionInvoker.BeginInvokeAction(ControllerContext controllerContext, String actionName, AsyncCallback callback, Object state)
+   at System.Web.Mvc.Controller.<>c__DisplayClass1d.<BeginExecuteCore>b__17(AsyncCallback asyncCallback, Object asyncState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`1.Begin(AsyncCallback callback, Object state, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin[TResult](AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate`1 endDelegate, Object tag, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin(AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate endDelegate, Object tag, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin(AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate endDelegate, Object tag)
+   at System.Web.Mvc.Controller.BeginExecuteCore(AsyncCallback callback, Object state)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`1.Begin(AsyncCallback callback, Object state, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin[TResult](AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate`1 endDelegate, Object tag, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin(AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate endDelegate, Object tag, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin(AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate endDelegate, Object tag)
+   at System.Web.Mvc.Controller.BeginExecute(RequestContext requestContext, AsyncCallback callback, Object state)
+   at System.Web.Mvc.Controller.System.Web.Mvc.Async.IAsyncController.BeginExecute(RequestContext requestContext, AsyncCallback callback, Object state)
+   at System.Web.Mvc.MvcHandler.<>c__DisplayClass8.<BeginProcessRequest>b__2(AsyncCallback asyncCallback, Object asyncState)
+   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`1.Begin(AsyncCallback callback, Object state, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin[TResult](AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate`1 endDelegate, Object tag, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin(AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate endDelegate, Object tag, Int32 timeout)
+   at System.Web.Mvc.Async.AsyncResultWrapper.Begin(AsyncCallback callback, Object state, BeginInvokeDelegate beginDelegate, EndInvokeDelegate endDelegate, Object tag)
+   at System.Web.Mvc.MvcHandler.BeginProcessRequest(HttpContextBase httpContext, AsyncCallback callback, Object state)
+   at System.Web.Mvc.MvcHandler.BeginProcessRequest(HttpContext httpContext, AsyncCallback callback, Object state)
+   at System.Web.Mvc.MvcHandler.System.Web.IHttpAsyncHandler.BeginProcessRequest(HttpContext context, AsyncCallback cb, Object extraData)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+INFO  2013-01-08 15:38:37,459 131468ms MvcApplication         Application_End    - Application_End()
+INFO  2013-01-08 16:12:50,168   225ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 16:13:08,872 18929ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+ERROR 2013-01-08 16:13:26,065 36122ms MvcApplication         Application_Error  - Application_Error
+System.Web.HttpException (0x80004005): External component has thrown an exception.
+   at System.Web.Handlers.TraceHandler.System.Web.IHttpHandler.ProcessRequest(HttpContext context)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+INFO  2013-01-08 16:13:30,559 40616ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 16:18:30,550 340607ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 16:22:50,527 600584ms MvcApplication         Sweep              - Begin sweep process
+INFO  2013-01-08 16:23:30,539 640596ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 16:28:30,527 940584ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 16:32:18,638   210ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 16:32:30,935 12507ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-08 16:32:58,956 40528ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 16:34:17,732   217ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 16:34:30,491 12976ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+ERROR 2013-01-08 16:34:46,322 28807ms MvcApplication         Application_Error  - Application_Error
+System.AggregateException: One or more errors occurred. ---> System.AggregateException: One or more errors occurred. ---> System.AggregateException: One or more errors occurred. ---> System.InvalidOperationException: The model backing the 'UsersContext' context has changed since the database was created. Consider using Code First Migrations to update the database (http://go.microsoft.com/fwlink/?LinkId=238269).
+   at System.Data.Entity.CreateDatabaseIfNotExists`1.InitializeDatabase(TContext context)
+   at System.Data.Entity.Internal.InternalContext.<>c__DisplayClass8.<PerformDatabaseInitialization>b__6()
+   at System.Data.Entity.Internal.InternalContext.PerformInitializationAction(Action action)
+   at System.Data.Entity.Internal.InternalContext.PerformDatabaseInitialization()
+   at System.Data.Entity.Internal.LazyInternalContext.<InitializeDatabase>b__4(InternalContext c)
+   at System.Data.Entity.Internal.RetryAction`1.PerformAction(TInput input)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabaseAction(Action`1 action)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabase()
+   at System.Data.Entity.Internal.InternalContext.Initialize()
+   at System.Data.Entity.Internal.InternalContext.GetEntitySetAndBaseTypeForType(Type entityType)
+   at System.Data.Entity.Internal.Linq.InternalSet`1.Initialize()
+   at System.Data.Entity.Internal.Linq.InternalSet`1.get_InternalContext()
+   at System.Data.Entity.Infrastructure.DbQuery`1.System.Linq.IQueryable.get_Provider()
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source, Expression`1 predicate)
+   at ShareDeployed.Repositories.WebSecurityRepository.<.cctor>b__0(UsersContext db, String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 13
+   at ShareDeployed.Repositories.WebSecurityRepository.GetByName(String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 41
+   at ShareDeployed.Hubs.MessangerHub.OnConnected() in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Hubs\MessangerHub.cs:line 216
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipelineModule.<>c__DisplayClassb.<BuildConnect>b__9(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipeline.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<OnConnectedAsync>b__f(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<>c__DisplayClass23.<ExecuteHubEventAsync>b__1f(IHub instance)
+   at System.Linq.Enumerable.WhereSelectListIterator`2.MoveNext()
+   at System.Linq.Buffer`1..ctor(IEnumerable`1 source)
+   at System.Linq.Enumerable.ToArray[TSource](IEnumerable`1 source)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.ExecuteHubEventAsync(IRequest request, String connectionId, Func`2 action)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.OnConnectedAsync(IRequest request, String connectionId)
+   at Microsoft.AspNet.SignalR.PersistentConnection.<>c__DisplayClass6.<ProcessRequestAsync>b__2()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClassa.<ProcessRequestCore>b__5()
+   at Microsoft.AspNet.SignalR.TaskAsyncHelper.<>c__DisplayClass13`1.<Interleave>b__12()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClass11.<ProcessReceiveRequestWithoutTracking>b__10()
+   --- End of inner exception stack trace ---
+   --- End of inner exception stack trace ---
+   --- End of inner exception stack trace ---
+   at System.Threading.Tasks.Task.ThrowIfExceptional(Boolean includeTaskCanceledExceptions)
+   at System.Threading.Tasks.Task.Wait(Int32 millisecondsTimeout, CancellationToken cancellationToken)
+   at System.Threading.Tasks.Task.Wait()
+   at Microsoft.AspNet.SignalR.Hosting.AspNet.HttpTaskAsyncHandler.System.Web.IHttpAsyncHandler.EndProcessRequest(IAsyncResult result)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.OnAsyncHandlerCompletion(IAsyncResult ar)
+---> (Inner Exception #0) System.AggregateException: One or more errors occurred. ---> System.AggregateException: One or more errors occurred. ---> System.InvalidOperationException: The model backing the 'UsersContext' context has changed since the database was created. Consider using Code First Migrations to update the database (http://go.microsoft.com/fwlink/?LinkId=238269).
+   at System.Data.Entity.CreateDatabaseIfNotExists`1.InitializeDatabase(TContext context)
+   at System.Data.Entity.Internal.InternalContext.<>c__DisplayClass8.<PerformDatabaseInitialization>b__6()
+   at System.Data.Entity.Internal.InternalContext.PerformInitializationAction(Action action)
+   at System.Data.Entity.Internal.InternalContext.PerformDatabaseInitialization()
+   at System.Data.Entity.Internal.LazyInternalContext.<InitializeDatabase>b__4(InternalContext c)
+   at System.Data.Entity.Internal.RetryAction`1.PerformAction(TInput input)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabaseAction(Action`1 action)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabase()
+   at System.Data.Entity.Internal.InternalContext.Initialize()
+   at System.Data.Entity.Internal.InternalContext.GetEntitySetAndBaseTypeForType(Type entityType)
+   at System.Data.Entity.Internal.Linq.InternalSet`1.Initialize()
+   at System.Data.Entity.Internal.Linq.InternalSet`1.get_InternalContext()
+   at System.Data.Entity.Infrastructure.DbQuery`1.System.Linq.IQueryable.get_Provider()
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source, Expression`1 predicate)
+   at ShareDeployed.Repositories.WebSecurityRepository.<.cctor>b__0(UsersContext db, String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 13
+   at ShareDeployed.Repositories.WebSecurityRepository.GetByName(String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 41
+   at ShareDeployed.Hubs.MessangerHub.OnConnected() in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Hubs\MessangerHub.cs:line 216
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipelineModule.<>c__DisplayClassb.<BuildConnect>b__9(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipeline.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<OnConnectedAsync>b__f(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<>c__DisplayClass23.<ExecuteHubEventAsync>b__1f(IHub instance)
+   at System.Linq.Enumerable.WhereSelectListIterator`2.MoveNext()
+   at System.Linq.Buffer`1..ctor(IEnumerable`1 source)
+   at System.Linq.Enumerable.ToArray[TSource](IEnumerable`1 source)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.ExecuteHubEventAsync(IRequest request, String connectionId, Func`2 action)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.OnConnectedAsync(IRequest request, String connectionId)
+   at Microsoft.AspNet.SignalR.PersistentConnection.<>c__DisplayClass6.<ProcessRequestAsync>b__2()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClassa.<ProcessRequestCore>b__5()
+   at Microsoft.AspNet.SignalR.TaskAsyncHelper.<>c__DisplayClass13`1.<Interleave>b__12()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClass11.<ProcessReceiveRequestWithoutTracking>b__10()
+   --- End of inner exception stack trace ---
+   --- End of inner exception stack trace ---
+---> (Inner Exception #0) System.AggregateException: One or more errors occurred. ---> System.InvalidOperationException: The model backing the 'UsersContext' context has changed since the database was created. Consider using Code First Migrations to update the database (http://go.microsoft.com/fwlink/?LinkId=238269).
+   at System.Data.Entity.CreateDatabaseIfNotExists`1.InitializeDatabase(TContext context)
+   at System.Data.Entity.Internal.InternalContext.<>c__DisplayClass8.<PerformDatabaseInitialization>b__6()
+   at System.Data.Entity.Internal.InternalContext.PerformInitializationAction(Action action)
+   at System.Data.Entity.Internal.InternalContext.PerformDatabaseInitialization()
+   at System.Data.Entity.Internal.LazyInternalContext.<InitializeDatabase>b__4(InternalContext c)
+   at System.Data.Entity.Internal.RetryAction`1.PerformAction(TInput input)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabaseAction(Action`1 action)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabase()
+   at System.Data.Entity.Internal.InternalContext.Initialize()
+   at System.Data.Entity.Internal.InternalContext.GetEntitySetAndBaseTypeForType(Type entityType)
+   at System.Data.Entity.Internal.Linq.InternalSet`1.Initialize()
+   at System.Data.Entity.Internal.Linq.InternalSet`1.get_InternalContext()
+   at System.Data.Entity.Infrastructure.DbQuery`1.System.Linq.IQueryable.get_Provider()
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source, Expression`1 predicate)
+   at ShareDeployed.Repositories.WebSecurityRepository.<.cctor>b__0(UsersContext db, String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 13
+   at ShareDeployed.Repositories.WebSecurityRepository.GetByName(String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 41
+   at ShareDeployed.Hubs.MessangerHub.OnConnected() in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Hubs\MessangerHub.cs:line 216
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipelineModule.<>c__DisplayClassb.<BuildConnect>b__9(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipeline.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<OnConnectedAsync>b__f(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<>c__DisplayClass23.<ExecuteHubEventAsync>b__1f(IHub instance)
+   at System.Linq.Enumerable.WhereSelectListIterator`2.MoveNext()
+   at System.Linq.Buffer`1..ctor(IEnumerable`1 source)
+   at System.Linq.Enumerable.ToArray[TSource](IEnumerable`1 source)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.ExecuteHubEventAsync(IRequest request, String connectionId, Func`2 action)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.OnConnectedAsync(IRequest request, String connectionId)
+   at Microsoft.AspNet.SignalR.PersistentConnection.<>c__DisplayClass6.<ProcessRequestAsync>b__2()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClassa.<ProcessRequestCore>b__5()
+   at Microsoft.AspNet.SignalR.TaskAsyncHelper.<>c__DisplayClass13`1.<Interleave>b__12()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClass11.<ProcessReceiveRequestWithoutTracking>b__10()
+   --- End of inner exception stack trace ---
+---> (Inner Exception #0) System.InvalidOperationException: The model backing the 'UsersContext' context has changed since the database was created. Consider using Code First Migrations to update the database (http://go.microsoft.com/fwlink/?LinkId=238269).
+   at System.Data.Entity.CreateDatabaseIfNotExists`1.InitializeDatabase(TContext context)
+   at System.Data.Entity.Internal.InternalContext.<>c__DisplayClass8.<PerformDatabaseInitialization>b__6()
+   at System.Data.Entity.Internal.InternalContext.PerformInitializationAction(Action action)
+   at System.Data.Entity.Internal.InternalContext.PerformDatabaseInitialization()
+   at System.Data.Entity.Internal.LazyInternalContext.<InitializeDatabase>b__4(InternalContext c)
+   at System.Data.Entity.Internal.RetryAction`1.PerformAction(TInput input)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabaseAction(Action`1 action)
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeDatabase()
+   at System.Data.Entity.Internal.InternalContext.Initialize()
+   at System.Data.Entity.Internal.InternalContext.GetEntitySetAndBaseTypeForType(Type entityType)
+   at System.Data.Entity.Internal.Linq.InternalSet`1.Initialize()
+   at System.Data.Entity.Internal.Linq.InternalSet`1.get_InternalContext()
+   at System.Data.Entity.Infrastructure.DbQuery`1.System.Linq.IQueryable.get_Provider()
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source, Expression`1 predicate)
+   at ShareDeployed.Repositories.WebSecurityRepository.<.cctor>b__0(UsersContext db, String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 13
+   at ShareDeployed.Repositories.WebSecurityRepository.GetByName(String name) in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Repositories\WebSecurityRepository.cs:line 41
+   at ShareDeployed.Hubs.MessangerHub.OnConnected() in d:\Projects\My\SharedDeploy\ShareDeployed\ShareDeployed\Hubs\MessangerHub.cs:line 216
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipelineModule.<>c__DisplayClassb.<BuildConnect>b__9(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipeline.Connect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<OnConnectedAsync>b__f(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<>c__DisplayClass23.<ExecuteHubEventAsync>b__1f(IHub instance)
+   at System.Linq.Enumerable.WhereSelectListIterator`2.MoveNext()
+   at System.Linq.Buffer`1..ctor(IEnumerable`1 source)
+   at System.Linq.Enumerable.ToArray[TSource](IEnumerable`1 source)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.ExecuteHubEventAsync(IRequest request, String connectionId, Func`2 action)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.OnConnectedAsync(IRequest request, String connectionId)
+   at Microsoft.AspNet.SignalR.PersistentConnection.<>c__DisplayClass6.<ProcessRequestAsync>b__2()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClassa.<ProcessRequestCore>b__5()
+   at Microsoft.AspNet.SignalR.TaskAsyncHelper.<>c__DisplayClass13`1.<Interleave>b__12()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClass11.<ProcessReceiveRequestWithoutTracking>b__10()<---
+<---
+<---
+
+INFO  2013-01-08 16:39:31,358   223ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 16:39:46,208 15073ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-08 16:40:11,693 40558ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow

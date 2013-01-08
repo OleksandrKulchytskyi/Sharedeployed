@@ -9,7 +9,6 @@ namespace ShareDeployed.Authorization
 {
 	public sealed class AuthTokenManagerEx : IDisposable
 	{
-
 		bool _disposed = false;
 		private static readonly object _locker = null;
 		private static readonly AuthTokenManagerEx _instance = null;

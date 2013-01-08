@@ -34,6 +34,5 @@ namespace ShareDeployed.Mailgrabber.Helpers
 		{
 			DoEvents(DispatcherPriority.Background);
 		}
-
 	}
 }

@@ -13,7 +13,7 @@ namespace ShareDeployed.Common.Extensions
 			var ctors = typeof(T).GetConstructors(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
 
 			if (!Array.Exists(ctors, (ci) => ci.GetParameters().Length == 0))
-				throw new InvalidOperationException("Non-public ctor() note found.");
+				throw new InvalidOperationException("Non-public ctor() was not found.");
 
 			var ctor = Array.Find(ctors, (ci) => ci.GetParameters().Length == 0);
 

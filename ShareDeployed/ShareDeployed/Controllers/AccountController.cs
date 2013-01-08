@@ -38,20 +38,19 @@ namespace ShareDeployed.Controllers
 		[ValidateAntiForgeryToken]
 		public ActionResult Login(LoginModel model, string returnUrl)
 		{
-			if (ModelState.IsValid && 
+			if (ModelState.IsValid &&
 				WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
 			{
 				FormsAuthentication.SetAuthCookie(model.UserName, model.RememberMe);
-				
-				if(Request.Cookies["ASP.NET_SessionId"]!=null)
+
+				if (Request.Cookies["ASP.NET_SessionId"] != null)
 				{
 					var cookie = Request.Cookies["ASP.NET_SessionId"];
-					if(Session.SessionID!= cookie.Value)
+					if (Session.SessionID != cookie.Value)
 					{
-						
 					}
 				}
-				
+
 				var authClient = WebHelper.GetClientIndetification();
 
 				int userId = -1;
@@ -157,10 +156,19 @@ namespace ShareDeployed.Controllers
 					userId = (int)Session["UserId"];
 				Authorization.AuthTokenManagerEx.Instance.RemoveClientInfo(new ClientInfo() { UserName = userName, Id = userId });
 			}
-			WebSecurity.Logout();
-			
-			Session.Abandon();
+
+			if (Request.Cookies["ASP.NET_SessionId"] != null)
+				Response.Cookies["ASP.NET_SessionId"].Expires = DateTime.Now.AddYears(-30);
+
+			if (Request.Cookies["messanger.state"] != null)
+				Response.Cookies.Remove("messanger.state");
+
 			Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", ""));
+			Response.Cookies.Remove(".ASPXAUTH");
+			Response.Cookies.Clear();
+			
+			WebSecurity.Logout();
+			Session.Abandon();
 
 			return RedirectToAction("Index", "Home");
 		}

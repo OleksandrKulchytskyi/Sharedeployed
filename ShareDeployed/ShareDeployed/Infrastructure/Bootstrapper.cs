@@ -223,10 +223,17 @@ namespace ShareDeployed.Infrastructure
 									 Users = g.Select(t => new UserViewModel(t.User))
 								 };
 
-				foreach (var roomGroup in roomGroups)
+				var parallelOpt = new System.Threading.Tasks.ParallelOptions() { MaxDegreeOfParallelism = Environment.ProcessorCount };
+				var result = System.Threading.Tasks.Parallel.ForEach(roomGroups, parallelOpt, roomGroup =>
 				{
-					hubContext.Clients.Group(roomGroup.Group.Name).markInactive(roomGroup.Users).Wait();
-				}
+					if (hubContext != null)
+						hubContext.Clients.Group(roomGroup.Group.Name).markInactive(roomGroup.Users).Wait();
+				});
+
+				//foreach (var roomGroup in roomGroups)
+				//{
+				//	hubContext.Clients.Group(roomGroup.Group.Name).markInactive(roomGroup.Users).Wait();
+				//}
 			}
 		}
 
@@ -278,14 +285,23 @@ namespace ShareDeployed.Infrastructure
 			if (allGrpMsgs == null)
 				return;
 
-			for (int i = 0; i < allGrpMsgs.Count; i++)
-			{
-				var groupMessages = allGrpMsgs[i];
+			var parallelOpt = new System.Threading.Tasks.ParallelOptions() { MaxDegreeOfParallelism = Environment.ProcessorCount };
+			var result = System.Threading.Tasks.Parallel.ForEach(allGrpMsgs, parallelOpt, grpMsgs =>
+				{
+					if (hubContext != null && grpMsgs.Group != null)
+						hubContext.Clients.Group(grpMsgs.Group.Name).
+						broadcastMessages(grpMsgs.Group.Name, grpMsgs.Messages).Wait();
+				});
 
-				if (hubContext != null && groupMessages.Group != null)
-					hubContext.Clients.Group(groupMessages.Group.Name).
-					broadcastMessages(groupMessages.Group.Name, groupMessages.Messages).Wait();
-			}
+			//old school sending workflow
+			//for (int i = 0; i < allGrpMsgs.Count; i++)
+			//{
+			//	var groupMessages = allGrpMsgs[i];
+
+			//	if (hubContext != null && groupMessages.Group != null)
+			//		hubContext.Clients.Group(groupMessages.Group.Name).
+			//		broadcastMessages(groupMessages.Group.Name, groupMessages.Messages).Wait();
+			//}
 		}
 	}
 }

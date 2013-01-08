@@ -13,7 +13,6 @@ namespace ShareDeployed.App_Start
 	{
 		public static void Register(IDependencyResolver resolver)
 		{
-
 			var host = new Host(resolver);
 			host.Configuration.KeepAlive = TimeSpan.FromSeconds(30);
 			// Make connections wait 50s maximum for any response. After

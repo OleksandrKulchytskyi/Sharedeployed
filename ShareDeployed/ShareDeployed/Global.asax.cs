@@ -60,7 +60,7 @@ namespace ShareDeployed
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
 			//This line has been added to support specific ASP.MVC 4 mobile
 			BundleMobileConfig.RegisterBundles(BundleTable.Bundles);
-			
+
 			//Setup MVC services
 			ControllerBuilder.Current.SetControllerFactory(typeof(ControllerFactory.DefaultMVCFactory));
 			System.Web.Mvc.DependencyResolver.SetResolver(new DependencyResolvers.MvcDependencyResolver(Infrastructure.Bootstrapper.Kernel));
@@ -87,7 +87,7 @@ namespace ShareDeployed
 			{
 				Logger.Error("Error has been occurred in Database.Setinitializer section", ex);
 			}
-			
+
 			if (!Database.Exists("Somee"))
 				Logger.Error("Databse is not exist");
 
@@ -112,10 +112,16 @@ namespace ShareDeployed
 
 		void Session_End(object sender, EventArgs e)
 		{
+			if (HttpContext.Current != null && HttpContext.Current.Request.Cookies.Count > 0)
+				HttpContext.Current.Response.Cookies.Clear();
+
+
 			if (HttpContext.Current != null && HttpContext.Current.Session != null
 				&& HttpContext.Current.Session["_MyAppSession"] != null)
 			{
+#if DEBUG
 				System.Diagnostics.Debug.WriteLine("Removed " + HttpContext.Current.Session["_MyAppSession"] as string);
+#endif
 				//AuthTokenManager.Instance.RemoveToken(HttpContext.Current.Session["_MyAppSession"] as string);
 				HttpContext.Current.Session.Remove("_MyAppSession");
 			}

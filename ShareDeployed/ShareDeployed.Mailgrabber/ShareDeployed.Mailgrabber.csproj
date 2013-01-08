@@ -107,6 +107,7 @@
     <Compile Include="Behaviour\PassworBoxBehavior.cs" />
     <Compile Include="Converters\BoolToVisibility.cs" />
     <Compile Include="Helpers\ApplicationHelper.cs" />
+    <Compile Include="Helpers\ConverterMarkupExtension.cs" />
     <Compile Include="Helpers\HttpClientHelper.cs" />
     <Compile Include="Helpers\WeakEventHandlerAdvanced.cs" />
     <Compile Include="Helpers\WeakEventHelper.cs" />
