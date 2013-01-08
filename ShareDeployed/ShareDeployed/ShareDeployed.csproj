@@ -211,6 +211,7 @@
     <Compile Include="DependencyResolvers\NInjectWebApiDepResolver.cs" />
     <Compile Include="Filters\CheckModelForNullAttribute.cs" />
     <Compile Include="Filters\DisableLazyloadingFilter.cs" />
+    <Compile Include="Filters\DropPreviousSessionFilter.cs" />
     <Compile Include="Filters\ValidateModelStateAttribute.cs" />
     <Compile Include="Handlers\LoginHandler.ashx.cs">
       <DependentUpon>LoginHandler.ashx</DependentUpon>

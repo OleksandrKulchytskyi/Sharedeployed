@@ -785,3 +785,6 @@ System.AggregateException: One or more errors occurred. ---> System.AggregateExc
 INFO  2013-01-08 16:39:31,358   223ms MvcApplication         Application_Start  - Application_Start()
 INFO  2013-01-08 16:39:46,208 15073ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
 INFO  2013-01-08 16:40:11,693 40558ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-08 17:22:10,653   222ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-08 17:22:25,492 15061ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-08 17:22:50,993 40562ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow

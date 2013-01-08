@@ -26,6 +26,7 @@ namespace ShareDeployed.Controllers
 		// GET: /Account/Login
 		//[HandleError(ExceptionType = typeof(System.Data.DataException), View = "Shared/Error")]
 		[AllowAnonymous]
+		[DropPreviousSessionFilter]
 		public ActionResult Login(string returnUrl)
 		{
 			ViewBag.ReturnUrl = returnUrl;
