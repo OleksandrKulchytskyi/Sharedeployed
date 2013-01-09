@@ -383,7 +383,12 @@ namespace ShareDeployed.Controllers.Api
 		[NonAction]
 		private void InitializeUserId()
 		{
-			if (Request != null && Request.Headers.Contains("UserId"))
+			if (Request.Headers.GetCookie("messanger.state") != null)
+			{
+				var state = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(Request.Headers.GetCookie("messanger.state"));
+				_userId = state.aspUserId;
+			}
+			else if (Request != null && Request.Headers.Contains("UserId"))
 			{
 				if (!Int32.TryParse(Request.Headers.GetValues("UserId").FirstOrDefault(), out _userId))
 					MvcApplication.Logger.WarnFormat("Fail to parse userId string. UserId contains in header: {0} , value: {1}",

@@ -126,11 +126,11 @@ namespace ShareDeployed.Authorization
 
 			var now = DateTime.UtcNow;
 
-			// TimeStamp should not be in 5 minutes behind
-			if (timestamp < now.AddMinutes(-5))
+			// TimeStamp should not be in 3 minutes behind
+			if (timestamp < now.AddMinutes(-3))
 				return false;
 
-			if (timestamp > now.AddMinutes(5))
+			if (timestamp > now.AddMinutes(3))
 				return false;
 
 			return true;

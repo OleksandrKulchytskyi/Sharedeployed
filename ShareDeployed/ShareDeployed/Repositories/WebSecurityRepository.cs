@@ -8,6 +8,21 @@ namespace ShareDeployed.Repositories
 {
 	public class WebSecurityRepository : IAspUserRepository
 	{
+		//smal trick to workaround exception
+		//(when user closed tab in browser without performing logout operation, on next web navigation exception will be thrown)
+		static WebSecurityRepository()
+		{
+			System.Data.Entity.Database.SetInitializer<UsersContext>(null);
+			try
+			{
+				using (var context = new UsersContext())
+				{
+				}
+				WebMatrix.WebData.WebSecurity.InitializeDatabaseConnection("Somee", "UserProfile", "UserId", "UserName", autoCreateTables: true);
+			}
+			catch { }
+		}
+
 		bool _disposed = false;
 		private readonly UsersContext _db;
 		private static readonly Func<UsersContext, string, UserProfile> getUserByName = (db, name) => db.UserProfiles.FirstOrDefault(u => u.UserName == name);

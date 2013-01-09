@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ShareDeployed.Common.Helper;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace ShareDeployed.Test
 {
@@ -10,9 +13,9 @@ namespace ShareDeployed.Test
 		[TestMethod]
 		public void TestMethod1()
 		{
-			using(DataAccess.MessangerContext context=new DataAccess.MessangerContext())
+			using (DataAccess.MessangerContext context = new DataAccess.MessangerContext())
 			{
-				var data=context.Application.FirstOrDefault(x => x.AppId.Equals("398338ad-aec9-4707-a713-6b446da0c015", StringComparison.OrdinalIgnoreCase));
+				var data = context.Application.FirstOrDefault(x => x.AppId.Equals("398338ad-aec9-4707-a713-6b446da0c015", StringComparison.OrdinalIgnoreCase));
 				if (data != null &&
 					data.SentMessages.ToList().Count > 0)
 				{
@@ -20,8 +23,52 @@ namespace ShareDeployed.Test
 				}
 				else
 					Assert.Fail();
-					
+
 			}
+		}
+
+		[TestMethod]
+		public void TimeStampTest()
+		{
+			var data = DateTime.UtcNow.ToUnixTimestamp();
+			if (data == 0)
+				Assert.Fail();
+
+			var data2 = DateTime.UtcNow.ToString("u");
+			if (string.IsNullOrEmpty(data2))
+				Assert.Fail();
+		}
+
+		[TestMethod]
+		public void HmacEncryptTest()
+		{
+			var hash = ComputeHash("LohrhqqoDy6PhLrHAXi7dUVACyJZilQtlDzNbLqzXlw=", "hello");
+			Assert.IsNotNull(hash);
+
+			try
+			{
+				var salt = Common.Crypt.PassCrypt.GenerateSalt();
+
+				var pass = Common.Crypt.PassCrypt.HashPassword("helloworld", salt);
+
+				bool same = Common.Crypt.PassCrypt.CheckPassword("helloworld", pass);
+				Assert.IsTrue(same);
+			}
+			catch (Exception ex) { if (ex is AssertFailedException) throw; }
+		}
+
+		private static string ComputeHash(string hashedPassword, string message)
+		{
+			var key = Encoding.UTF8.GetBytes(hashedPassword.ToUpper());
+			string hashString;
+
+			using (var hmac = new HMACSHA256(key))
+			{
+				var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(message));
+				hashString = Convert.ToBase64String(hash);
+			}
+
+			return hashString;
 		}
 	}
 }

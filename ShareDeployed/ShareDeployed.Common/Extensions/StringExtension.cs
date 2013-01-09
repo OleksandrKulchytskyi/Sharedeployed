@@ -18,7 +18,7 @@ namespace ShareDeployed.Common.Extensions
 			string result = string.Empty;
 			using (MD5 md5 = MD5.Create())
 			{
-				result = String.Join("", md5.ComputeHash(Encoding.Default.GetBytes(value))
+				result = string.Join("", md5.ComputeHash(Encoding.Default.GetBytes(value))
 							 .Select(b => b.ToString("x2")));
 			}
 			return result;
@@ -31,7 +31,7 @@ namespace ShareDeployed.Common.Extensions
 			string result = string.Empty;
 			using (SHA256 sha256 = SHA256.Create())
 			{
-				result = String.Join("", sha256.ComputeHash(Encoding.Default.GetBytes(value))
+				result = string.Join("", sha256.ComputeHash(Encoding.Default.GetBytes(value))
 							 .Select(b => b.ToString("x2")));
 			}
 			return result;

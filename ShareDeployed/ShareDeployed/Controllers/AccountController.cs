@@ -79,9 +79,7 @@ namespace ShareDeployed.Controllers
 						{
 							//get user email from asp db login 
 							if (aspRepo != null)
-							{
 								email = aspRepo.GetByName(model.UserName).Email;
-							}
 						}
 						mesUser = new MessangerUser()
 						{
@@ -129,13 +127,12 @@ namespace ShareDeployed.Controllers
 							cookie.Expires = DateTime.Now.AddDays(30);
 						else
 							cookie.Expires = DateTime.Now.AddHours(1);
+
 						HttpContext.Response.Cookies.Add(cookie);
 					}
 				}//end of using mesRepo
-
 				return RedirectToLocal(returnUrl);
 			}
-
 			// If we got this far, something failed, redisplay form
 			ModelState.AddModelError("", "The user name or password provided is incorrect.");
 			return View(model);
@@ -167,7 +164,7 @@ namespace ShareDeployed.Controllers
 			Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", ""));
 			Response.Cookies.Remove(".ASPXAUTH");
 			Response.Cookies.Clear();
-			
+
 			WebSecurity.Logout();
 			Session.Abandon();
 
@@ -326,7 +323,7 @@ namespace ShareDeployed.Controllers
 				message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
 				: message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
 				: message == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
-				: "";
+				: string.Empty;
 			ViewBag.HasLocalPassword = OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(User.Identity.Name));
 			ViewBag.ReturnUrl = Url.Action("Manage");
 			return View();
@@ -462,9 +459,7 @@ namespace ShareDeployed.Controllers
 						return RedirectToLocal(returnUrl);
 					}
 					else
-					{
 						ModelState.AddModelError("UserName", "User name already exists. Please enter a different user name.");
-					}
 				}
 			}
 

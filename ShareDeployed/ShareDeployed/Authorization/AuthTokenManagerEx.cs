@@ -173,8 +173,12 @@ namespace ShareDeployed.Authorization
 
 				lock (_locker)
 				{
-					foreach (AuthClientData key in _container.Keys)
+					var option = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount, CancellationToken = _cts.Token };
+					Parallel.ForEach(_container.Keys, option, (key, state) =>
 					{
+						if (option.CancellationToken.IsCancellationRequested)
+							state.Break();
+
 						if (_container[key].ExpireOn < DateTime.Now)
 						{
 							AuthTokenValueEx value;
@@ -184,10 +188,7 @@ namespace ShareDeployed.Authorization
 								RemoveClientInfo(cInfo);
 							}
 						}
-
-						if (_cts == null || _cts.IsCancellationRequested)
-							break;
-					}
+					});
 				}
 			}
 		}

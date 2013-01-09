@@ -64,7 +64,8 @@ namespace ShareDeployed.Authorization
 				return false;
 			}
 
-			if (!HttpContext.Current.Request.Headers.AllKeys.Contains("Authorization")) return false;
+			if (!HttpContext.Current.Request.Headers.AllKeys.Contains("Authorization"))
+				return false;
 
 			string authHeader = HttpContext.Current.Request.Headers["Authorization"];
 
@@ -83,7 +84,8 @@ namespace ShareDeployed.Authorization
 			var creds = ParseAuthHeader(authHeader);
 			if (creds != null)
 			{
-				if (TryGetPrincipal(creds[0], creds[1], out principal)) return true;
+				if (TryGetPrincipal(creds[0], creds[1], out principal))
+					return true;
 			}
 
 			principal = null;
@@ -94,7 +96,7 @@ namespace ShareDeployed.Authorization
 		private string[] ParseAuthHeader(string authHeader)
 		{
 			// Check this is a Basic Auth header
-			if (authHeader == null || authHeader.Length == 0 )//|| !authHeader.StartsWith("Basic"))
+			if (authHeader == null || authHeader.Length == 0)//|| !authHeader.StartsWith("Basic"))
 				return null;
 
 			// Pull out the Credentials with are seperated by ':' and Base64 encoded 

@@ -416,9 +416,19 @@ namespace ShareDeployed.Hubs
 
 				// Add the caller to the group so they receive messages
 				//TODO: check here When user navigates to differ link it adds the same client ID to existing groups....
-				Groups.Add(clientId, group.Name).Wait();
+				try
+				{
+					Groups.Add(clientId, group.Name).Wait();
+				}
+				catch (Exception ex)
+				{
+					if ((ex is AggregateException) && 
+						!((ex as AggregateException).InnerException is System.Threading.Tasks.TaskCanceledException))
+					{
+						MvcApplication.Logger.Error("INotificationService.LogOn", ex.InnerException);
+					}
+				}
 
-				// Add to the list of group names
 				//groups.Add(new RoomViewModel
 				//{
 				//	Name = room.Name,

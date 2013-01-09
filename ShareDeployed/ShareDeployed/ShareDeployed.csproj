@@ -93,6 +93,7 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -199,7 +200,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\AuthConfig.cs" />
+    <Compile Include="Authorization\AuthenticateWithTimeStamp.cs" />
+    <Compile Include="Authorization\TokenValidationAttribute.cs" />
     <Compile Include="Controllers\Api\ApplicationController.cs" />
+    <Compile Include="Controllers\Api\PingController.cs" />
     <Compile Include="Controllers\Api\MessangerController.cs" />
     <Compile Include="Controllers\Api\MessangerGroupController.cs" />
     <Compile Include="Controllers\Api\MessangerUserController.cs" />

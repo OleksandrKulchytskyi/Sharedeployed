@@ -21,8 +21,7 @@ namespace ShareDeployed.Common.Crypt
 		private uint[] s;
 		private static readonly uint[] s_orig; 
 		#endregion
-
-
+		
 		#region ctors
 		static PassCrypt()
 		{
