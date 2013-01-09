@@ -25,8 +25,6 @@ namespace ShareDeployed.Filters
 				if (filterContext.HttpContext.Session != null)
 					filterContext.HttpContext.Session.Abandon();
 			}
-
-
 		}
 	}
 }
