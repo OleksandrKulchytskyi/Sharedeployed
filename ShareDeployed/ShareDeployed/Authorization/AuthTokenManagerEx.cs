@@ -10,6 +10,7 @@ namespace ShareDeployed.Authorization
 	public sealed class AuthTokenManagerEx : IDisposable
 	{
 		bool _disposed = false;
+		private volatile int waitTimeout = (int)TimeSpan.FromSeconds(5).TotalMilliseconds;
 		private static readonly object _locker = null;
 		private static readonly AuthTokenManagerEx _instance = null;
 
@@ -24,7 +25,7 @@ namespace ShareDeployed.Authorization
 			_clientsAccessTokens = new System.Collections.Concurrent.ConcurrentDictionary<ClientInfo, string>(new ClientInfoComparer());
 			_container = new System.Collections.Concurrent.ConcurrentDictionary<AuthClientData, AuthTokenValueEx>(new AuthClientDataComparer());
 			_cts = new CancellationTokenSource();
-			_threadClean = new Task(new Action(PerformTimeout), _cts.Token, TaskCreationOptions.LongRunning);
+			_threadClean = new Task(new Action(PerformPurge), _cts.Token, TaskCreationOptions.LongRunning);
 			_threadClean.Start();
 		}
 
@@ -43,6 +44,13 @@ namespace ShareDeployed.Authorization
 					return _instance;
 				}
 			}
+		}
+
+		public int Count { get { return _container.Count; } }
+
+		public void SetPurgeTimeout(TimeSpan timeout)
+		{
+			waitTimeout = (int)timeout.TotalMilliseconds;
 		}
 
 		public AuthTokenValueEx this[AuthClientData data]
@@ -66,7 +74,7 @@ namespace ShareDeployed.Authorization
 				return _container[session].ToString();
 
 			AuthTokenValueEx val = new AuthTokenValueEx();
-			val.ExpireOn = DateTime.Now.AddMinutes(39).AddSeconds(30);
+			val.ExpireOn = DateTime.UtcNow.AddMinutes(39).AddSeconds(30);
 			val.GuidKey = Guid.NewGuid();
 
 			if (!_container.TryAdd(session, val))
@@ -75,7 +83,7 @@ namespace ShareDeployed.Authorization
 			return _container[session].GuidKey.ToString("d");
 		}
 
-		public string Generate(string ip, string clientName)
+		public string Generate(string ip, string clientName, int timeoutMin = 39)
 		{
 			if (string.IsNullOrEmpty(ip) || string.IsNullOrEmpty(clientName))
 				throw new ArgumentException("One of the arguments in invalid");
@@ -86,7 +94,7 @@ namespace ShareDeployed.Authorization
 				return _container[session].ToString();
 
 			AuthTokenValueEx val = new AuthTokenValueEx();
-			val.ExpireOn = DateTime.Now.AddMinutes(39).AddSeconds(30);
+			val.ExpireOn = DateTime.UtcNow.AddMinutes(timeoutMin).AddSeconds(30);
 			val.GuidKey = Guid.NewGuid();
 
 			if (!_container.TryAdd(session, val))
@@ -160,11 +168,24 @@ namespace ShareDeployed.Authorization
 		}
 		#endregion
 
-		void PerformTimeout()
+		void PerformPurge()
 		{
-			while (_disposed && _cts != null && !_cts.IsCancellationRequested)
+
+			int cycle = 0;
+			int totalCycles = (waitTimeout / 20);
+			while (!_disposed && _cts != null && !_cts.IsCancellationRequested)
 			{
-				Thread.Sleep(TimeSpan.FromMinutes(1));
+				cycle = 0;
+				totalCycles = (waitTimeout / 20);
+				while (cycle != totalCycles)
+				{
+					if (_cts.IsCancellationRequested)
+						break;
+
+					cycle++;
+					Thread.Sleep(20);
+				}
+
 				if (_container.Count == 0)
 					continue;
 
@@ -179,7 +200,7 @@ namespace ShareDeployed.Authorization
 						if (option.CancellationToken.IsCancellationRequested)
 							state.Break();
 
-						if (_container[key].ExpireOn < DateTime.Now)
+						if (_container[key].ExpireOn < DateTime.UtcNow)
 						{
 							AuthTokenValueEx value;
 							if (_container.TryRemove(key, out value))
@@ -189,6 +210,8 @@ namespace ShareDeployed.Authorization
 							}
 						}
 					});
+
+					Monitor.Pulse(_locker);
 				}
 			}
 		}
@@ -206,20 +229,22 @@ namespace ShareDeployed.Authorization
 
 			_disposed = true;
 
+			StopCleaning();
+
+			if (_threadClean != null)
+			{
+				_threadClean.Wait(TimeSpan.FromMilliseconds(250));
+				_threadClean.Dispose();
+			}
+
 			if (_cts != null)
 			{
-				StopCleaning();
 				_cts.Dispose();
 				_cts = null;
 			}
 
-			if (_threadClean != null)
-			{
-				_threadClean.Wait();
-				_threadClean.Dispose();
-			}
-
 			GC.SuppressFinalize(this);
+			GC.Collect();
 		}
 	}
 

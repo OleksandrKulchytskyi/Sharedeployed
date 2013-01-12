@@ -1,56 +1,210 @@
-INFO  2013-01-09 13:55:33,080   225ms MvcApplication         Application_Start  - Application_Start()
-INFO  2013-01-09 13:55:48,652 15797ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
-INFO  2013-01-09 13:56:13,406 40551ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
-ERROR 2013-01-09 13:56:59,308 86453ms MvcApplication         Application_Error  - Application_Error
-System.Web.HttpException (0x80004005): File does not exist.
-   at System.Web.StaticFileHandler.GetFileInfo(String virtualPathWithPathInfo, String physicalPath, HttpResponse response)
-   at System.Web.StaticFileHandler.ProcessRequestInternal(HttpContext context, String overrideVirtualPath)
-   at System.Web.DefaultHttpHandler.BeginProcessRequest(HttpContext context, AsyncCallback callback, Object state)
+INFO  2013-01-12 16:15:11,228   354ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-12 21:08:26,237   442ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-12 21:08:47,029 21234ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-12 21:09:06,708 40913ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-12 21:14:06,718 340923ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+ERROR 2013-01-12 21:16:03,607 457812ms MvcApplication         shipInitialization - PersistedRepository.DoMembershipInitialization
+System.InvalidOperationException: The "WebSecurity.InitializeDatabaseConnection" method can be called only once.
+   at WebMatrix.WebData.WebSecurity.InitializeMembershipProvider(SimpleMembershipProvider simpleMembership, DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean createTables)
+   at WebMatrix.WebData.WebSecurity.InitializeProviders(DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   at WebMatrix.WebData.WebSecurity.InitializeDatabaseConnection(String connectionStringName, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   at ShareDeployed.Repositories.PersistedRepository.DoMembershipInitialization() in d:\MyProjects\ShareDeployed\ShareDeployed\Repositories\PersistedRepository.cs:line 184
+ERROR 2013-01-12 21:18:18,871 593076ms MvcApplication         shipInitialization - PersistedRepository.DoMembershipInitialization
+System.InvalidOperationException: The "WebSecurity.InitializeDatabaseConnection" method can be called only once.
+   at WebMatrix.WebData.WebSecurity.InitializeMembershipProvider(SimpleMembershipProvider simpleMembership, DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean createTables)
+   at WebMatrix.WebData.WebSecurity.InitializeProviders(DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   at WebMatrix.WebData.WebSecurity.InitializeDatabaseConnection(String connectionStringName, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   at ShareDeployed.Repositories.PersistedRepository.DoMembershipInitialization() in d:\MyProjects\ShareDeployed\ShareDeployed\Repositories\PersistedRepository.cs:line 184
+INFO  2013-01-12 21:18:26,707 600912ms MvcApplication         Sweep              - Begin sweep process
+INFO  2013-01-12 21:19:06,747 640952ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-12 21:32:47,951   349ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-12 21:33:06,229 18627ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-12 21:34:26,226 98624ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+ERROR 2013-01-12 21:36:27,249 219647ms MvcApplication         Application_Error  - Application_Error
+System.InvalidOperationException: Cannot logout non-authorized user
+   at ShareDeployed.Handlers.LoginHandler.ProcessRequest(HttpContext context) in d:\MyProjects\ShareDeployed\ShareDeployed\Handlers\LoginHandler.ashx.cs:line 149
    at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
    at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
-INFO  2013-01-09 14:01:13,397 340542ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
-INFO  2013-01-09 14:46:31,096   221ms MvcApplication         Application_Start  - Application_Start()
-INFO  2013-01-09 14:46:56,399 25524ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
-INFO  2013-01-09 14:50:07,984 217109ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
-INFO  2013-01-09 14:52:33,941   223ms MvcApplication         Application_Start  - Application_Start()
-INFO  2013-01-09 14:52:50,897 17180ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
-INFO  2013-01-09 14:53:57,008   219ms MvcApplication         Application_Start  - Application_Start()
-INFO  2013-01-09 14:54:09,300 12512ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
-INFO  2013-01-09 14:54:37,314 40525ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
-INFO  2013-01-09 14:56:47,916   229ms MvcApplication         Application_Start  - Application_Start()
-INFO  2013-01-09 14:57:05,196 17509ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
-INFO  2013-01-09 14:57:28,230 40543ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
-INFO  2013-01-09 15:02:28,169 340482ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
-INFO  2013-01-09 15:06:48,119 600432ms MvcApplication         Sweep              - Begin sweep process
-INFO  2013-01-09 15:07:28,133 640446ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
-INFO  2013-01-09 15:12:28,118 940431ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
-INFO  2013-01-09 15:16:48,090 1200403ms MvcApplication         Sweep              - Begin sweep process
-INFO  2013-01-09 15:17:28,107 1240420ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
-INFO  2013-01-09 15:58:47,815   225ms MvcApplication         Application_Start  - Application_Start()
-INFO  2013-01-09 15:59:05,777 18187ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
-INFO  2013-01-09 16:18:52,966   226ms MvcApplication         Application_Start  - Application_Start()
-INFO  2013-01-09 16:19:07,979 15239ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
-INFO  2013-01-09 16:19:33,309 40569ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
-INFO  2013-01-09 16:19:52,500 59760ms MvcApplication         Application_End    - Application_End()
-INFO  2013-01-09 16:20:12,295   218ms MvcApplication         Application_Start  - Application_Start()
-INFO  2013-01-09 16:20:25,081 13004ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
-INFO  2013-01-09 16:20:57,247 45170ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
-INFO  2013-01-09 16:25:54,077 342000ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
-INFO  2013-01-09 16:33:01,776   215ms MvcApplication         Application_Start  - Application_Start()
-INFO  2013-01-09 16:33:16,048 14487ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
-INFO  2013-01-09 16:34:14,244   226ms MvcApplication         Application_Start  - Application_Start()
-INFO  2013-01-09 16:34:30,780 16762ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
-INFO  2013-01-09 16:34:54,594 40576ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
-INFO  2013-01-09 16:39:29,019   223ms MvcApplication         Application_Start  - Application_Start()
-INFO  2013-01-09 16:39:47,309 18512ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
-INFO  2013-01-09 16:40:30,631   226ms MvcApplication         Application_Start  - Application_Start()
-INFO  2013-01-09 16:40:48,096 17690ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
-INFO  2013-01-09 16:41:12,856 42450ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
-INFO  2013-01-09 16:44:12,784 222378ms MvcApplication         Application_End    - Application_End()
-INFO  2013-01-09 16:44:24,097   212ms MvcApplication         Application_Start  - Application_Start()
-INFO  2013-01-09 16:44:37,230 13345ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
-INFO  2013-01-09 16:45:04,432 40547ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
-INFO  2013-01-09 16:50:04,454 340569ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
-INFO  2013-01-09 17:36:42,322   289ms MvcApplication         Application_Start  - Application_Start()
-INFO  2013-01-09 17:36:59,558 17525ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
-INFO  2013-01-09 17:37:22,738 40705ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-12 21:39:23,582 395980ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+ERROR 2013-01-12 21:40:13,119 445517ms MvcApplication         shipInitialization - PersistedRepository.DoMembershipInitialization
+System.InvalidOperationException: The "WebSecurity.InitializeDatabaseConnection" method can be called only once.
+   at WebMatrix.WebData.WebSecurity.InitializeMembershipProvider(SimpleMembershipProvider simpleMembership, DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean createTables)
+   at WebMatrix.WebData.WebSecurity.InitializeProviders(DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   at WebMatrix.WebData.WebSecurity.InitializeDatabaseConnection(String connectionStringName, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   at ShareDeployed.Repositories.PersistedRepository.DoMembershipInitialization() in d:\MyProjects\ShareDeployed\ShareDeployed\Repositories\PersistedRepository.cs:line 184
+INFO  2013-01-12 21:42:48,423 600821ms MvcApplication         Sweep              - Begin sweep process
+INFO  2013-01-12 21:52:40,265   353ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-12 21:52:58,659 18746ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-12 21:53:23,498 43586ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+ERROR 2013-01-12 21:53:39,395 59483ms MvcApplication         Application_Error  - Application_Error
+System.InvalidOperationException: Cannot logout non-authorized user
+   at ShareDeployed.Handlers.LoginHandler.ProcessRequest(HttpContext context) in d:\MyProjects\ShareDeployed\ShareDeployed\Handlers\LoginHandler.ashx.cs:line 150
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+ERROR 2013-01-12 21:53:57,042 77130ms MvcApplication         shipInitialization - PersistedRepository.DoMembershipInitialization
+System.InvalidOperationException: The "WebSecurity.InitializeDatabaseConnection" method can be called only once.
+   at WebMatrix.WebData.WebSecurity.InitializeMembershipProvider(SimpleMembershipProvider simpleMembership, DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean createTables)
+   at WebMatrix.WebData.WebSecurity.InitializeProviders(DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   at WebMatrix.WebData.WebSecurity.InitializeDatabaseConnection(String connectionStringName, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   at ShareDeployed.Repositories.PersistedRepository.DoMembershipInitialization() in d:\MyProjects\ShareDeployed\ShareDeployed\Repositories\PersistedRepository.cs:line 184
+ERROR 2013-01-12 21:54:37,288 117376ms MvcApplication         Application_Error  - Application_Error
+Microsoft.CSharp.RuntimeBinder.RuntimeBinderException: '<>f__AnonymousType7<int,string>' does not contain a definition for 'aspxAuth'
+   at CallSite.Target(Closure , CallSite , Object , String )
+   at System.Dynamic.UpdateDelegates.UpdateAndExecute2[T0,T1,TRet](CallSite site, T0 arg0, T1 arg1)
+   at ShareDeployed.Handlers.LoginHandler.ProcessRequest(HttpContext context) in d:\MyProjects\ShareDeployed\ShareDeployed\Handlers\LoginHandler.ashx.cs:line 122
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+INFO  2013-01-12 22:04:17,562   357ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-12 22:04:35,730 18524ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-12 22:04:58,680 41475ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+ERROR 2013-01-12 22:05:04,954 47748ms MvcApplication         shipInitialization - PersistedRepository.DoMembershipInitialization
+System.InvalidOperationException: The "WebSecurity.InitializeDatabaseConnection" method can be called only once.
+   at WebMatrix.WebData.WebSecurity.InitializeMembershipProvider(SimpleMembershipProvider simpleMembership, DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean createTables)
+   at WebMatrix.WebData.WebSecurity.InitializeProviders(DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   at WebMatrix.WebData.WebSecurity.InitializeDatabaseConnection(String connectionStringName, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   at ShareDeployed.Repositories.PersistedRepository.DoMembershipInitialization() in d:\MyProjects\ShareDeployed\ShareDeployed\Repositories\PersistedRepository.cs:line 184
+INFO  2013-01-12 22:20:25,485   389ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-12 22:20:44,538 19442ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+ERROR 2013-01-12 22:21:04,815 39718ms MvcApplication         shipInitialization - PersistedRepository.DoMembershipInitialization
+System.InvalidOperationException: The "WebSecurity.InitializeDatabaseConnection" method can be called only once.
+   at WebMatrix.WebData.WebSecurity.InitializeMembershipProvider(SimpleMembershipProvider simpleMembership, DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean createTables)
+   at WebMatrix.WebData.WebSecurity.InitializeProviders(DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   at WebMatrix.WebData.WebSecurity.InitializeDatabaseConnection(String connectionStringName, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   at ShareDeployed.Repositories.PersistedRepository.DoMembershipInitialization() in d:\MyProjects\ShareDeployed\ShareDeployed\Repositories\PersistedRepository.cs:line 184
+INFO  2013-01-12 22:21:05,940 40843ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-12 22:26:05,952 340855ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-12 23:17:58,870   354ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-12 23:18:17,335 18818ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-12 23:18:39,359 40843ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+ERROR 2013-01-12 23:19:18,985 80469ms MvcApplication         shipInitialization - PersistedRepository.DoMembershipInitialization
+System.InvalidOperationException: The "WebSecurity.InitializeDatabaseConnection" method can be called only once.
+   at WebMatrix.WebData.WebSecurity.InitializeMembershipProvider(SimpleMembershipProvider simpleMembership, DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean createTables)
+   at WebMatrix.WebData.WebSecurity.InitializeProviders(DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   at WebMatrix.WebData.WebSecurity.InitializeDatabaseConnection(String connectionStringName, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   at ShareDeployed.Repositories.PersistedRepository.DoMembershipInitialization() in d:\MyProjects\ShareDeployed\ShareDeployed\Repositories\PersistedRepository.cs:line 184
+INFO  2013-01-12 23:23:39,642 341125ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+ERROR 2013-01-12 23:23:49,189 350673ms MvcApplication         Application_Error  - Application_Error
+System.InvalidOperationException: Cannot perform logout operation for non-authorized user.
+   at ShareDeployed.Handlers.LoginHandler.ProcessRequest(HttpContext context) in d:\MyProjects\ShareDeployed\ShareDeployed\Handlers\LoginHandler.ashx.cs:line 171
+   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+INFO  2013-01-12 23:28:18,650   339ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-12 23:28:34,158 15847ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+ERROR 2013-01-12 23:28:53,951 35639ms MvcApplication         shipInitialization - PersistedRepository.DoMembershipInitialization
+System.InvalidOperationException: The "WebSecurity.InitializeDatabaseConnection" method can be called only once.
+   at WebMatrix.WebData.WebSecurity.InitializeMembershipProvider(SimpleMembershipProvider simpleMembership, DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean createTables)
+   at WebMatrix.WebData.WebSecurity.InitializeProviders(DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   at WebMatrix.WebData.WebSecurity.InitializeDatabaseConnection(String connectionStringName, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   at ShareDeployed.Repositories.PersistedRepository.DoMembershipInitialization() in d:\MyProjects\ShareDeployed\ShareDeployed\Repositories\PersistedRepository.cs:line 184
+INFO  2013-01-12 23:29:04,037 45726ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-12 23:34:09,540   355ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-12 23:34:28,590 19405ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-12 23:34:56,135 46951ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+ERROR 2013-01-12 23:34:57,216 48032ms MvcApplication         Application_Error  - Application_Error
+System.AggregateException: One or more errors occurred. ---> System.AggregateException: One or more errors occurred. ---> System.AggregateException: One or more errors occurred. ---> System.InvalidOperationException: You're not logged in.
+   at ShareDeployed.Extension.RepositoryExtensions.VerifyUserId(IMessangerRepository repository, String userId) in d:\MyProjects\ShareDeployed\ShareDeployed\Extension\RepositoryExtension.cs:line 76
+   at ShareDeployed.Hubs.MessangerHub.OnReconnected() in d:\MyProjects\ShareDeployed\ShareDeployed\Hubs\MessangerHub.cs:line 258
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.Reconnect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipelineModule.<>c__DisplayClass10.<BuildReconnect>b__e(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipeline.Reconnect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<OnReconnectedAsync>b__10(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<>c__DisplayClass23.<ExecuteHubEventAsync>b__1f(IHub instance)
+   at System.Linq.Enumerable.WhereSelectListIterator`2.MoveNext()
+   at System.Linq.Buffer`1..ctor(IEnumerable`1 source)
+   at System.Linq.Enumerable.ToArray[TSource](IEnumerable`1 source)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.ExecuteHubEventAsync(IRequest request, String connectionId, Func`2 action)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.OnReconnectedAsync(IRequest request, String connectionId)
+   at Microsoft.AspNet.SignalR.PersistentConnection.<>c__DisplayClass6.<ProcessRequestAsync>b__3()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<ProcessRequestCore>b__7()
+   at Microsoft.AspNet.SignalR.TaskAsyncHelper.<>c__DisplayClass13`1.<Interleave>b__12()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClass11.<ProcessReceiveRequestWithoutTracking>b__10()
+   --- End of inner exception stack trace ---
+   --- End of inner exception stack trace ---
+   --- End of inner exception stack trace ---
+   at System.Threading.Tasks.Task.ThrowIfExceptional(Boolean includeTaskCanceledExceptions)
+   at System.Threading.Tasks.Task.Wait(Int32 millisecondsTimeout, CancellationToken cancellationToken)
+   at System.Threading.Tasks.Task.Wait()
+   at Microsoft.AspNet.SignalR.Hosting.AspNet.HttpTaskAsyncHandler.System.Web.IHttpAsyncHandler.EndProcessRequest(IAsyncResult result)
+   at System.Web.HttpApplication.CallHandlerExecutionStep.OnAsyncHandlerCompletion(IAsyncResult ar)
+---> (Inner Exception #0) System.AggregateException: One or more errors occurred. ---> System.AggregateException: One or more errors occurred. ---> System.InvalidOperationException: You're not logged in.
+   at ShareDeployed.Extension.RepositoryExtensions.VerifyUserId(IMessangerRepository repository, String userId) in d:\MyProjects\ShareDeployed\ShareDeployed\Extension\RepositoryExtension.cs:line 76
+   at ShareDeployed.Hubs.MessangerHub.OnReconnected() in d:\MyProjects\ShareDeployed\ShareDeployed\Hubs\MessangerHub.cs:line 258
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.Reconnect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipelineModule.<>c__DisplayClass10.<BuildReconnect>b__e(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipeline.Reconnect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<OnReconnectedAsync>b__10(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<>c__DisplayClass23.<ExecuteHubEventAsync>b__1f(IHub instance)
+   at System.Linq.Enumerable.WhereSelectListIterator`2.MoveNext()
+   at System.Linq.Buffer`1..ctor(IEnumerable`1 source)
+   at System.Linq.Enumerable.ToArray[TSource](IEnumerable`1 source)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.ExecuteHubEventAsync(IRequest request, String connectionId, Func`2 action)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.OnReconnectedAsync(IRequest request, String connectionId)
+   at Microsoft.AspNet.SignalR.PersistentConnection.<>c__DisplayClass6.<ProcessRequestAsync>b__3()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<ProcessRequestCore>b__7()
+   at Microsoft.AspNet.SignalR.TaskAsyncHelper.<>c__DisplayClass13`1.<Interleave>b__12()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClass11.<ProcessReceiveRequestWithoutTracking>b__10()
+   --- End of inner exception stack trace ---
+   --- End of inner exception stack trace ---
+---> (Inner Exception #0) System.AggregateException: One or more errors occurred. ---> System.InvalidOperationException: You're not logged in.
+   at ShareDeployed.Extension.RepositoryExtensions.VerifyUserId(IMessangerRepository repository, String userId) in d:\MyProjects\ShareDeployed\ShareDeployed\Extension\RepositoryExtension.cs:line 76
+   at ShareDeployed.Hubs.MessangerHub.OnReconnected() in d:\MyProjects\ShareDeployed\ShareDeployed\Hubs\MessangerHub.cs:line 258
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.Reconnect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipelineModule.<>c__DisplayClass10.<BuildReconnect>b__e(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipeline.Reconnect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<OnReconnectedAsync>b__10(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<>c__DisplayClass23.<ExecuteHubEventAsync>b__1f(IHub instance)
+   at System.Linq.Enumerable.WhereSelectListIterator`2.MoveNext()
+   at System.Linq.Buffer`1..ctor(IEnumerable`1 source)
+   at System.Linq.Enumerable.ToArray[TSource](IEnumerable`1 source)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.ExecuteHubEventAsync(IRequest request, String connectionId, Func`2 action)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.OnReconnectedAsync(IRequest request, String connectionId)
+   at Microsoft.AspNet.SignalR.PersistentConnection.<>c__DisplayClass6.<ProcessRequestAsync>b__3()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<ProcessRequestCore>b__7()
+   at Microsoft.AspNet.SignalR.TaskAsyncHelper.<>c__DisplayClass13`1.<Interleave>b__12()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClass11.<ProcessReceiveRequestWithoutTracking>b__10()
+   --- End of inner exception stack trace ---
+---> (Inner Exception #0) System.InvalidOperationException: You're not logged in.
+   at ShareDeployed.Extension.RepositoryExtensions.VerifyUserId(IMessangerRepository repository, String userId) in d:\MyProjects\ShareDeployed\ShareDeployed\Extension\RepositoryExtension.cs:line 76
+   at ShareDeployed.Hubs.MessangerHub.OnReconnected() in d:\MyProjects\ShareDeployed\ShareDeployed\Hubs\MessangerHub.cs:line 258
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.Reconnect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipelineModule.<>c__DisplayClass10.<BuildReconnect>b__e(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubPipeline.Reconnect(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<OnReconnectedAsync>b__10(IHub hub)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.<>c__DisplayClass23.<ExecuteHubEventAsync>b__1f(IHub instance)
+   at System.Linq.Enumerable.WhereSelectListIterator`2.MoveNext()
+   at System.Linq.Buffer`1..ctor(IEnumerable`1 source)
+   at System.Linq.Enumerable.ToArray[TSource](IEnumerable`1 source)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.ExecuteHubEventAsync(IRequest request, String connectionId, Func`2 action)
+   at Microsoft.AspNet.SignalR.Hubs.HubDispatcher.OnReconnectedAsync(IRequest request, String connectionId)
+   at Microsoft.AspNet.SignalR.PersistentConnection.<>c__DisplayClass6.<ProcessRequestAsync>b__3()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<ProcessRequestCore>b__7()
+   at Microsoft.AspNet.SignalR.TaskAsyncHelper.<>c__DisplayClass13`1.<Interleave>b__12()
+   at Microsoft.AspNet.SignalR.Transports.ForeverTransport.<>c__DisplayClass11.<ProcessReceiveRequestWithoutTracking>b__10()<---
+<---
+<---
+
+ERROR 2013-01-12 23:36:11,481 122296ms MvcApplication         shipInitialization - PersistedRepository.DoMembershipInitialization
+System.InvalidOperationException: The "WebSecurity.InitializeDatabaseConnection" method can be called only once.
+   at WebMatrix.WebData.WebSecurity.InitializeMembershipProvider(SimpleMembershipProvider simpleMembership, DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean createTables)
+   at WebMatrix.WebData.WebSecurity.InitializeProviders(DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   at WebMatrix.WebData.WebSecurity.InitializeDatabaseConnection(String connectionStringName, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   at ShareDeployed.Repositories.PersistedRepository.DoMembershipInitialization() in d:\MyProjects\ShareDeployed\ShareDeployed\Repositories\PersistedRepository.cs:line 184
+INFO  2013-01-12 23:38:51,407   348ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-12 23:39:09,761 18701ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-12 23:39:31,877 40817ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+ERROR 2013-01-12 23:40:09,589 78529ms MvcApplication         shipInitialization - PersistedRepository.DoMembershipInitialization
+System.InvalidOperationException: The "WebSecurity.InitializeDatabaseConnection" method can be called only once.
+   at WebMatrix.WebData.WebSecurity.InitializeMembershipProvider(SimpleMembershipProvider simpleMembership, DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean createTables)
+   at WebMatrix.WebData.WebSecurity.InitializeProviders(DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   at WebMatrix.WebData.WebSecurity.InitializeDatabaseConnection(String connectionStringName, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   at ShareDeployed.Repositories.PersistedRepository.DoMembershipInitialization() in d:\MyProjects\ShareDeployed\ShareDeployed\Repositories\PersistedRepository.cs:line 184
+INFO  2013-01-12 23:44:31,875 340815ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+INFO  2013-01-12 23:46:51,525   356ms MvcApplication         Application_Start  - Application_Start()
+INFO  2013-01-12 23:47:09,785 18616ms MvcApplication         Application_Start  - Module AuthTokenManagerEx is initialized
+INFO  2013-01-12 23:47:31,978 40809ms MvcApplication         oadCastNewMessages - Begin broadcast messages workflow
+ERROR 2013-01-12 23:48:06,705 75536ms MvcApplication         shipInitialization - PersistedRepository.DoMembershipInitialization
+System.InvalidOperationException: The "WebSecurity.InitializeDatabaseConnection" method can be called only once.
+   at WebMatrix.WebData.WebSecurity.InitializeMembershipProvider(SimpleMembershipProvider simpleMembership, DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean createTables)
+   at WebMatrix.WebData.WebSecurity.InitializeProviders(DatabaseConnectionInfo connect, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   at WebMatrix.WebData.WebSecurity.InitializeDatabaseConnection(String connectionStringName, String userTableName, String userIdColumn, String userNameColumn, Boolean autoCreateTables)
+   at ShareDeployed.Repositories.PersistedRepository.DoMembershipInitialization() in d:\MyProjects\ShareDeployed\ShareDeployed\Repositories\PersistedRepository.cs:line 184

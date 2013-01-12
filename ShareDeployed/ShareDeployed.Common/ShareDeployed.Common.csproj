@@ -53,10 +53,13 @@
   <ItemGroup>
     <Compile Include="Caching\ICache.cs" />
     <Compile Include="Crypt\PassCrypt.cs" />
+    <Compile Include="Crypt\PasswordHash.cs" />
     <Compile Include="Crypt\RSACrypt.cs" />
     <Compile Include="Extensions\Common.cs" />
+    <Compile Include="Dynamic\ExpandoObject.cs" />
     <Compile Include="Extensions\FileHelper.cs" />
     <Compile Include="Extensions\SingletonBase.cs" />
+    <Compile Include="Extensions\StraemUtils.cs" />
     <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="Extensions\TaskAsyncHelper.cs" />
     <Compile Include="Helper\DateTimeExtender.cs" />

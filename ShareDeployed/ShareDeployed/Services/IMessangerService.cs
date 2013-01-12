@@ -46,6 +46,5 @@ namespace ShareDeployed.Services
 		void AddAdmin(MessangerUser admin, MessangerUser targetUser);
 		void RemoveAdmin(MessangerUser admin, MessangerUser targetUser);
 		void BanUser(MessangerUser callingUser, MessangerUser targetUser);
-
 	}
 }

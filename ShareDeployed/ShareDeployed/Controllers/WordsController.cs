@@ -48,7 +48,7 @@ namespace ShareDeployed.Controllers
 				{
 					if (Session != null && Session["UserId"] != null)
 					{
-						var fileName = string.Format(format, (int)Session["UserId"], DateTime.Now.ToString("ddMMyyyyhhmm"), Path.GetFileName(file.FileName));
+						var fileName = string.Format(format, (int)Session["UserId"], DateTime.UtcNow.ToString("ddMMyyyyhhmm"), Path.GetFileName(file.FileName));
 						var path = Path.Combine(Server.MapPath("~/App_Data/Uploads"), fileName);
 
 						file.SaveAs(path);

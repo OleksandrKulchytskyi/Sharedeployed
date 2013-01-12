@@ -94,6 +94,8 @@ namespace ShareDeployed
 			//Make fake initialization
 			if (Authorization.AuthTokenManagerEx.Instance != null)
 				Logger.Info("Module AuthTokenManagerEx is initialized");
+
+			Authorization.SessionTokenIssuer.Instance.SetPurgeTimeout(new TimeSpan(0, 3, 0));
 		}
 
 		private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -129,8 +131,9 @@ namespace ShareDeployed
 
 		protected void Application_End()
 		{
-			Authorization.AuthTokenManagerEx.Instance.StopCleaning();
+			Authorization.SessionTokenIssuer.Instance.Dispose();
 			Authorization.AuthTokenManagerEx.Instance.Dispose();
+
 			Logger.Info("Application_End()");
 			LogManager.Shutdown();
 		}

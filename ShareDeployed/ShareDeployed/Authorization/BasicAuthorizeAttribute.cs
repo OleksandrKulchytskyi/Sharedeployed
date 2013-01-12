@@ -14,26 +14,24 @@ namespace ShareDeployed.Authorization
 {
 	public class BasicHttpAuthorizeAttribute : AuthorizeAttribute
 	{
-		bool requireSsl = Convert.ToBoolean(ConfigurationManager.AppSettings["RequireSsl"]);
+		/// <summary>
+		/// For logging with log4net.
+		/// </summary>
+		private static readonly ILog log = LogManager.GetLogger(typeof(BasicHttpAuthorizeAttribute));
 
+		private bool requireSsl = Convert.ToBoolean(ConfigurationManager.AppSettings["RequireSsl"]);
 		public bool RequireSsl
 		{
 			get { return requireSsl; }
 			set { requireSsl = value; }
 		}
 
-		bool requireAuthentication = true;
-
+		private bool requireAuthentication = true;
 		public bool RequireAuthentication
 		{
 			get { return requireAuthentication; }
 			set { requireAuthentication = value; }
 		}
-
-		/// <summary>
-		/// For logging with log4net.
-		/// </summary>
-		private static readonly ILog log = LogManager.GetLogger(typeof(BasicHttpAuthorizeAttribute));
 
 		public override void OnAuthorization(System.Web.Http.Controllers.HttpActionContext actionContext)
 		{

@@ -9,8 +9,11 @@ using System.Web;
 
 namespace ShareDeployed.Handlers
 {
-	public class LoginHandler : IHttpHandler
+	public class LoginHandler : IHttpHandler, System.Web.SessionState.IReadOnlySessionState
 	{
+		private readonly string userSesionConst = "userNameData";
+		private readonly string mesStateConst = "messanger.state";
+
 		public void ProcessRequest(HttpContext context)
 		{
 			string uid = null;
@@ -45,8 +48,7 @@ namespace ShareDeployed.Handlers
 						return;
 					}
 
-					string token = context.Request.Form["token"];
-
+					//string token = context.Request.Form["token"];
 					var repository = Bootstrapper.Kernel.Get<Repositories.IMessangerRepository>();
 					var messangerService = Bootstrapper.Kernel.Get<Services.IMessangerService>();
 
@@ -57,6 +59,15 @@ namespace ShareDeployed.Handlers
 					{
 						throw new InvalidOperationException("User doesn't exist in application context.");
 					}
+
+					context.Session[userSesionConst] = uid;
+					string tokenIssuerId = Guid.NewGuid().ToString();
+					Authorization.SessionTokenIssuer.Instance.AddOrUpdate(new Authorization.SessionInfo()
+					{
+						Session = context.Session.SessionID,
+						Expire = DateTime.UtcNow.AddMinutes(40)
+					}, (tokenIssuerId = Guid.NewGuid().ToString()));
+					Authorization.SessionTokenIssuer.Instance.AddOrUpdateUserName(tokenIssuerId, uid);
 
 					var authClient = WebHelper.GetClientIndetification();
 
@@ -70,18 +81,18 @@ namespace ShareDeployed.Handlers
 						Authorization.AuthTokenManagerEx.Instance.AddClientInfo(cInfo, authToken);
 					}
 
-					var state = JsonConvert.SerializeObject(new { userId = userId });
-					var cookie = new HttpCookie("messanger.state", state);
-					cookie.Expires = DateTime.Now.AddDays(30);
-					context.Response.Cookies.Add(cookie);
-
 					response = JsonConvert.SerializeObject(new
 					{
 						userId = userId,
 						authToken = authToken,
 						errorId = 0,
-						userIdentity = string.Format("{0}_{1}", uid, userId)
+						userIdentity = string.Format("{0}_{1}", uid, userId),
+						tokenId = tokenIssuerId
 					});
+
+					var cookie = new HttpCookie(mesStateConst, response);
+					cookie.Expires = DateTime.UtcNow.AddDays(1);
+					context.Response.Cookies.Add(cookie);
 
 					context.Response.Write(response);
 					context.ApplicationInstance.CompleteRequest();
@@ -106,15 +117,61 @@ namespace ShareDeployed.Handlers
 					else
 					{
 						response = JsonConvert.SerializeObject(new { error = "Access token verification was failed.", errorId = 2 });
-
 						context.Response.Write(response);
 						context.ApplicationInstance.CompleteRequest();
 					}
 					break;
 
+				case "2":
+					if (context.Session != null && context.Session[userSesionConst] != null)
+					{
+						dynamic authData = new System.Dynamic.ExpandoObject();
+						authData.errorId = 0;
+						authData.user = (context.Session[userSesionConst] as string);
+						if (IsCookieExist(context, ".ASPXAUTH"))
+							authData.aspxAuth = GetCookieValue(context, ".ASPXAUTH");
+
+						if (IsCookieExist(context, mesStateConst))
+						{
+							dynamic desData = JsonConvert.DeserializeObject<dynamic>(GetCookieValue(context, mesStateConst));
+							string tokenId = desData.tokenId;
+							authData.IsKeyValid = Authorization.SessionTokenIssuer.Instance.CheckSessionToken(context.Session.SessionID,tokenId);
+						}
+						context.Response.Write(JsonConvert.SerializeObject(authData));
+						context.ApplicationInstance.CompleteRequest();
+					}
+					else
+					{
+						context.Response.Write(JsonConvert.SerializeObject(new { error = "No data for current session.", errorId = 4 }));
+						context.ApplicationInstance.CompleteRequest();
+					}
+					break;
+
+				case "3":
+					if (context.Session != null && context.Session[userSesionConst] != null)
+					{
+						string uName = (context.Session[userSesionConst] as string);
+						if (IsCookieExist(context, mesStateConst))
+						{
+							string tokenSesId = GetCookieValue(context, mesStateConst);
+							Authorization.SessionTokenIssuer.Instance.Remove(new Authorization.SessionInfo { Session = tokenSesId });
+							context.Response.Cookies.Add(new HttpCookie(mesStateConst) { Expires = DateTime.Now.AddDays(-1) });
+						}
+
+						context.Session.Clear();
+						WebMatrix.WebData.WebSecurity.Logout();
+						context.Session.Abandon();
+
+						response = JsonConvert.SerializeObject(new { error = string.Format("User {0} has been out.", uName), errorId = 0 });
+						context.Response.Write(response);
+						context.ApplicationInstance.CompleteRequest();
+						break;
+					}
+					else
+						throw new InvalidOperationException("Cannot perform logout operation for non-authorized user.");
+
 				default:
 					response = JsonConvert.SerializeObject(new { error = "logon type has not specified.", errorId = 1 });
-
 					context.Response.Write(response);
 					context.ApplicationInstance.CompleteRequest();
 					break;
@@ -123,7 +180,7 @@ namespace ShareDeployed.Handlers
 
 		private ClientState GetClientState(HttpContext context)
 		{
-			var messangerState = GetCookieValue(context, "messanger.state");// New client state
+			var messangerState = GetCookieValue(context, mesStateConst);// New client state
 
 			ClientState clientState = null;
 			if (String.IsNullOrEmpty(messangerState))
@@ -141,11 +198,17 @@ namespace ShareDeployed.Handlers
 			return cookie != null ? HttpUtility.UrlDecode(cookie.Value) : null;
 		}
 
+		private bool IsCookieExist(HttpContext context, string key)
+		{
+			HttpCookie cookie = context.Request.Cookies[key];
+			return (cookie != null);
+		}
+
 		public bool IsReusable
 		{
 			get
 			{
-				return false;
+				return true;
 			}
 		}
 	}

@@ -19,11 +19,9 @@ namespace ShareDeployed.Test
 				if (data != null &&
 					data.SentMessages.ToList().Count > 0)
 				{
-
 				}
 				else
 					Assert.Fail();
-
 			}
 		}
 
@@ -40,19 +38,17 @@ namespace ShareDeployed.Test
 		}
 
 		[TestMethod]
-		public void HmacEncryptTest()
+		public void HmacAndPassCryptTest()
 		{
 			var hash = ComputeHash("LohrhqqoDy6PhLrHAXi7dUVACyJZilQtlDzNbLqzXlw=", "hello");
 			Assert.IsNotNull(hash);
 
 			try
 			{
-				var salt = Common.Crypt.PassCrypt.GenerateSalt();
-
-				var pass = Common.Crypt.PassCrypt.HashPassword("helloworld", salt);
-
-				bool same = Common.Crypt.PassCrypt.CheckPassword("helloworld", pass);
-				Assert.IsTrue(same);
+				var saltB=Common.Crypt.PassCrypt.GenerateSalt();
+				var passB = Common.Crypt.PassCrypt.HashPassword("helloworld", saltB);
+				bool theSame = Common.Crypt.PassCrypt.Verify("helloworld", passB);
+				Assert.IsTrue(theSame);
 			}
 			catch (Exception ex) { if (ex is AssertFailedException) throw; }
 		}

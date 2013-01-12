@@ -201,6 +201,7 @@
   <ItemGroup>
     <Compile Include="App_Start\AuthConfig.cs" />
     <Compile Include="Authorization\AuthenticateWithTimeStamp.cs" />
+    <Compile Include="Authorization\SessionTokenIssuer.cs" />
     <Compile Include="Authorization\TokenValidationAttribute.cs" />
     <Compile Include="Controllers\Api\ApplicationController.cs" />
     <Compile Include="Controllers\Api\PingController.cs" />

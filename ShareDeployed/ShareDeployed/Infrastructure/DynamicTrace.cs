@@ -62,7 +62,7 @@ namespace ShareDeployed.Infrastructure
 		{
 			var msgBuilder = new StringBuilder();
 			msgBuilder.AppendMessage(record.Level.ToString().ToUpper());
-			msgBuilder.AppendMessage(DateTime.Now.ToString("dd-MM-yyyy hh:mm"));
+			msgBuilder.AppendMessage(DateTime.UtcNow.ToString("dd-MM-yyyy hh:mm"));
 
 			if (record.Request != null)
 				msgBuilder.AppendMessage(record.Request.Method.ToString(), Common.Extensions.Common.notEmpty).

@@ -20,7 +20,51 @@ namespace WebAPI.Hmac.Filters
 		private const string AuthenticationHeaderName = "Authentication";
 		private const string TimestampHeaderName = "Timestamp";
 
+		private const int slideExpirationTime = 5;
+
 		//public IAccountRepository Repository { get; set; }
+
+		public override void OnActionExecuting(HttpActionContext actionContext)
+		{
+			bool isAuthenticated = IsAuthenticated(actionContext);
+
+			if (!isAuthenticated)
+			{
+				var response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
+				actionContext.Response = response;
+			}
+		}
+
+		private bool IsAuthenticated(HttpActionContext actionContext)
+		{
+			var headers = actionContext.Request.Headers;
+
+			var timeStampString = GetHttpRequestHeader(headers, TimestampHeaderName);
+			if (!IsDateValidated(timeStampString))
+				return false;
+
+			var authenticationString = GetHttpRequestHeader(headers, AuthenticationHeaderName);
+			if (string.IsNullOrEmpty(authenticationString))
+				return false;
+
+			var authenticationParts = authenticationString.Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries);
+
+			if (authenticationParts.Length != 2)
+				return false;
+
+			var username = authenticationParts[0];
+			var signature = authenticationParts[1];
+
+			if (!IsSignatureValidated(signature))
+				return false;
+
+			AddToMemoryCache(signature);
+
+			var hashedPassword = GetHashedPassword(username);
+			var baseString = BuildBaseString(actionContext);
+
+			return IsAuthenticated(hashedPassword, baseString, signature);
+		}
 
 		private static string ComputeHash(string hashedPassword, string message)
 		{
@@ -65,18 +109,6 @@ namespace WebAPI.Hmac.Filters
 			return parameterCollection.OrderBy(pair => pair.Key).ToList();
 		}
 
-		private static string BuildParameterMessage(HttpActionContext actionContext)
-		{
-			var parameterCollection = BuildParameterCollection(actionContext);
-			if (!parameterCollection.Any())
-				return string.Empty;
-
-			var keyValueStrings = parameterCollection.Select(pair =>
-				string.Format("{0}={1}", pair.Key, pair.Value));
-
-			return string.Join("&", keyValueStrings);
-		}
-
 		[System.Diagnostics.DebuggerStepThrough]
 		private static string GetHttpRequestHeader(HttpHeaders headers, string headerName)
 		{
@@ -103,6 +135,18 @@ namespace WebAPI.Hmac.Filters
 			return message;
 		}
 
+		private static string BuildParameterMessage(HttpActionContext actionContext)
+		{
+			var parameterCollection = BuildParameterCollection(actionContext);
+			if (!parameterCollection.Any())
+				return string.Empty;
+
+			var keyValueStrings = parameterCollection.Select(pair =>
+				string.Format("{0}={1}", pair.Key, pair.Value));
+
+			return string.Join("&", keyValueStrings);
+		}
+
 		private static bool IsAuthenticated(string hashedPassword, string message, string signature)
 		{
 			if (string.IsNullOrEmpty(hashedPassword))
@@ -118,9 +162,7 @@ namespace WebAPI.Hmac.Filters
 		private static bool IsDateValidated(string timestampString)
 		{
 			DateTime timestamp;
-
-			bool isDateTime = DateTime.TryParseExact(timestampString, "r", null,
-				DateTimeStyles.AdjustToUniversal, out timestamp);
+			bool isDateTime = DateTime.TryParseExact(timestampString, "r", null, DateTimeStyles.AdjustToUniversal, out timestamp);
 
 			if (!isDateTime)
 				return false;
@@ -128,10 +170,10 @@ namespace WebAPI.Hmac.Filters
 			var now = DateTime.UtcNow;
 
 			// TimeStamp should not be in 5 minutes behind
-			if (timestamp < now.AddMinutes(-5))
+			if (timestamp < now.AddMinutes(-slideExpirationTime))
 				return false;
 
-			if (timestamp > now.AddMinutes(5))
+			if (timestamp > now.AddMinutes(slideExpirationTime))
 				return false;
 
 			return true;
@@ -151,7 +193,7 @@ namespace WebAPI.Hmac.Filters
 			var memoryCache = MemoryCache.Default;
 			if (!memoryCache.Contains(signature))
 			{
-				var expiration = DateTimeOffset.UtcNow.AddMinutes(5);
+				var expiration = DateTimeOffset.UtcNow.AddMinutes(slideExpirationTime);
 				memoryCache.Add(signature, signature, expiration);
 			}
 		}
@@ -160,48 +202,6 @@ namespace WebAPI.Hmac.Filters
 		{
 			//TODO: configure here,needs to be replaced with repository logic
 			return "password";
-		}
-
-		private bool IsAuthenticated(HttpActionContext actionContext)
-		{
-			var headers = actionContext.Request.Headers;
-
-			var timeStampString = GetHttpRequestHeader(headers, TimestampHeaderName);
-			if (!IsDateValidated(timeStampString))
-				return false;
-
-			var authenticationString = GetHttpRequestHeader(headers, AuthenticationHeaderName);
-			if (string.IsNullOrEmpty(authenticationString))
-				return false;
-
-			var authenticationParts = authenticationString.Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries);
-
-			if (authenticationParts.Length != 2)
-				return false;
-
-			var username = authenticationParts[0];
-			var signature = authenticationParts[1];
-
-			if (!IsSignatureValidated(signature))
-				return false;
-
-			AddToMemoryCache(signature);
-
-			var hashedPassword = GetHashedPassword(username);
-			var baseString = BuildBaseString(actionContext);
-
-			return IsAuthenticated(hashedPassword, baseString, signature);
-		}
-
-		public override void OnActionExecuting(HttpActionContext actionContext)
-		{
-			bool isAuthenticated = IsAuthenticated(actionContext);
-
-			if (!isAuthenticated)
-			{
-				var response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
-				actionContext.Response = response;
-			}
 		}
 	}
 }

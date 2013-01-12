@@ -18,7 +18,14 @@ namespace ShareDeployed.Filters
 			if (!filterContext.HttpContext.User.Identity.IsAuthenticated)
 			{
 				if (filterContext.HttpContext.Request.Cookies["ASP.NET_SessionId"] != null)
-					filterContext.HttpContext.Response.Cookies["ASP.NET_SessionId"].Expires = DateTime.Now.AddYears(-30);
+					filterContext.HttpContext.Response.Cookies["ASP.NET_SessionId"].Expires = DateTime.UtcNow.AddYears(-30);
+
+				if (filterContext.HttpContext.Request.Cookies["messanger.state"] != null)
+				{
+					var msCookie = new HttpCookie("messanger.state");
+					msCookie.Expires = DateTime.UtcNow.AddDays(-1);
+					filterContext.HttpContext.Response.Cookies.Add(msCookie);
+				}
 
 				if (filterContext.HttpContext.Session != null)
 					filterContext.HttpContext.Session.Abandon();

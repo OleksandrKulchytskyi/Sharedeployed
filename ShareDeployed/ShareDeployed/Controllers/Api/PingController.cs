@@ -1,4 +1,5 @@
 ﻿using System;
+using ShareDeployed.Extension;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -10,15 +11,26 @@ namespace ShareDeployed.Controllers.Api
 	[WebAPI.Hmac.Filters.AuthenticateWithTimeStamp]
 	public class PingController : ApiController
 	{
+		string sessionTokenId = string.Empty;
+
 		[HttpGet]
 		public HttpResponseMessage Ping()
 		{
+			UpdateActivity();
+
 			return new HttpResponseMessage(HttpStatusCode.OK)
 			{
-				Content =
-					new System.Net.Http.StringContent(DateTime.UtcNow.ToString())
+				Content = new System.Net.Http.StringContent(DateTime.UtcNow.ToString())
 			};
 		}
 
+		private void UpdateActivity()
+		{
+			if (Request.Headers.GetCookie("messanger.state") != null)
+			{
+				var state = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(Request.Headers.GetCookie("messanger.state"));
+				sessionTokenId = state.tokenId;
+			}
+		}
 	}
 }

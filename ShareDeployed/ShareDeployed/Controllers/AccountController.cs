@@ -1,9 +1,10 @@
 ﻿using DotNetOpenAuth.AspNet;
 using Microsoft.Web.WebPages.OAuth;
+using Newtonsoft.Json;
 using Ninject;
 using ShareDeployed.Authorization;
-using ShareDeployed.Common.Models;
 using ShareDeployed.Common.Extensions;
+using ShareDeployed.Common.Models;
 using ShareDeployed.Extension;
 using ShareDeployed.Filters;
 using ShareDeployed.Models;
@@ -15,7 +16,6 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using WebMatrix.WebData;
-using Newtonsoft.Json;
 
 namespace ShareDeployed.Controllers
 {
@@ -43,13 +43,18 @@ namespace ShareDeployed.Controllers
 				WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
 			{
 				FormsAuthentication.SetAuthCookie(model.UserName, model.RememberMe);
+				string tokenIssuerId = string.Empty;
 
 				if (Request.Cookies["ASP.NET_SessionId"] != null)
 				{
 					var cookie = Request.Cookies["ASP.NET_SessionId"];
-					if (Session.SessionID != cookie.Value)
+					SessionTokenIssuer.Instance.AddOrUpdate(new SessionInfo()
 					{
-					}
+						Session = Session.SessionID,
+						Expire = DateTime.UtcNow.AddMinutes(40)
+					}, (tokenIssuerId = Guid.NewGuid().ToString()));
+
+					SessionTokenIssuer.Instance.AddOrUpdateUserName(tokenIssuerId, model.UserName);
 				}
 
 				var authClient = WebHelper.GetClientIndetification();
@@ -86,7 +91,7 @@ namespace ShareDeployed.Controllers
 							Id = Guid.NewGuid().ToString("d"),
 							Identity = string.Format("{0}_{1}", model.UserName, userId),
 							IsBanned = false,
-							LastActivity = DateTime.Now,
+							LastActivity = DateTime.UtcNow,
 							Name = model.UserName,
 							Status = (int)Common.Models.UserStatus.Active,
 							Note = "created from LogOn workflow",
@@ -104,13 +109,14 @@ namespace ShareDeployed.Controllers
 							userId = mesUser.Id,
 							aspUserId = userId,
 							userName = model.UserName,
-							hash = mesUser.Hash
+							hash = mesUser.Hash,
+							tokenId = tokenIssuerId
 						});
 						var cookie = new HttpCookie("messanger.state", state);
 						if (model.RememberMe)
-							cookie.Expires = DateTime.Now.AddDays(30);
+							cookie.Expires = DateTime.UtcNow.AddDays(30);
 						else
-							cookie.Expires = DateTime.Now.AddHours(1);
+							cookie.Expires = DateTime.UtcNow.AddMinutes(40);
 						HttpContext.Response.Cookies.Add(cookie);
 					}
 					else if (mesUser != null)
@@ -120,13 +126,14 @@ namespace ShareDeployed.Controllers
 							userId = mesUser.Id,
 							aspUserId = userId,
 							userName = model.UserName,
-							hash = mesUser.Hash
+							hash = mesUser.Hash,
+							tokenId = tokenIssuerId
 						});
 						var cookie = new HttpCookie("messanger.state", state);
 						if (model.RememberMe)
-							cookie.Expires = DateTime.Now.AddDays(30);
+							cookie.Expires = DateTime.UtcNow.AddDays(30);
 						else
-							cookie.Expires = DateTime.Now.AddHours(1);
+							cookie.Expires = DateTime.UtcNow.AddMinutes(40);
 
 						HttpContext.Response.Cookies.Add(cookie);
 					}
@@ -146,6 +153,9 @@ namespace ShareDeployed.Controllers
 			Authorization.AuthTokenManagerEx.Instance.RemoveToken(WebHelper.GetClientIndetification());
 			if (Session != null)
 			{
+				if (!string.IsNullOrEmpty(Session.SessionID))
+					SessionTokenIssuer.Instance.Remove(new SessionInfo() { Session = Session.SessionID });
+
 				string userName = string.Empty;
 				int userId = -1;
 				if (Session["UserName"] != null)
@@ -156,10 +166,14 @@ namespace ShareDeployed.Controllers
 			}
 
 			if (Request.Cookies["ASP.NET_SessionId"] != null)
-				Response.Cookies["ASP.NET_SessionId"].Expires = DateTime.Now.AddYears(-30);
+				Response.Cookies["ASP.NET_SessionId"].Expires = DateTime.UtcNow.AddYears(-30);
 
 			if (Request.Cookies["messanger.state"] != null)
-				Response.Cookies.Remove("messanger.state");
+			{
+				var msC = new HttpCookie("messanger.state");
+				msC.Expires = DateTime.UtcNow.AddDays(-1);
+				Response.Cookies.Add(msC);
+			}
 
 			Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", ""));
 			Response.Cookies.Remove(".ASPXAUTH");
@@ -239,23 +253,36 @@ namespace ShareDeployed.Controllers
 																authToken);
 					}//end using messangerRepo
 
+					string tokenIssuerId = string.Empty;
+					if(Session!=null && !string.IsNullOrEmpty(Session.SessionID))
+					{
+						SessionTokenIssuer.Instance.AddOrUpdate(new SessionInfo()
+						{
+							Session = Session.SessionID,
+							Expire = DateTime.UtcNow.AddMinutes(40)
+						}, (tokenIssuerId = Guid.NewGuid().ToString()));
+
+						SessionTokenIssuer.Instance.AddOrUpdateUserName(tokenIssuerId, model.UserName);
+					}
+
 					var state = JsonConvert.SerializeObject(new
 					{
 						userId = mesUsr.Id,
 						aspUserId = webSecUID,
 						userName = model.UserName,
-						hash = mesUsr.Hash
+						hash = mesUsr.Hash,
+						tokenId = tokenIssuerId
 					});
 
 					var cookie = new HttpCookie("messanger.state", state);
-					cookie.Expires = DateTime.Now.AddHours(1);
+					cookie.Expires = DateTime.UtcNow.AddHours(40);
 					HttpContext.Response.Cookies.Add(cookie);
 
 					return RedirectToAction("Index", "Home");
 				}
 				catch (MembershipCreateUserException e)
 				{
-					ModelState.AddModelError("", ErrorCodeToString(e.StatusCode));
+					ModelState.AddModelError(string.Empty, ErrorCodeToString(e.StatusCode));
 					MvcApplication.Logger.Error("Error occurred while register user", e);
 				}
 			}
