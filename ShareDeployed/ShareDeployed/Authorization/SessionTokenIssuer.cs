@@ -122,6 +122,17 @@ namespace ShareDeployed.Authorization
 			return key;
 		}
 
+		public string Get(string sessionId)
+		{
+			string key = string.Empty;
+			var info = new SessionInfo { Session = sessionId };
+			if (_inner.ContainsKey(info))
+			{
+				_inner.TryGetValue(info, out key);
+			}
+			return key;
+		}
+
 		public bool Remove(SessionInfo info)
 		{
 			string sesKey;
@@ -143,8 +154,8 @@ namespace ShareDeployed.Authorization
 			if (string.IsNullOrEmpty(sessionId) && string.IsNullOrEmpty(authToken))
 				return false;
 
-			var sesInfo=new SessionInfo{ Session=sessionId};
-			if(_inner.ContainsKey(sesInfo))
+			var sesInfo = new SessionInfo { Session = sessionId };
+			if (_inner.ContainsKey(sesInfo))
 			{
 				return string.Equals(_inner[sesInfo], authToken, StringComparison.OrdinalIgnoreCase);
 			}
@@ -159,6 +170,11 @@ namespace ShareDeployed.Authorization
 		public int CountUser
 		{
 			get { return _userData.Count; }
+		}
+
+		public IEnumerable<string> GetAllSessions()
+		{
+			return _inner.Keys.Select(x => x.Session).AsEnumerable();
 		}
 
 		public void Dispose()
