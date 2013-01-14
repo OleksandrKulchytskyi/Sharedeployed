@@ -111,6 +111,9 @@
     <Compile Include="Helpers\HttpClientHelper.cs" />
     <Compile Include="Helpers\WeakEventHandlerAdvanced.cs" />
     <Compile Include="Helpers\WeakEventHelper.cs" />
+    <Compile Include="Helpers\WebClientWithCookies.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Infrastructure\LinkManager.cs" />
     <Compile Include="LocalStateContainer.cs" />
     <Compile Include="Message\ChangeGroupMessage.cs" />

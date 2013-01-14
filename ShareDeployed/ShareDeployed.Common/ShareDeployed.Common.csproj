@@ -66,6 +66,7 @@
     <Compile Include="Helper\DisposalAccumulator.cs" />
     <Compile Include="Helper\GenericWeakReference.cs" />
     <Compile Include="Helper\LazyWeakReference.cs" />
+    <Compile Include="Helper\TaskQueue.cs" />
     <Compile Include="Infrastructure\CookieAwareWebClient.cs">
       <SubType>Component</SubType>
     </Compile>

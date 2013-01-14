@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace ShareDeployed.Common.Helper
+﻿namespace ShareDeployed.Common.Helper
 {
 	using IDisposable = System.IDisposable;
 	using System.Collections.Generic;
