@@ -33,6 +33,7 @@ namespace ShareDeployed.Handlers
 			}
 
 			string logonType = context.Request.Headers.Get("logonType");
+			context.Response.ContentType = "application/json";
 
 			switch (logonType)
 			{
@@ -90,7 +91,8 @@ namespace ShareDeployed.Handlers
 						tokenId = tokenIssuerId
 					});
 
-					var cookie = new HttpCookie(mesStateConst, response);
+					var cookie = new HttpCookie(mesStateConst);
+					cookie.Value = response;
 					cookie.Expires = DateTime.UtcNow.AddDays(1);
 					context.Response.Cookies.Add(cookie);
 
@@ -135,7 +137,7 @@ namespace ShareDeployed.Handlers
 						{
 							dynamic desData = JsonConvert.DeserializeObject<dynamic>(GetCookieValue(context, mesStateConst));
 							string tokenId = desData.tokenId;
-							authData.IsKeyValid = Authorization.SessionTokenIssuer.Instance.CheckSessionToken(context.Session.SessionID,tokenId);
+							authData.IsKeyValid = Authorization.SessionTokenIssuer.Instance.CheckSessionToken(context.Session.SessionID, tokenId);
 						}
 						context.Response.Write(JsonConvert.SerializeObject(authData));
 						context.ApplicationInstance.CompleteRequest();

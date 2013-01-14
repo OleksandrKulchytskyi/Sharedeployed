@@ -8,6 +8,7 @@ namespace ShareDeployed.HttpModules
 	public class MobileRouterModule : IHttpModule
 	{
 		private const String ForceFullSiteCookieName = "FullSiteMode";
+		
 		public void Dispose()
 		{
 		}

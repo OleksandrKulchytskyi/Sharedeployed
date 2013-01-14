@@ -64,9 +64,16 @@
     <Compile Include="Extensions\TaskAsyncHelper.cs" />
     <Compile Include="Helper\DateTimeExtender.cs" />
     <Compile Include="Helper\DisposalAccumulator.cs" />
+    <Compile Include="Helper\GCWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Helper\GenericWeakReference.cs" />
     <Compile Include="Helper\LazyWeakReference.cs" />
     <Compile Include="Helper\TaskQueue.cs" />
+    <Compile Include="Helper\WebClientWithCookies.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Helper\WebRequesthelper.cs" />
     <Compile Include="Infrastructure\CookieAwareWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
