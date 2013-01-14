@@ -23,6 +23,8 @@ namespace ShareDeployed.Controllers
 	[InitializeSimpleMembership]
 	public class AccountController : Controller
 	{
+		private const string _msConst="messanger.state";
+		private const string _aspSesId = "ASP.NET_SessionId";
 		// GET: /Account/Login
 		//[HandleError(ExceptionType = typeof(System.Data.DataException), View = "Shared/Error")]
 		[AllowAnonymous]
@@ -45,9 +47,9 @@ namespace ShareDeployed.Controllers
 				FormsAuthentication.SetAuthCookie(model.UserName, model.RememberMe);
 				string tokenIssuerId = string.Empty;
 
-				if (Request.Cookies["ASP.NET_SessionId"] != null)
+				if (Request.Cookies[_aspSesId] != null)
 				{
-					var cookie = Request.Cookies["ASP.NET_SessionId"];
+					var cookie = Request.Cookies[_aspSesId];
 					SessionTokenIssuer.Instance.AddOrUpdate(new SessionInfo()
 					{
 						Session = Session.SessionID,
@@ -102,7 +104,7 @@ namespace ShareDeployed.Controllers
 					}
 
 					// save messanger state to cookies object
-					if (mesUser != null && Request.Cookies.Get("messanger.state") != null)
+					if (mesUser != null && Request.Cookies.Get(_msConst) != null)
 					{
 						var state = JsonConvert.SerializeObject(new
 						{
@@ -112,7 +114,7 @@ namespace ShareDeployed.Controllers
 							hash = mesUser.Hash,
 							tokenId = tokenIssuerId
 						});
-						var cookie = new HttpCookie("messanger.state", state);
+						var cookie = new HttpCookie(_msConst, state);
 						if (model.RememberMe)
 							cookie.Expires = DateTime.UtcNow.AddDays(30);
 						else
@@ -129,7 +131,7 @@ namespace ShareDeployed.Controllers
 							hash = mesUser.Hash,
 							tokenId = tokenIssuerId
 						});
-						var cookie = new HttpCookie("messanger.state", state);
+						var cookie = new HttpCookie(_msConst, state);
 						if (model.RememberMe)
 							cookie.Expires = DateTime.UtcNow.AddDays(30);
 						else
@@ -165,17 +167,17 @@ namespace ShareDeployed.Controllers
 				Authorization.AuthTokenManagerEx.Instance.RemoveClientInfo(new ClientInfo() { UserName = userName, Id = userId });
 			}
 
-			if (Request.Cookies["ASP.NET_SessionId"] != null)
-				Response.Cookies["ASP.NET_SessionId"].Expires = DateTime.UtcNow.AddYears(-30);
+			if (Request.Cookies[_aspSesId] != null)
+				Response.Cookies[_aspSesId].Expires = DateTime.UtcNow.AddDays(-1);
 
-			if (Request.Cookies["messanger.state"] != null)
+			if (Request.Cookies[_msConst] != null)
 			{
-				var msC = new HttpCookie("messanger.state");
+				var msC = new HttpCookie(_msConst);
 				msC.Expires = DateTime.UtcNow.AddDays(-1);
 				Response.Cookies.Add(msC);
 			}
 
-			Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", ""));
+			Response.Cookies.Add(new HttpCookie(_aspSesId, ""));
 			Response.Cookies.Remove(".ASPXAUTH");
 			Response.Cookies.Clear();
 
@@ -274,7 +276,7 @@ namespace ShareDeployed.Controllers
 						tokenId = tokenIssuerId
 					});
 
-					var cookie = new HttpCookie("messanger.state", state);
+					var cookie = new HttpCookie(_msConst, state);
 					cookie.Expires = DateTime.UtcNow.AddHours(40);
 					HttpContext.Response.Cookies.Add(cookie);
 

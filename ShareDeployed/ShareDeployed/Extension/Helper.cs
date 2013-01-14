@@ -17,14 +17,22 @@ namespace ShareDeployed.Extension
 
 	public static class WebHelper
 	{
+		internal static bool RequestIsLocal(HttpRequest request)
+		{
+			if (request.UserHostAddress == "127.0.0.1" ||
+				request.UserHostAddress == request.ServerVariables["LOCAL_ADDR"])
+				return true;
+			else
+				return false;
+		}
+
 		internal static string GetIpAddress()
 		{
 			string ipAddress = string.Empty;
 			ipAddress = System.Web.HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
 			if (string.IsNullOrEmpty(ipAddress))
-			{
 				ipAddress = System.Web.HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"];
-			}
+
 			return ipAddress;
 		}
 
@@ -41,7 +49,6 @@ namespace ShareDeployed.Extension
 			}
 			catch (Exception)
 			{
-
 			}
 			return false;
 		}
@@ -49,7 +56,6 @@ namespace ShareDeployed.Extension
 		internal static string DetermineNameFromHeaders()
 		{
 			return System.Web.HttpContext.Current.Request.ServerVariables["REMOTE_HOST"];
-
 		}
 
 		internal static Authorization.AuthClientData GetClientIndetification()
@@ -92,9 +98,7 @@ namespace ShareDeployed.Extension
 				{
 					CookieHeaderValue cookieHeaderValue;
 					if (CookieHeaderValue.TryParse(cookie, out cookieHeaderValue))
-					{
 						result.Add(cookieHeaderValue);
-					}
 				}
 			}
 			return result;

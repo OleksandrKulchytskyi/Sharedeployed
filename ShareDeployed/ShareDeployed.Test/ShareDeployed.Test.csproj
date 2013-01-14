@@ -76,6 +76,8 @@
     <Compile Include="UnitTest4.cs" />
     <Compile Include="SessionIssuerTest.cs" />
     <Compile Include="ThreadTest.cs" />
+    <Compile Include="TaskQueueTest.cs" />
+    <Compile Include="CookielessWebClientTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ShareDeployed.Common\ShareDeployed.Common.csproj">
