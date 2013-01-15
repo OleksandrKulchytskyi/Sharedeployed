@@ -1,15 +1,13 @@
-﻿using System;
-using System.Configuration;
-using System.Linq;
-using log4net;
-
-using System.Text;
-using System.Web;
-using System.Web.Http;
-using System.Security.Principal;
+﻿using log4net;
 using ShareDeployed.Common.Models;
 using ShareDeployed.Extension;
+using System;
+using System.Configuration;
 using System.Globalization;
+using System.Linq;
+using System.Security.Principal;
+using System.Web;
+using System.Web.Http;
 
 namespace ShareDeployed.Authorization
 {
@@ -19,20 +17,23 @@ namespace ShareDeployed.Authorization
 		private const string AuthTokenHeaderName = "AuthToken";
 
 		private bool requireSsl = Convert.ToBoolean(ConfigurationManager.AppSettings["RequireSsl"]);
+
 		public bool RequireSsl
 		{
 			get { return requireSsl; }
 			set { requireSsl = value; }
 		}
 
-		bool requireToken = true;
+		private bool requireToken = true;
+
 		public bool RequireToken
 		{
 			get { return requireToken; }
 			set { requireToken = value; }
 		}
 
-		bool requireTimestamp = false;
+		private bool requireTimestamp = false;
+
 		public bool RequireTimestamp
 		{
 			get { return requireTimestamp; }

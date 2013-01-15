@@ -1,13 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
+using System.Runtime.InteropServices;
 
 namespace ShareDeployed.Common.Extensions
 {
 	public static class StreamUtils
 	{
+		[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, EntryPoint = "GetDiskFreeSpaceW")]
+		private static extern bool GetDiskFreeSpace(string lpRootName, out int lpSectorsPerCluster, out int lpBytesPerSector,
+													out int lpNiumberOfFreeClusters, out int lpTotalNumberOfClusters);
+
+		public static int GetClusterSize(string path)
+		{
+			int sectorsPerCluster;
+			int bytesPerSector;
+			int freeClusters;
+			int totalClusters;
+			int clusterSize = 0;
+			if (GetDiskFreeSpace(Path.GetPathRoot(path), out sectorsPerCluster, out bytesPerSector, out freeClusters, out totalClusters))
+				clusterSize = bytesPerSector * sectorsPerCluster;
+			return clusterSize;
+		}
+
 		public static void CopyStream(this Stream input, Stream output)
 		{
 			byte[] buffer = new byte[8 * 1024];

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+//using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -8,6 +8,33 @@ namespace ShareDeployed.Common.Extensions
 {
 	public static class StringExtensions
 	{
+		//bool IsKeyword(String tokenText, HashSet<string> keywords)
+		//{
+		//	int hashCode = 0;
+
+		//	for (int i = 0; i < tokenText.Length; i++)
+		//	{
+		//		int c = (int)tokenText[i];
+
+		//		// check upper bound
+		//		if (c > 'z')
+		//			return false;
+
+		//		// to upper case for Latin letters
+		//		if (c >= 'a')
+		//			c ^= 0x20;
+
+		//		// a keyword must be of Latin letters, numbers, and underscore
+		//		if (!((c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_'))
+		//			return false;
+
+		//		// update hash code
+		//		hashCode = hashCode + c;
+		//	}
+
+		//	return keywords.Contains(hashCode);
+		//}
+
 		public static string ToMD5(this string value)
 		{
 			if (String.IsNullOrEmpty(value))

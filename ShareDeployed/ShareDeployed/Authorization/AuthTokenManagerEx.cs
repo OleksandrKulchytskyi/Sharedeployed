@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace ShareDeployed.Authorization
 {
 	public sealed class AuthTokenManagerEx : IDisposable
 	{
-		bool _disposed = false;
+		private bool _disposed = false;
 		private volatile int waitTimeout = (int)TimeSpan.FromSeconds(5).TotalMilliseconds;
 		private static readonly object _locker = null;
 		private static readonly AuthTokenManagerEx _instance = null;
@@ -132,6 +131,7 @@ namespace ShareDeployed.Authorization
 		}
 
 		#region client login operations
+
 		public void AddClientInfo(ClientInfo info, string authToken)
 		{
 			if (_clientsAccessTokens.ContainsKey(info))
@@ -166,11 +166,11 @@ namespace ShareDeployed.Authorization
 				_clientsAccessTokens[cInfo] = value;
 			}
 		}
-		#endregion
 
-		void PerformPurge()
+		#endregion client login operations
+
+		private void PerformPurge()
 		{
-
 			int cycle = 0;
 			int totalCycles = (waitTimeout / 20);
 			while (!_disposed && _cts != null && !_cts.IsCancellationRequested)
@@ -255,6 +255,7 @@ namespace ShareDeployed.Authorization
 			MachineName = string.Empty;
 			IpAddress = string.Empty;
 		}
+
 		public AuthClientData(string ip, string machineName)
 			: base()
 		{
@@ -263,6 +264,7 @@ namespace ShareDeployed.Authorization
 		}
 
 		public string IpAddress { get; set; }
+
 		public string MachineName { get; set; }
 	}
 
@@ -274,6 +276,7 @@ namespace ShareDeployed.Authorization
 		}
 
 		public int Id { get; set; }
+
 		public string UserName { get; set; }
 	}
 
@@ -286,6 +289,7 @@ namespace ShareDeployed.Authorization
 		}
 
 		public int UserId { get; set; }
+
 		public string UserName { get; set; }
 	}
 
@@ -335,6 +339,7 @@ namespace ShareDeployed.Authorization
 	public class AuthTokenValue : IEquatable<AuthTokenValue>
 	{
 		public Guid GuidKey { get; set; }
+
 		public DateTime ExpireOn { get; set; }
 
 		public bool Equals(AuthTokenValue other)
@@ -354,19 +359,16 @@ namespace ShareDeployed.Authorization
 		public AuthTokenManagerException()
 			: base()
 		{
-
 		}
 
 		public AuthTokenManagerException(string msg)
 			: base(msg)
 		{
-
 		}
 
 		public AuthTokenManagerException(string msg, Exception innerExc)
 			: base(msg, innerExc)
 		{
-
 		}
 	}
 }

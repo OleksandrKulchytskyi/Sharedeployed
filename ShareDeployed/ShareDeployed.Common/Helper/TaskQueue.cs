@@ -6,13 +6,14 @@ namespace ShareDeployed.Common.Helper
 {
 	public class TaskQueue : IDisposable
 	{
-		object locker = new object();
-		Thread[] workers;
-		Queue<string> taskQ = new Queue<string>();
+		private object locker = new object();
+		private Thread[] workers;
+		private Queue<string> taskQ = new Queue<string>();
 
 		public TaskQueue(int workerCount)
 		{
 			workers = new Thread[workerCount];
+
 			// Create and run separate pool  for each consumer
 			for (int i = 0; i < workerCount; i++)
 				(workers[i] = new Thread(Consume)).Start();
@@ -36,7 +37,7 @@ namespace ShareDeployed.Common.Helper
 			}
 		}
 
-		void Consume()
+		private void Consume()
 		{
 			while (true)
 			{

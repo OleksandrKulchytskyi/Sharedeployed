@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ShareDeployed.Common.Extensions
 {
@@ -19,7 +16,6 @@ namespace ShareDeployed.Common.Extensions
 
 			// Invoke constructor and return resulting object.
 			return ctor.Invoke(new object[] { }) as T;
-
 		}, System.Threading.LazyThreadSafetyMode.ExecutionAndPublication);
 
 		public static T Instance

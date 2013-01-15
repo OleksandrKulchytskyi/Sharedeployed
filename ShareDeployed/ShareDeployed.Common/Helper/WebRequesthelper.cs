@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
+﻿using System.Net;
 
 namespace ShareDeployed.Common.Helper
 {
 	public class WebRequesthelper
 	{
-		public static  void Do(string url)
+		public static void Do(string url)
 		{
 			HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
 			request.Headers.Add("uid", "admin");

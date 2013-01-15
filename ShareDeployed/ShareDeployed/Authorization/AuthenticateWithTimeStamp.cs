@@ -19,7 +19,6 @@ namespace WebAPI.Hmac.Filters
 	{
 		private const string AuthenticationHeaderName = "Authentication";
 		private const string TimestampHeaderName = "Timestamp";
-
 		private const int slideExpirationTime = 5;
 
 		//public IAccountRepository Repository { get; set; }
