@@ -14,7 +14,6 @@ namespace ShareDeployed.Test
 
 			//ShareDeployed.Common.Helper.WebRequesthelper.Do(url);
 
-
 			WebClientWithCookies client = new WebClientWithCookies();
 
 			client.Headers.Add("uid", "admin");
@@ -24,7 +23,6 @@ namespace ShareDeployed.Test
 			var data = client.DownloadString(url);
 			if (data != null)
 			{
-
 			}
 
 			if (client.GetCookies() != null)
@@ -36,7 +34,6 @@ namespace ShareDeployed.Test
 					var cookie2 = client.GetCookies().GetCookies(new Uri("//"));
 					if (cookie2 != null)
 					{
-
 					}
 				}
 				catch (Exception)

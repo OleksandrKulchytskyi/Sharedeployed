@@ -1,13 +1,13 @@
-﻿using System;
+﻿using log4net;
+using ShareDeployed.Common.Models;
+using System;
 using System.Configuration;
 using System.Linq;
-using log4net;
-
+using System.Security.Principal;
 using System.Text;
 using System.Web;
 using System.Web.Http;
-using System.Security.Principal;
-using ShareDeployed.Common.Models;
+
 //using Supertext.BL.CustomerManagement;
 
 namespace ShareDeployed.Authorization
@@ -20,6 +20,7 @@ namespace ShareDeployed.Authorization
 		private static readonly ILog log = LogManager.GetLogger(typeof(BasicHttpAuthorizeAttribute));
 
 		private bool requireSsl = Convert.ToBoolean(ConfigurationManager.AppSettings["RequireSsl"]);
+
 		public bool RequireSsl
 		{
 			get { return requireSsl; }
@@ -27,6 +28,7 @@ namespace ShareDeployed.Authorization
 		}
 
 		private bool requireAuthentication = true;
+
 		public bool RequireAuthentication
 		{
 			get { return requireAuthentication; }
@@ -53,7 +55,6 @@ namespace ShareDeployed.Authorization
 			throw new HttpResponseException(challengeMessage);
 		}
 
-
 		private bool Authenticate(System.Web.Http.Controllers.HttpActionContext actionContext)
 		{
 			if (RequireSsl && !HttpContext.Current.Request.IsSecureConnection && !HttpContext.Current.Request.IsLocal)
@@ -76,7 +77,6 @@ namespace ShareDeployed.Authorization
 			return false;
 		}
 
-
 		private bool TryGetPrincipal(string authHeader, out IPrincipal principal)
 		{
 			var creds = ParseAuthHeader(authHeader);
@@ -90,28 +90,26 @@ namespace ShareDeployed.Authorization
 			return false;
 		}
 
-
 		private string[] ParseAuthHeader(string authHeader)
 		{
 			// Check this is a Basic Auth header
 			if (authHeader == null || authHeader.Length == 0)//|| !authHeader.StartsWith("Basic"))
 				return null;
 
-			// Pull out the Credentials with are seperated by ':' and Base64 encoded 
+			// Pull out the Credentials with are seperated by ':' and Base64 encoded
 			string base64Credentials = authHeader.Trim();//.Substring(6);
 			string[] credentials = Encoding.UTF8.GetString(Convert.FromBase64String(base64Credentials)).Split(new char[] { ':' });
 
 			if (credentials.Length != 2 || string.IsNullOrEmpty(credentials[0]) || string.IsNullOrEmpty(credentials[0]))
 				return null;
 
-			// Okay this is the credentials 
+			// Okay this is the credentials
 			return credentials;
 		}
 
-
 		private bool TryGetPrincipal(string username, string password, out IPrincipal principal)
 		{
-			// this is the method that does the authentication 
+			// this is the method that does the authentication
 			//users often add a copy/paste space at the end of the username
 			username = username.Trim();
 			password = password.Trim();

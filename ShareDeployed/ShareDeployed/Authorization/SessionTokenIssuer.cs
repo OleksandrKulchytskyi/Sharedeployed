@@ -5,69 +5,73 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace ShareDeployed.Authorization
 {
 	public class SessionTokenIssuer : SingletonBase<SessionTokenIssuer>, IDisposable
 	{
 		private volatile bool isDisposed = false;
+
 		/// <summary>
 		/// timeout in miliseconds
 		/// </summary>
-		private volatile int purgeTimeout = 15000;
-		private readonly Task _purgeTask;
+		private static readonly TimeSpan _sweepInterval = TimeSpan.FromMinutes(10);
+
 		private readonly ConcurrentDictionary<SessionInfo, string> _inner;
 		private readonly ConcurrentDictionary<string, string> _userData;
-		readonly CancellationTokenSource _cts;
-		private readonly object _syncRoot = new object();
+		private readonly CancellationTokenSource _cts;
+		private System.Threading.Timer _purgeTimer;
 
 		private SessionTokenIssuer()
 		{
 			_inner = new ConcurrentDictionary<SessionInfo, string>(new SessionInfoComparer());
 			_userData = new ConcurrentDictionary<string, string>();
 			_cts = new CancellationTokenSource();
-			_purgeTask = new Task(PerformePurge, _cts.Token, TaskCreationOptions.LongRunning);
-			_purgeTask.Start();
+
+			_purgeTimer = new Timer(_ => PerformePurge(), null, _sweepInterval, _sweepInterval);
 		}
 
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="timeout">timeout represented in miliseconds</param>
 		public void SetPurgeTimeout(int timeout)
 		{
 			if (timeout <= 0)
 				throw new ArgumentException("timeout must be greater than zero.");
-			purgeTimeout = timeout;
+
+			_purgeTimer.Change(timeout, timeout);
 		}
 
 		public void SetPurgeTimeout(TimeSpan timeout)
 		{
 			if (timeout == null)
 				throw new ArgumentNullException("timeout cannot be null.");
-			purgeTimeout = (int)timeout.TotalMilliseconds;
+
+			_purgeTimer.Change(timeout, timeout);
 		}
 
-		private void PerformePurge()
+		protected void PerformePurge()
 		{
-			int cycle = 0;
+			if (_cts.IsCancellationRequested)
+				return;
+
+			CheckForDisposing();
+
 			var option = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount, CancellationToken = _cts.Token };
-			System.Diagnostics.Debug.WriteLine("\n Processor count is:  " + Environment.ProcessorCount + "\n");
-
-			Thread.Sleep(500);
-
-			while (!_cts.IsCancellationRequested)
+#if DEBUG
+			System.Diagnostics.Debug.WriteLine("\nProcessor count is:  " + Environment.ProcessorCount + "\n");
+			System.Diagnostics.Debug.WriteLine("\nItems count: " + _inner.Count);
+#endif
+			try
 			{
-				int totalCycles = ((purgeTimeout) / 10);
-
-				System.Diagnostics.Debug.WriteLine("!!!! \n Items count: " + _inner.Count);
-
 				Parallel.ForEach(_inner.Keys, option, (x, state) =>
 					{
-						System.Diagnostics.Debug.WriteLine("Item: " + x.ToString());
+						System.Diagnostics.Debug.WriteLine("Processing item: " + x.ToString());
 						if (option.CancellationToken.IsCancellationRequested)
-							state.Break();
+						{
+							state.Stop();
+						}
 
 						if (x.Expire < DateTime.UtcNow)
 						{
@@ -75,23 +79,21 @@ namespace ShareDeployed.Authorization
 							Remove(x);
 						}
 					});
-
-				cycle = 0;
-				while (cycle != totalCycles)
-				{
-					if (_cts.IsCancellationRequested)
-						break;
-
-					cycle++;
-					Thread.Sleep(10);
-				}
 			}
+			catch (OperationCanceledException) { }
+			catch (AggregateException ex) { }
 
-			System.Diagnostics.Debug.WriteLine("Purge task has benn finished");
+			if (_cts.IsCancellationRequested)
+				return;
+#if DEBUG
+			System.Diagnostics.Debug.WriteLine("Purge task has been finished");
+#endif
 		}
 
 		public void AddOrUpdate(SessionInfo info, string key)
 		{
+			CheckForDisposing();
+
 			if (_inner.ContainsKey(info))
 			{
 				info.UpdateActivity();
@@ -106,6 +108,8 @@ namespace ShareDeployed.Authorization
 
 		public void AddOrUpdateUserName(string sessionKey, string userName)
 		{
+			CheckForDisposing();
+
 			if (_userData.ContainsKey(sessionKey))
 				_userData.TryUpdate(sessionKey, userName, userName);
 			else
@@ -114,6 +118,8 @@ namespace ShareDeployed.Authorization
 
 		public string Get(SessionInfo info)
 		{
+			CheckForDisposing();
+
 			string key = string.Empty;
 			if (_inner.ContainsKey(info))
 			{
@@ -124,6 +130,7 @@ namespace ShareDeployed.Authorization
 
 		public string Get(string sessionId)
 		{
+			CheckForDisposing();
 			string key = string.Empty;
 			var info = new SessionInfo { Session = sessionId };
 			if (_inner.ContainsKey(info))
@@ -135,14 +142,19 @@ namespace ShareDeployed.Authorization
 
 		public bool Remove(SessionInfo info)
 		{
+			CheckForDisposing();
+
 			string sesKey;
 			string user;
 			if (_inner.ContainsKey(info))
 			{
 				bool result = false;
 				result = _inner.TryRemove(info, out sesKey);
+
 				if (_userData.ContainsKey(sesKey))
+				{
 					_userData.TryRemove(sesKey, out user);
+				}
 
 				return result;
 			}
@@ -151,6 +163,8 @@ namespace ShareDeployed.Authorization
 
 		public bool CheckSessionToken(string sessionId, string authToken)
 		{
+			CheckForDisposing();
+
 			if (string.IsNullOrEmpty(sessionId) && string.IsNullOrEmpty(authToken))
 				return false;
 
@@ -174,11 +188,13 @@ namespace ShareDeployed.Authorization
 
 		public IEnumerable<string> GetAllSessions()
 		{
+			CheckForDisposing();
 			return _inner.Keys.Select(x => x.Session).AsEnumerable();
 		}
 
 		public void Dispose()
 		{
+			CheckForDisposing();
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
@@ -192,18 +208,23 @@ namespace ShareDeployed.Authorization
 			if (disposing)
 			{
 				_cts.Cancel();
-
-				_purgeTask.Wait((int)TimeSpan.FromSeconds(.5).TotalMilliseconds);
-
-				_purgeTask.Dispose();
+				_purgeTimer.Dispose();
+				_purgeTimer = null;
 				_cts.Dispose();
 			}
+		}
+
+		private void CheckForDisposing()
+		{
+			if (isDisposed)
+				throw new ObjectDisposedException(GetType().FullName);
 		}
 	}
 
 	public class SessionInfo
 	{
 		public string Session { get; set; }
+
 		public DateTime Expire { get; set; }
 
 		public void UpdateActivity()

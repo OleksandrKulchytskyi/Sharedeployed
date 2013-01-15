@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace ShareDeployed.Common.Helper
 {
 	[Serializable]
 	public class LazyWeakReference<T> where T : class
 	{
-		WeakReference reference;
-		Func<T> constructor = null;
+		private WeakReference reference;
+		private Func<T> constructor = null;
 		private int reinitializingCounter = 0;
 
 		public LazyWeakReference(T anObject, Func<T> aConstructor = null)
@@ -37,6 +33,5 @@ namespace ShareDeployed.Common.Helper
 				return (target as T);
 			}
 		}
-
 	}
 }

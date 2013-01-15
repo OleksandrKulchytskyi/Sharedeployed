@@ -15,7 +15,6 @@ namespace ShareDeployed.Test
 		[TestMethod]
 		public void TestSessionIssuerMethod()
 		{
-			//SessionTokenIssuer.Instance.SetPurgeTimeout(2000);
 			SessionTokenIssuer.Instance.SetPurgeTimeout(new TimeSpan(0, 0, 2));
 
 			var session1 = new SessionInfo { Expire = DateTime.UtcNow.AddMinutes(1), Session = Guid.NewGuid().ToString() };
@@ -27,14 +26,13 @@ namespace ShareDeployed.Test
 			Task.Factory.StartNew(Producer);
 			Task.Factory.StartNew(Consumer);
 
-			Thread.Sleep(65000);
+			Thread.Sleep(67700);
 
 			Assert.IsTrue(SessionTokenIssuer.Instance.Count == 0);
 
 			Assert.IsTrue(SessionTokenIssuer.Instance.CountUser == 0);
 
 			SessionTokenIssuer.Instance.Dispose();
-
 			SessionTokenIssuer.Instance.Dispose();
 		}
 

@@ -1,18 +1,12 @@
 ﻿using log4net;
-using ShareDeployed.Authorization;
 using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Reflection;
-using System.Security.Principal;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using System.Web.Security;
-using ShareDeployed.App_Start;
 
 namespace ShareDeployed
 {
@@ -58,6 +52,7 @@ namespace ShareDeployed
 			FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
+
 			//This line has been added to support specific ASP.MVC 4 mobile
 			BundleMobileConfig.RegisterBundles(BundleTable.Bundles);
 
@@ -65,7 +60,7 @@ namespace ShareDeployed
 			ControllerBuilder.Current.SetControllerFactory(typeof(ControllerFactory.DefaultMVCFactory));
 			System.Web.Mvc.DependencyResolver.SetResolver(new DependencyResolvers.MvcDependencyResolver(Infrastructure.Bootstrapper.Kernel));
 
-			// Cache never expires.You must restart application pool when you add/delete a view.A non-expiring cache can lead to heavy server memory load. 
+			// Cache never expires.You must restart application pool when you add/delete a view.A non-expiring cache can lead to heavy server memory load.
 			ViewEngines.Engines.OfType<RazorViewEngine>().First().ViewLocationCache =
 			new DefaultViewLocationCache(System.Web.Caching.Cache.NoSlidingExpiration);
 
@@ -76,6 +71,7 @@ namespace ShareDeployed
 			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
 			Infrastructure.Bootstrapper.DoMigrations();
+
 			//Infrastructure.Bootstrapper.DoSomeeMigrations();
 
 			try
@@ -103,7 +99,7 @@ namespace ShareDeployed
 			Logger.Error("UnhandledException", e.ExceptionObject as Exception);
 		}
 
-		void Session_Start(object sender, EventArgs e)
+		private void Session_Start(object sender, EventArgs e)
 		{
 			if (HttpContext.Current == null || HttpContext.Current.Session == null)
 				return;
@@ -112,11 +108,10 @@ namespace ShareDeployed
 			System.Diagnostics.Debug.WriteLine("Added " + HttpContext.Current.Session["_MyAppSession"] as string);
 		}
 
-		void Session_End(object sender, EventArgs e)
+		private void Session_End(object sender, EventArgs e)
 		{
 			if (HttpContext.Current != null && HttpContext.Current.Request.Cookies.Count > 0)
 				HttpContext.Current.Response.Cookies.Clear();
-
 
 			if (HttpContext.Current != null && HttpContext.Current.Session != null
 				&& HttpContext.Current.Session["_MyAppSession"] != null)
@@ -124,6 +119,7 @@ namespace ShareDeployed
 #if DEBUG
 				System.Diagnostics.Debug.WriteLine("Removed " + HttpContext.Current.Session["_MyAppSession"] as string);
 #endif
+
 				//AuthTokenManager.Instance.RemoveToken(HttpContext.Current.Session["_MyAppSession"] as string);
 				HttpContext.Current.Session.Remove("_MyAppSession");
 			}
