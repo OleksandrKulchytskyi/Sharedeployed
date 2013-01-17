@@ -488,9 +488,7 @@ namespace ShareDeployed.Common.Extensions
 		{
 			var tcs = new TaskCompletionSource<object>();
 
-			var timer = new Timer(tcs.SetResult,
-			null,
-			timeOut,
+			var timer = new Timer(tcs.SetResult,			null,			timeOut,
 			TimeSpan.FromMilliseconds(-1));
 
 			return tcs.Task.ContinueWith(_ =>

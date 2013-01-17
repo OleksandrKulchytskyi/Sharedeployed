@@ -98,6 +98,7 @@
     <Compile Include="Security\BasicCredentials.cs" />
     <Compile Include="Security\DummyPrincipalProvider.cs" />
     <Compile Include="Security\IProvidePrincipal.cs" />
+    <Compile Include="Timers\Timer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
