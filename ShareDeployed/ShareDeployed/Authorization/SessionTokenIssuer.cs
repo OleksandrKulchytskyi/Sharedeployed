@@ -20,35 +20,26 @@ namespace ShareDeployed.Authorization
 		private readonly ConcurrentDictionary<SessionInfo, string> _inner;
 		private readonly ConcurrentDictionary<string, string> _userData;
 		private readonly CancellationTokenSource _cts;
-		private System.Threading.Timer _purgeTimer;
+		private readonly ShareDeployed.Common.Timers.Timer _purgeTimer;
 
 		private SessionTokenIssuer()
 		{
 			_inner = new ConcurrentDictionary<SessionInfo, string>(new SessionInfoComparer());
 			_userData = new ConcurrentDictionary<string, string>();
 			_cts = new CancellationTokenSource();
+			_cts.Token.Register(() =>
+			{
+				_purgeTimer.Stop();
+			});
 
-			_purgeTimer = new Timer(_ => PerformePurge(), null, _sweepInterval, _sweepInterval);
+			_purgeTimer = new Common.Timers.Timer(_sweepInterval, true);
+			_purgeTimer.Elapsed += _purgeTimer_Elapsed;
+			_purgeTimer.Start();
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="timeout">timeout represented in miliseconds</param>
-		public void SetPurgeTimeout(int timeout)
+		void _purgeTimer_Elapsed(object sender, EventArgs e)
 		{
-			if (timeout <= 0)
-				throw new ArgumentException("timeout must be greater than zero.");
-
-			_purgeTimer.Change(timeout, timeout);
-		}
-
-		public void SetPurgeTimeout(TimeSpan timeout)
-		{
-			if (timeout == null)
-				throw new ArgumentNullException("timeout cannot be null.");
-
-			_purgeTimer.Change(timeout, timeout);
+			Task.Factory.StartNew(PerformePurge, _cts.Token);
 		}
 
 		protected void PerformePurge()
@@ -88,6 +79,31 @@ namespace ShareDeployed.Authorization
 #if DEBUG
 			System.Diagnostics.Debug.WriteLine("Purge task has been finished");
 #endif
+			GC.Collect();
+		}
+
+		/// <summary>
+		/// Set timeout for timer callback to be invoked
+		/// </summary>
+		/// <param name="timeout">timeout represented in miliseconds</param>
+		public void SetPurgeTimeout(int timeout)
+		{
+			if (timeout <= 0)
+				throw new ArgumentException("timeout must be greater than zero.");
+
+			_purgeTimer.Period = timeout;
+		}
+
+		/// <summary>
+		/// Set timeout for timer callback to be invoked
+		/// </summary>
+		/// <param name="timeout">timeout represented in miliseconds</param>
+		public void SetPurgeTimeout(TimeSpan timeout)
+		{
+			if (timeout == null)
+				throw new ArgumentNullException("timeout cannot be null.");
+
+			_purgeTimer.Period = (int)timeout.TotalMilliseconds;
 		}
 
 		public void AddOrUpdate(SessionInfo info, string key)
@@ -207,9 +223,10 @@ namespace ShareDeployed.Authorization
 			isDisposed = true;
 			if (disposing)
 			{
-				_cts.Cancel();
+				if (!_cts.IsCancellationRequested)
+					_cts.Cancel();
+
 				_purgeTimer.Dispose();
-				_purgeTimer = null;
 				_cts.Dispose();
 			}
 		}

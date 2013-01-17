@@ -17,8 +17,8 @@ namespace ShareDeployed.Common.Extensions
 
 		public static Task<TResult> ToTask<TResult>(this IEnumerable<Task> tasks)
 		{
-			var taskScheduler = SynchronizationContext.Current == null
-					? TaskScheduler.Default : TaskScheduler.FromCurrentSynchronizationContext();
+			var taskScheduler = SynchronizationContext.Current == null ?
+								TaskScheduler.Default : TaskScheduler.FromCurrentSynchronizationContext();
 			var taskEnumerator = tasks.GetEnumerator();
 			var completionSource = new TaskCompletionSource<TResult>();
 
@@ -120,7 +120,7 @@ namespace ShareDeployed.Common.Extensions
 					var ex = innerTask.Exception;
 					// observe Exception
 #if !WINDOWS_PHONE && !SILVERLIGHT
-					Trace.TraceError("SignalR exception thrown by Task: {0}", ex);
+					Trace.TraceError("Some exception thrown by Task: {0}", ex);
 #endif
 				}, TaskContinuationOptions.OnlyOnFaulted);
 			}
@@ -488,9 +488,7 @@ namespace ShareDeployed.Common.Extensions
 		{
 			var tcs = new TaskCompletionSource<object>();
 
-			var timer = new Timer(tcs.SetResult,
-			null,
-			timeOut,
+			var timer = new Timer(tcs.SetResult,			null,			timeOut,
 			TimeSpan.FromMilliseconds(-1));
 
 			return tcs.Task.ContinueWith(_ =>

@@ -93,11 +93,13 @@
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserStatus.cs" />
     <Compile Include="Models\Word.cs" />
+    <Compile Include="Processor\SequentialItemProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequetResponse\RangeRequest.cs" />
     <Compile Include="Security\BasicCredentials.cs" />
     <Compile Include="Security\DummyPrincipalProvider.cs" />
     <Compile Include="Security\IProvidePrincipal.cs" />
+    <Compile Include="Timers\Timer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
