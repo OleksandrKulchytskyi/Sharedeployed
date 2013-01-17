@@ -189,6 +189,7 @@ namespace ShareDeployed.Common.Timers
 				Stop();
 				_taskTimer.Dispose();
 			}
+			GC.SuppressFinalize(this);
 		}
 	}
 }
