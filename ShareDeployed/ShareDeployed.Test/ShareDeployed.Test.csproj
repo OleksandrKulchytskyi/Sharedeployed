@@ -78,6 +78,7 @@
     <Compile Include="ThreadTest.cs" />
     <Compile Include="TaskQueueTest.cs" />
     <Compile Include="CookielessWebClientTest.cs" />
+    <Compile Include="TimerTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ShareDeployed.Common\ShareDeployed.Common.csproj">

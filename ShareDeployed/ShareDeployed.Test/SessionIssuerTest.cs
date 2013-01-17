@@ -15,7 +15,7 @@ namespace ShareDeployed.Test
 		[TestMethod]
 		public void TestSessionIssuerMethod()
 		{
-			SessionTokenIssuer.Instance.SetPurgeTimeout(new TimeSpan(0, 0, 2));
+			SessionTokenIssuer.Instance.SetPurgeTimeout(new TimeSpan(0, 0, 5));
 
 			var session1 = new SessionInfo { Expire = DateTime.UtcNow.AddMinutes(1), Session = Guid.NewGuid().ToString() };
 			SessionTokenIssuer.Instance.AddOrUpdate(session1, Guid.NewGuid().ToString());
@@ -26,13 +26,11 @@ namespace ShareDeployed.Test
 			Task.Factory.StartNew(Producer);
 			Task.Factory.StartNew(Consumer);
 
-			Thread.Sleep(67700);
+			Thread.Sleep(67000);
 
-			Assert.IsTrue(SessionTokenIssuer.Instance.Count == 0);
+			Assert.IsTrue(SessionTokenIssuer.Instance.Count <= 10);
+			Assert.IsTrue(SessionTokenIssuer.Instance.CountUser <= 10);
 
-			Assert.IsTrue(SessionTokenIssuer.Instance.CountUser == 0);
-
-			SessionTokenIssuer.Instance.Dispose();
 			SessionTokenIssuer.Instance.Dispose();
 		}
 
@@ -57,7 +55,7 @@ namespace ShareDeployed.Test
 			SessionInfo info = null;
 			System.Diagnostics.Debug.WriteLine("Begin consumer");
 			do
-			{				
+			{
 				if (_queue.TryDequeue(out info))
 				{
 					string authKey = SessionTokenIssuer.Instance.Get(info);

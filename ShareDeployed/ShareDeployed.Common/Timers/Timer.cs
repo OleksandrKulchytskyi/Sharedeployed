@@ -9,8 +9,9 @@ namespace ShareDeployed.Common.Timers
 	/// <summary>
 	/// This class is a timer that performs some tasks periodically.
 	/// </summary>
-	public class Timer
+	public sealed class Timer:IDisposable
 	{
+		private bool _isDisposed = false;
 		#region Public events
 
 		/// <summary>
@@ -78,6 +79,18 @@ namespace ShareDeployed.Common.Timers
 			_taskTimer = new System.Threading.Timer(TimerCallBack, null, Timeout.Infinite, Timeout.Infinite);
 		}
 
+		/// <summary>
+		/// Creates a new Timer.
+		/// </summary>
+		/// <param name="period">Task period of timer (as milliseconds)</param>
+		/// <param name="runOnStart">Indicates whether timer raises Elapsed event on Start method of Timer for once</param>
+		public Timer(TimeSpan period, bool runOnStart)
+		{
+			Period = (int)period.TotalMilliseconds;
+			RunOnStart = runOnStart;
+			_taskTimer = new System.Threading.Timer(TimerCallBack, null, Timeout.Infinite, Timeout.Infinite);
+		}
+
 		#endregion
 
 		#region Public methods
@@ -112,7 +125,7 @@ namespace ShareDeployed.Common.Timers
 			{
 				while (_performingTasks)
 				{
-					Monitor.Wait(_taskTimer);
+					Monitor.Wait(_taskTimer, TimeSpan.FromMilliseconds(500));
 				}
 			}
 		}
@@ -162,5 +175,20 @@ namespace ShareDeployed.Common.Timers
 			}
 		}
 		#endregion
+
+		public void Dispose()
+		{
+			if (_isDisposed)
+				return;
+
+			_isDisposed = true;
+
+			if(this._taskTimer!=null)
+			{
+				WaitToStop();
+				Stop();
+				_taskTimer.Dispose();
+			}
+		}
 	}
 }
