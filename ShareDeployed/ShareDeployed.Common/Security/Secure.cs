@@ -9,13 +9,18 @@ namespace ShareDeployed.Common.Security
 	{
 		private const string minSalt = "&B6yhj$,";
 
+		/// <summary>
+		/// Create RijndaelManaged object
+		/// </summary>
+		/// <param name="keySeed"></param>
+		/// <param name="saltString"></param>
+		/// <returns></returns>
 		private static RijndaelManaged Cryptor(string keySeed, string saltString)
 		{
 			byte[] salt = UTF8Encoding.UTF8.GetBytes(saltString + minSalt);
 			using (Rfc2898DeriveBytes derivedBytes = new Rfc2898DeriveBytes(keySeed, salt, 1000))
 			{
 				RijndaelManaged cryptor = new RijndaelManaged();
-
 				// KeySize must be set before the Key
 				cryptor.KeySize = 128;
 				cryptor.Key = derivedBytes.GetBytes(16);

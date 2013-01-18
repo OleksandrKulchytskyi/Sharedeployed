@@ -47,8 +47,6 @@ namespace ShareDeployed.Authorization
 			if (_cts.IsCancellationRequested)
 				return;
 
-			CheckForDisposing();
-
 			var option = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount, CancellationToken = _cts.Token };
 #if DEBUG
 			System.Diagnostics.Debug.WriteLine("\nProcessor count is:  " + Environment.ProcessorCount + "\n");
@@ -211,6 +209,7 @@ namespace ShareDeployed.Authorization
 		public void Dispose()
 		{
 			CheckForDisposing();
+
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}

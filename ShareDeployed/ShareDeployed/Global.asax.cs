@@ -36,6 +36,13 @@ namespace ShareDeployed
 			Logger = LogManager.GetLogger(typeof(MvcApplication).FullName);
 			log4net.Config.XmlConfigurator.Configure();
 			Logger.Info("Application_Start()");
+			
+			try
+			{
+				System.Web.Hosting.HostingEnvironment.MaxConcurrentRequestsPerCPU = 500;
+				System.Web.Hosting.HostingEnvironment.MaxConcurrentThreadsPerCPU = 0;
+			}
+			catch (Exception ex) { Logger.Error("Error in configuring Hosting Environment", ex); }
 
 			Infrastructure.Bootstrapper.PreAppStart();
 
