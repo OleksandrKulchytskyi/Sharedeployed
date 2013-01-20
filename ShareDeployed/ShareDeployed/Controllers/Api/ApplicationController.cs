@@ -22,7 +22,7 @@ namespace ShareDeployed.Controllers.Api
 		[Filters.DisableLazyloadingFilter(false, false)]
 		public IEnumerable<MessangerApplication> GetAll()
 		{
-			var applications= _repository.Application.AsEnumerable();
+			var applications = _repository.Application.AsEnumerable();
 			return applications;
 		}
 
@@ -44,7 +44,7 @@ namespace ShareDeployed.Controllers.Api
 			{
 				if (!(ex is HttpResponseException))
 					throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError));
-				
+
 				MvcApplication.Logger.Error(ex);
 				throw;
 			}

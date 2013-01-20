@@ -1,18 +1,12 @@
-
 //[assembly: WebActivator.PreApplicationStartMethod(typeof(ShareDeployed.App_Start.NinjectWebCommon), "Start")]
 //[assembly: WebActivator.ApplicationShutdownMethodAttribute(typeof(ShareDeployed.App_Start.NinjectWebCommon), "Stop")]
-
 namespace ShareDeployed.App_Start
 {
-	using System;
-	using System.Web;
-
 	using Microsoft.Web.Infrastructure.DynamicModuleHelper;
-
 	using Ninject;
 	using Ninject.Web.Common;
-	using ShareDeployed.Common;
-	using ShareDeployed.Common.Models;
+	using System;
+	using System.Web;
 
 	public static class NinjectWebCommon
 	{

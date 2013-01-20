@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Web;
 
 namespace ShareDeployed.Services
 {
@@ -29,7 +28,9 @@ namespace ShareDeployed.Services
 		}
 
 		// Iso reference: http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+
 		#region countries mapping
+
 		private static readonly IDictionary<string, string> CountriesMap = new Dictionary<string, string>
                                                                             {
                                                                                 {"ad", "Andorra"},
@@ -282,9 +283,11 @@ namespace ShareDeployed.Services
                                                                                 {"zm", "Zambia"},
                                                                                 {"zw", "Zimbabwe"}
                                                   };
-		#endregion
+
+		#endregion countries mapping
 
 		#region IMessangerService
+
 		public Common.Models.MessangerUser AddUser(string userName, string clientId, string userAgent, string password)
 		{
 			if (!IsValidUserName(userName))
@@ -440,6 +443,7 @@ namespace ShareDeployed.Services
 				user.ConnectedClients.Remove(client);
 
 				if (!user.ConnectedClients.Any())
+
 					// If no more clients mark the user as offline
 					user.Status = (int)UserStatus.Offline;
 
@@ -484,6 +488,7 @@ namespace ShareDeployed.Services
 			{
 				// First, check if the invite code is correct
 				if (!String.IsNullOrEmpty(inviteCode) && String.Equals(inviteCode, group.InviteCode, StringComparison.OrdinalIgnoreCase))
+
 					// It is, add the user to the allowed users so that future joins will work
 					group.AllowedUsers.Add(user);
 
@@ -540,6 +545,7 @@ namespace ShareDeployed.Services
 			EnsureOwnerOrAdmin(targetUser, targetGroup);
 
 			if (targetGroup.Owners.Contains(targetUser))
+
 				// If the target user is already an owner, then throw
 				throw new InvalidOperationException(String.Format("'{0}' is already an owner of '{1}'.", targetUser.Name, targetGroup.Name));
 
@@ -567,6 +573,7 @@ namespace ShareDeployed.Services
 			EnsureOwnerOrAdmin(targetUser, targetGroup);
 
 			if (!targetGroup.Owners.Contains(targetUser))
+
 				// If the target user is not an owner, then throw
 				throw new InvalidOperationException(String.Format("'{0}' is not an owner of '{1}'.", targetUser.Name, targetGroup.Name));
 
@@ -755,7 +762,7 @@ namespace ShareDeployed.Services
 			return group.AllowedUsers.Contains(user) || user.IsAdmin;
 		}
 
-		#endregion
+		#endregion IMessangerService
 
 		internal static void ThrowUserExists(string userName)
 		{

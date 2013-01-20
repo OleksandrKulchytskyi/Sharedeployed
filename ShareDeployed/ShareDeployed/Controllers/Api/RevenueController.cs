@@ -1,23 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ShareDeployed.Common.Models;
+using ShareDeployed.Extension;
+using System;
 using System.Linq;
-using System.Web;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using ShareDeployed.Common;
-using ShareDeployed.Extension;
-using ShareDeployed.Common.Extensions;
-using ShareDeployed.Common.Models;
-using ShareDeployed.Common.RequetResponse;
 
 namespace ShareDeployed.Controllers.Api
 {
 	[Authorization.AuthTokenAthorization(RequireToken = true)]
 	public class RevenueController : ApiController
 	{
-		readonly DataAccess.Interfaces.IUnityOfWork _unity;
-		int _userId;
+		private readonly DataAccess.Interfaces.IUnityOfWork _unity;
+		private int _userId;
 
 		public RevenueController(DataAccess.Interfaces.IUnityOfWork unity)
 		{
@@ -150,7 +145,6 @@ namespace ShareDeployed.Controllers.Api
 			}
 			catch (Exception ex)
 			{
-
 				MvcApplication.Logger.Error("GetAll", ex);
 				throw new HttpResponseException(HttpStatusCode.InternalServerError);
 			}
@@ -201,7 +195,6 @@ namespace ShareDeployed.Controllers.Api
 				var content = Request.Content.ReadAsStringAsync().Result;
 				if (!string.IsNullOrEmpty(content))
 				{
-
 				}
 				return new HttpResponseMessage(HttpStatusCode.BadRequest);
 			}
@@ -224,7 +217,7 @@ namespace ShareDeployed.Controllers.Api
 		{
 			if (revenue == null)
 				return new HttpResponseMessage(HttpStatusCode.BadRequest);
-			
+
 			InitializeUserId();
 			try
 			{

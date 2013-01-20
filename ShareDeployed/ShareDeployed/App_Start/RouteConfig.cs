@@ -1,10 +1,4 @@
-﻿using ShareDeployed.RoutingHelper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Http;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using System.Web.Routing;
 
 namespace ShareDeployed
@@ -14,7 +8,6 @@ namespace ShareDeployed
 		public static void RegisterRoutes(RouteCollection routes)
 		{
 			//HttpRouteTableBuilder.BuildTable(routes, typeof(RouteConfig).Assembly);
-
 			routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
 			routes.MapRoute(name: "Default",

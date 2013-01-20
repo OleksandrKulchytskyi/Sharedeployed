@@ -1,15 +1,12 @@
 ﻿using Ninject;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace ShareDeployed.DependencyResolvers
 {
 	internal class MvcDependencyResolver : System.Web.Mvc.IDependencyResolver
 	{
-		IKernel _kernel;
-
+		private readonly IKernel _kernel;
 		public MvcDependencyResolver(IKernel kernel)
 		{
 			_kernel = kernel;

@@ -1,5 +1,4 @@
-﻿using System.Web;
-using System.Web.Optimization;
+﻿using System.Web.Optimization;
 
 namespace ShareDeployed
 {
@@ -22,13 +21,13 @@ namespace ShareDeployed
 			bundles.Add(new ScriptBundle("~/bundles/modernizr").Include("~/Scripts/modernizr-*"));
 
 			bundles.Add(new ScriptBundle("~/bundles/jquerybase64").Include("~/Scripts/base64/jquery.base64*"));
-			
+
 			bundles.Add(new ScriptBundle("~/bundles/app").Include("~/Scripts/app*"));
 
 			bundles.Add(new ScriptBundle("~/messanger").Include("~/messanger.utils.js"));
 
 			bundles.Add(new ScriptBundle("~/bundles/SignalR").Include("~/Scripts/jquery.signalR*"));
-			
+
 			bundles.Add(new ScriptBundle("~/bundles/cookie").Include("~/Scripts/jquery.cookie.js"));
 
 			bundles.Add(new ScriptBundle("~/bundles/KoProtectedObservable").Include("~/Scripts/KO/ko-protected-observable.js"));

@@ -1,22 +1,18 @@
-﻿using ShareDeployed.Common;
+﻿using ShareDeployed.Common.Models;
 using ShareDeployed.Extension;
-using ShareDeployed.Common.Models;
-using ShareDeployed.Common.Extensions;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Web;
-using System.Web.Http;
 using System.Net.Http;
+using System.Web.Http;
 
 namespace ShareDeployed.Controllers.Api
 {
 	[Authorization.AuthTokenAthorization(RequireToken = true, RequireTimestamp = false)]
 	public class WordsController : ApiController
 	{
-		readonly DataAccess.Interfaces.IUnityOfWork _unity;
-		int _userId = -1;
+		private readonly DataAccess.Interfaces.IUnityOfWork _unity;
+		private int _userId = -1;
 
 		public WordsController(DataAccess.Interfaces.IUnityOfWork unity)
 		{
@@ -194,7 +190,7 @@ namespace ShareDeployed.Controllers.Api
 		}
 
 		[NonAction]
-		HttpResponseMessage GenerateMessage(Word word)
+		private HttpResponseMessage GenerateMessage(Word word)
 		{
 			var resp = new HttpResponseMessage(HttpStatusCode.Created);
 			resp.Content = new StringContent(word.UserId.ToString());

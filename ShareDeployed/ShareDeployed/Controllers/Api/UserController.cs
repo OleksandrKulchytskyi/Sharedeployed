@@ -1,8 +1,5 @@
-﻿using ShareDeployed.Common;
-using ShareDeployed.Common.Models;
+﻿using ShareDeployed.Common.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -11,7 +8,7 @@ namespace ShareDeployed.Controllers.Api
 {
 	public class UserController : ApiController
 	{
-		readonly DataAccess.Interfaces.IUnityOfWork _unity;
+		private readonly DataAccess.Interfaces.IUnityOfWork _unity;
 
 		public UserController(DataAccess.Interfaces.IUnityOfWork unity)
 		{

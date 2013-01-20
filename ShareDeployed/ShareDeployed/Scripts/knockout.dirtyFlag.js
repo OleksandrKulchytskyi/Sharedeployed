@@ -3,23 +3,23 @@
 //
 // Knockout.DirtyFlag
 //
-// John Papa 
+// John Papa
 //          http://johnpapa.net
 //          http://twitter.com/@john_papa
 //
 // Depends on scripts:
-//          Knockout 
+//          Knockout
 //
 //  Notes:
-//          Special thanks to Steve Sanderson and Ryan Niemeyer for 
+//          Special thanks to Steve Sanderson and Ryan Niemeyer for
 //          their influence and help.
 //
-//  Usage:      
-//          To Setup Tracking, add this tracker property to your viewModel    
+//  Usage:
+//          To Setup Tracking, add this tracker property to your viewModel
 //              ===> viewModel.dirtyFlag = new ko.DirtyFlag(viewModel.model);
 //
 //          Hook these into your view ...
-//              Did It Change?          
+//              Did It Change?
 //              ===> viewModel.dirtyFlag().isDirty();
 //
 //          Hook this into your view model functions (ex: load, save) ...
@@ -31,7 +31,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 ;(function (ko) {
         ko.DirtyFlag = function (objectToTrack, isInitiallyDirty, hashFunction) {
-
             hashFunction = hashFunction || ko.toJSON;
 
             var
@@ -53,7 +52,7 @@
 
                     return self;
                 };
-            
+
             return result;
         };
     })(ko);

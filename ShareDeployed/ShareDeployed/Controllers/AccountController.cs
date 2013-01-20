@@ -23,8 +23,9 @@ namespace ShareDeployed.Controllers
 	[InitializeSimpleMembership]
 	public class AccountController : Controller
 	{
-		private const string _msConst="messanger.state";
+		private const string _msConst = "messanger.state";
 		private const string _aspSesId = "ASP.NET_SessionId";
+
 		// GET: /Account/Login
 		//[HandleError(ExceptionType = typeof(System.Data.DataException), View = "Shared/Error")]
 		[AllowAnonymous]
@@ -84,7 +85,7 @@ namespace ShareDeployed.Controllers
 						string email = string.Empty;
 						using (var aspRepo = Infrastructure.Bootstrapper.Kernel.Get<Repositories.IAspUserRepository>())
 						{
-							//get user email from asp db login 
+							//get user email from asp db login
 							if (aspRepo != null)
 								email = aspRepo.GetByName(model.UserName).Email;
 						}
@@ -142,6 +143,7 @@ namespace ShareDeployed.Controllers
 				}//end of using mesRepo
 				return RedirectToLocal(returnUrl);
 			}
+
 			// If we got this far, something failed, redisplay form
 			ModelState.AddModelError("", "The user name or password provided is incorrect.");
 			return View(model);
@@ -256,7 +258,7 @@ namespace ShareDeployed.Controllers
 					}//end using messangerRepo
 
 					string tokenIssuerId = string.Empty;
-					if(Session!=null && !string.IsNullOrEmpty(Session.SessionID))
+					if (Session != null && !string.IsNullOrEmpty(Session.SessionID))
 					{
 						SessionTokenIssuer.Instance.AddOrUpdate(new SessionInfo()
 						{
@@ -288,6 +290,7 @@ namespace ShareDeployed.Controllers
 					MvcApplication.Logger.Error("Error occurred while register user", e);
 				}
 			}
+
 			// If we got this far, something failed, redisplay form
 			return View(model);
 		}
@@ -475,6 +478,7 @@ namespace ShareDeployed.Controllers
 				using (UsersContext db = new UsersContext())
 				{
 					UserProfile user = db.UserProfiles.FirstOrDefault(u => u.UserName == model.UserName);
+
 					// Check if user already exists
 					if (user == null)
 					{
@@ -534,6 +538,7 @@ namespace ShareDeployed.Controllers
 		}
 
 		#region Helpers
+
 		private ActionResult RedirectToLocal(string returnUrl)
 		{
 			if (Url.IsLocalUrl(returnUrl))
@@ -562,6 +567,7 @@ namespace ShareDeployed.Controllers
 			}
 
 			public string Provider { get; private set; }
+
 			public string ReturnUrl { get; private set; }
 
 			public override void ExecuteResult(ControllerContext context)
@@ -606,9 +612,11 @@ namespace ShareDeployed.Controllers
 					return "An unknown error occurred. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
 			}
 		}
-		#endregion
+
+		#endregion Helpers
 
 		#region Session initializer methods
+
 		[NonAction]
 		private void InitializeSessionValiable(LoginModel model)
 		{
@@ -628,6 +636,7 @@ namespace ShareDeployed.Controllers
 				HttpContext.Session["UserIdentit"] = string.Format("{0}_{1}", username, userId);
 			}
 		}
-		#endregion
+
+		#endregion Session initializer methods
 	}
 }

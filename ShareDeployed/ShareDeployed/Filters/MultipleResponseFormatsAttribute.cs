@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using ShareDeployed.Extension;
 using System.Web.Mvc;
-using ShareDeployed.Extension;
 
 namespace ShareDeployed.Filters
 {
 	public class MultipleResponseFormatsAttribute : ActionFilterAttribute
 	{
-
 		public override void OnActionExecuted(ActionExecutedContext filterContext)
 		{
 			var request = filterContext.HttpContext.Request;
@@ -35,6 +30,5 @@ namespace ShareDeployed.Filters
 				};
 			}
 		}
-
 	}
 }

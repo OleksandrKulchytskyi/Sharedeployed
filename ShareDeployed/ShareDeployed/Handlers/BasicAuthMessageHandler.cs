@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using ShareDeployed.Common.Security;
+using System;
 using System.Net;
-using System.Net.Http.Handlers;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using ShareDeployed.Common.Security;
-using System.Threading;
 using System.Text;
+using System.Threading;
 
 namespace ShareDeployed.Handlers
 {

@@ -72,7 +72,8 @@ namespace ShareDeployed.Extension
 			MessangerUser user = repository.GetUserById(userId);
 
 			if (user == null)
-				// The user isn't logged in 
+
+				// The user isn't logged in
 				throw new InvalidOperationException("You're not logged in.");
 
 			return user;
@@ -140,8 +141,6 @@ namespace ShareDeployed.Extension
 					user.ReadMessages.Add(message);
 					repository.CommitChanges();
 				}
-
-
 			}
 		}
 
@@ -149,6 +148,7 @@ namespace ShareDeployed.Extension
 		{
 			return (from item in repository.Groups.Include(g => g.Messages).ToList()
 					let grp = item
+
 					//from user in item.Users
 					//where user.Key == usr.Key && item.CreatorKey == usr.Key
 					from msg in item.Messages

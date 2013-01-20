@@ -83,12 +83,12 @@
 	function validateChck2() {
 		var result = false;
 		$("input[type=checkbox][checked]").each(function () {
-											result = true;
-											return result;
-										});
+			result = true;
+			return result;
+		});
 		return result;
 	};
-	
+
 	function find() {
 
 		if (validateChck() === false) {
@@ -220,5 +220,5 @@
 			</li>
 		</ul>
 	</div>
-	 <a class="top" data-ajax="false" data-role="button" data-bind="visible: loaded()" href="#expenseFormDiv">Back to top</a>
+	<a class="top" data-ajax="false" data-role="button" data-bind="visible: loaded()" href="#expenseFormDiv">Back to top</a>
 </div>

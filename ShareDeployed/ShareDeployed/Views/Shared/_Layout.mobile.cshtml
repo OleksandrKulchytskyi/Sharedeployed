@@ -5,8 +5,7 @@
 	<title>@ViewBag.Title</title>
 	<meta name="viewport" content="width=device-width" />
 	<style type="text/css">
-		#backToTop
-		{
+		#backToTop {
 			position: fixed;
 			top: 0px;
 			left: 0px;
@@ -23,25 +22,25 @@
 		@Html.Partial("_ViewSwitcher")
 
 		@if (Request.IsAuthenticated)
-		{
+  {
 			<div data-role="header">
 				<h1>@ViewBag.Title</h1>
 				<a href="@Url.Action("Index", "Home")" data-icon="back" class="ui-btn-right">Home</a>
 			</div>
-		}
+  }
 
 		<div data-role="content">
 			@if (Request.IsAuthenticated)
-			{
+   {
 				<text>
 				Hello, @Html.ActionLink(User.Identity.Name, "Manage", "Account", routeValues: null, htmlAttributes: new { @class = "username", title = "Manage" })!
 				@using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
-				{
+	{
 					@Html.AntiForgeryToken()
-					<a href="javascript:document.getElementById('logoutForm').submit()">Log off</a>
-				}
+<a href="javascript:document.getElementById('logoutForm').submit()">Log off</a>
+	}
 				</text>
-			}
+   }
 
 			@RenderSection("featured", false)
 			@RenderBody()
@@ -71,7 +70,7 @@
 				};
 
 				$(document).bind("mobileinit", function () {
-					// jQuery Mobile's Ajax navigation does not work in all cases (e.g.,when navigating from a mobile to a non-mobile page), 
+					// jQuery Mobile's Ajax navigation does not work in all cases (e.g.,when navigating from a mobile to a non-mobile page),
 					// especially when going back, hence disabling it.
 					//backToTop.init();
 
@@ -91,7 +90,6 @@
 			</div>
 			<div data-role="content">Error has occurred in web application.</div>
 		</div>
-
 	</div>
 </body>
 </html>

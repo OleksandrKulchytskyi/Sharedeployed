@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 
 namespace ShareDeployed.HttpModules
@@ -8,7 +6,7 @@ namespace ShareDeployed.HttpModules
 	public class MobileRouterModule : IHttpModule
 	{
 		private const String ForceFullSiteCookieName = "FullSiteMode";
-		
+
 		public void Dispose()
 		{
 		}
@@ -27,7 +25,7 @@ namespace ShareDeployed.HttpModules
 			// Check whether it is a mobile site
 			var isMobileDevice = IsMobileUserAgent(app);
 
-			// The mobile user confirmed to view the desktop site 
+			// The mobile user confirmed to view the desktop site
 			if (isMobileDevice && ForceFullSite(app))
 			{
 				app.Response.AppendCookie(new HttpCookie(ForceFullSiteCookieName));
@@ -37,6 +35,7 @@ namespace ShareDeployed.HttpModules
 			// The mobile user is navigating through the desktop site
 			if (isMobileDevice && HasFullSiteCookie(app))
 				return;
+
 			// The mobile user is attempting to view a desktop page
 			if (isMobileDevice)
 				ToMobileLandingPage(app);
@@ -45,6 +44,7 @@ namespace ShareDeployed.HttpModules
 		public static bool IsMobileUserAgent(HttpApplication httpApp)
 		{
 			return httpApp.Request.Browser.IsMobileDevice;
+
 			//	userAgent = userAgent.ToLower();
 
 			//	return userAgent.Contains("iphone") |
@@ -56,7 +56,6 @@ namespace ShareDeployed.HttpModules
 			//		 userAgent.Contains("palm") |
 			//		 userAgent.Contains("portable");
 		}
-
 
 		private static bool HasFullSiteCookie(HttpApplication app)
 		{

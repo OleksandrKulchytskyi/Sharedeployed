@@ -133,6 +133,7 @@ namespace ShareDeployed.Controllers.Api
 			List<string> compName = GetIPHost.HostName.ToString().Split('.').ToList();
 			return compName.First();
 		}
-		#endregion
+
+		#endregion helpers
 	}
 }

@@ -1,7 +1,4 @@
 ﻿using ShareDeployed.Authorization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
@@ -20,6 +17,7 @@ namespace ShareDeployed.Extension
 		public override void OnActionExecuting(ActionExecutingContext filterContext)
 		{
 			HttpContext ctx = HttpContext.Current;
+
 			// If the browser session or authentication session has expired...
 			if (ctx.Session["UserName"] == null || !filterContext.HttpContext.Request.IsAuthenticated)
 			{
@@ -47,7 +45,7 @@ namespace ShareDeployed.Extension
 			}
 			string authToken = HttpContext.Current.Request.Headers[_authToken];
 
-			AuthClientData data =WebHelper.GetClientIndetification();
+			AuthClientData data = WebHelper.GetClientIndetification();
 			if (!AuthTokenManagerEx.Instance.CheckIfSessionIsAuthenticated(data))
 			{
 				throw new AuthTokenManagerException("Fail to retreive authentication data");

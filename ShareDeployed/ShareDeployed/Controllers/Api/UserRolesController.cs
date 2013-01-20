@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+﻿using System.Collections.Generic;
 using System.Web.Http;
 
 namespace ShareDeployed.Controllers.Api
@@ -10,7 +6,7 @@ namespace ShareDeployed.Controllers.Api
 	[Authorize(Roles = "Admin")]
 	public class UserRolesController : ApiController
 	{
-		readonly Repositories.IAspUserRepository _repo;
+		private readonly Repositories.IAspUserRepository _repo;
 
 		public UserRolesController(Repositories.IAspUserRepository repository)
 		{

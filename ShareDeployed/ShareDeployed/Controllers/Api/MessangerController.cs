@@ -1,7 +1,6 @@
 ﻿using ShareDeployed.Common.Models;
 using ShareDeployed.Extension;
 using ShareDeployed.Repositories;
-using ShareDeployed.RoutingHelper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +24,7 @@ namespace ShareDeployed.Controllers.Api
 
 		[HttpGet()]
 		[ActionName("GetNew")]
-		[Filters.DisableLazyloadingFilter(false,false)]
+		[Filters.DisableLazyloadingFilter(false, false)]
 		public IEnumerable<Common.Models.Message> GetNew()
 		{
 			try
@@ -43,7 +42,7 @@ namespace ShareDeployed.Controllers.Api
 
 		[HttpGet()]
 		[ActionName("Get")]
-		[Filters.DisableLazyloadingFilter(false,false)]
+		[Filters.DisableLazyloadingFilter(false, false)]
 		public Common.Models.Message Get(string id)
 		{
 			try
@@ -122,7 +121,6 @@ namespace ShareDeployed.Controllers.Api
 		[Filters.ValidateModelState()]
 		public HttpResponseMessage PostMessageResponse(string msgId, [FromBody] MessageResponse response)
 		{
-
 			try
 			{
 				var repoMsg = _repository.GetMessagesById(msgId);
@@ -141,7 +139,6 @@ namespace ShareDeployed.Controllers.Api
 					throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError));
 				throw;
 			}
-
 		}
 
 		protected override void Dispose(bool disposing)

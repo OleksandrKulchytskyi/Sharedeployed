@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Web;
 using System.Web.Mvc;
 
 namespace ShareDeployed.ControllerFactory
 {
 	public class DefaultMVCFactory : DefaultControllerFactory
 	{
-		static object locker;
+		private static object locker;
 
 		static DefaultMVCFactory()
 		{

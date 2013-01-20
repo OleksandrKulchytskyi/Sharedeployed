@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Web;
 using System.Web.Http.Dependencies;
 
 namespace ShareDeployed.DependencyResolvers
@@ -14,7 +13,7 @@ namespace ShareDeployed.DependencyResolvers
 	public class NinjectDependencyScope : IDependencyScope
 	{
 		private IResolutionRoot resolutionRoot;
-		bool _dispoded = false;
+		private bool _dispoded = false;
 
 		internal NinjectDependencyScope(IResolutionRoot kernel)
 		{
@@ -28,6 +27,7 @@ namespace ShareDeployed.DependencyResolvers
 				throw new ObjectDisposedException("this", "This scope has already been disposed");
 
 			return resolutionRoot.Resolve(this.CreateRequest(serviceType)).FirstOrDefault();
+
 			//return resolutionRoot.TryGet(serviceType);
 		}
 
@@ -37,6 +37,7 @@ namespace ShareDeployed.DependencyResolvers
 				throw new ObjectDisposedException("this", "This scope has already been disposed");
 
 			return resolutionRoot.Resolve(this.CreateRequest(serviceType)).ToList();
+
 			//return resolutionRoot.GetAll(serviceType);
 		}
 
@@ -70,7 +71,8 @@ namespace ShareDeployed.DependencyResolvers
 				}
 			}
 		}
-		#endregion
+
+		#endregion IDisposable
 	}
 
 	public class NinjectWebApiDependencyResolver : NinjectDependencyScope, IDependencyResolver

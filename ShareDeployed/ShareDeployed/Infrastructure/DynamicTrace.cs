@@ -1,20 +1,19 @@
-﻿using System;
+﻿using NLog;
+using ShareDeployed.Common.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Web;
 using System.Web.Http.Tracing;
-using ShareDeployed.Common.Extensions;
-using NLog;
 
 namespace ShareDeployed.Infrastructure
 {
 	public class DynamicTrace : Hubs.SignalRBase<Hubs.TraceHub>, ITraceWriter
 	{
 		private readonly Lazy<Dictionary<TraceLevel, Action<string>>> loggingMap = new
-			Lazy<Dictionary<TraceLevel, Action<string>>>(() => new Dictionary<TraceLevel, Action<string>> 
-			{ 
+			Lazy<Dictionary<TraceLevel, Action<string>>>(() => new Dictionary<TraceLevel, Action<string>>
+			{
 				{ TraceLevel.Info, LogManager.GetCurrentClassLogger().Info },
 				{ TraceLevel.Debug, LogManager.GetCurrentClassLogger().Debug },
 				{ TraceLevel.Error, LogManager.GetCurrentClassLogger().Error },
@@ -114,6 +113,5 @@ namespace ShareDeployed.Infrastructure
 
 			_nlogLogger[record.Level](message);
 		}
-
 	}
 }

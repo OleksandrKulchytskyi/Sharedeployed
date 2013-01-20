@@ -8,9 +8,9 @@
 		Model.From = new DateTime(now.Year, now.Month, 1);
 		Model.To = now;
 	}
-	if(Session!=null)
+	if (Session != null)
 	{
-		<input value="@Session["UserId"]" hidden="hidden" id="uid" />
+	<input value="@Session["UserId"]" hidden="hidden" id="uid" />
 	}
 }
 
@@ -46,7 +46,7 @@
 			self.removeRevenue = function (revenue) {
 				$.ajax({
 					type: "DELETE",
-					headers:{"UserId":self.userId()},
+					headers: { "UserId": self.userId() },
 					url: "/api/Revenue/delete?id=" + revenue.Id
 				})
 				.done(function () { self.revenues.remove(revenue); });

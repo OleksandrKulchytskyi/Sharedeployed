@@ -1,7 +1,5 @@
-﻿using System;
-using ShareDeployed.Extension;
-using System.Collections.Generic;
-using System.Linq;
+﻿using ShareDeployed.Extension;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -11,7 +9,7 @@ namespace ShareDeployed.Controllers.Api
 	[WebAPI.Hmac.Filters.AuthenticateWithTimeStamp]
 	public class PingController : ApiController
 	{
-		string sessionTokenId = string.Empty;
+		private string sessionTokenId = string.Empty;
 
 		[HttpGet]
 		public HttpResponseMessage Ping()

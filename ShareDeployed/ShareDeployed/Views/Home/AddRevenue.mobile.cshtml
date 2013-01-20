@@ -34,7 +34,7 @@
 								.success(function () {
 									self.uploaded(false);
 									var loc = jqxhr.getResponseHeader('Location');
-									var a = $('<a/>', { href: loc, text: loc });
+									var a = $('<a />', { href: loc, text: loc });
 									$('#message').html(a);
 								})
 								.error(function () {

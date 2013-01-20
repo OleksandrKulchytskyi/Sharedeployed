@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
-using System.Globalization;
 using System.Web.Mvc;
-using System.Web.Security;
 
 namespace ShareDeployed.Models
 {
@@ -19,6 +15,7 @@ namespace ShareDeployed.Models
 		{ }
 
 		public DbSet<UserProfile> UserProfiles { get; set; }
+
 		public DbSet<webpages_Roles> webpages_Roles { get; set; } // add roles table
 	}
 
@@ -43,6 +40,7 @@ namespace ShareDeployed.Models
 		[Key]
 		[DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
 		public int RoleId { get; set; }
+
 		[Display(Name = "Role name")]
 		public string RoleName { get; set; }
 	}
@@ -118,7 +116,9 @@ namespace ShareDeployed.Models
 	public class ExternalLogin
 	{
 		public string Provider { get; set; }
+
 		public string ProviderDisplayName { get; set; }
+
 		public string ProviderUserId { get; set; }
 	}
 }

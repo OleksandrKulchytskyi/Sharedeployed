@@ -1,16 +1,14 @@
 ﻿using ShareDeployed.Common;
 using ShareDeployed.Common.Models;
-using ShareDeployed.Common.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace ShareDeployed.Repositories
 {
 	public class WordsRepository : IRepositoryEx<Word>, IDisposable
 	{
-		bool _disposed = false;
+		private bool _disposed = false;
 		private readonly IUnityOfWork _unityOfWork;
 		private readonly DataAccess.ShareDeployedContext _dbContext;
 

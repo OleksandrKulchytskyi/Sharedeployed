@@ -37,7 +37,7 @@ namespace ShareDeployed.Authorization
 			_purgeTimer.Start();
 		}
 
-		void _purgeTimer_Elapsed(object sender, EventArgs e)
+		private void _purgeTimer_Elapsed(object sender, EventArgs e)
 		{
 			Task.Factory.StartNew(PerformePurge, _cts.Token);
 		}

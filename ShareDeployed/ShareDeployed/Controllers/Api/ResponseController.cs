@@ -2,17 +2,17 @@
 using ShareDeployed.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using System.Data.Entity;
 
 namespace ShareDeployed.Controllers.Api
 {
 	public class ResponseController : ApiController
 	{
-		readonly IMessangerRepository _repository;
+		private readonly IMessangerRepository _repository;
 
 		public ResponseController(IMessangerRepository rep)
 		{
@@ -20,14 +20,14 @@ namespace ShareDeployed.Controllers.Api
 		}
 
 		[ActionName("GetAll")]
-		[Filters.DisableLazyloadingFilter(false,false)]
+		[Filters.DisableLazyloadingFilter(false, false)]
 		public IEnumerable<MessageResponse> GetAll()
 		{
 			return _repository.Response.AsEnumerable();
 		}
 
 		[ActionName("GetResponseMessage")]
-		[Filters.DisableLazyloadingFilter(false,false)]
+		[Filters.DisableLazyloadingFilter(false, false)]
 		public Message GetResponseMessage(int respKey)
 		{
 			try

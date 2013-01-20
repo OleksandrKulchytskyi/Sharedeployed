@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Web;
 using System.Web.Http;
 using System.Web.Http.Filters;
 using System.Web.Mvc;
@@ -15,7 +12,6 @@ namespace ShareDeployed.Extension
 	{
 		public void OnException(ExceptionContext filterContext)
 		{
-
 		}
 	}
 
@@ -60,7 +56,6 @@ namespace ShareDeployed.Extension
 					Content = new StringContent(context.Exception.Message),
 					ReasonPhrase = "Exception"
 				});
-
 			}
 
 			//Log Critical errors

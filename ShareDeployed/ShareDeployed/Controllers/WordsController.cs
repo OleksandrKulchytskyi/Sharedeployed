@@ -1,5 +1,4 @@
-﻿
-using ShareDeployed.Common.Models;
+﻿using ShareDeployed.Common.Models;
 using ShareDeployed.DataAccess.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -14,13 +13,13 @@ namespace ShareDeployed.Controllers
 	[Authorize]
 	public class WordsController : Controller
 	{
-		IUnityOfWork _unity;
+		private IUnityOfWork _unity;
 
 		public WordsController(IUnityOfWork unity)
 		{
 			if (null == unity)
 				throw new ArgumentNullException("unity");
-			_unity=unity;
+			_unity = unity;
 		}
 
 		public ActionResult Index()
@@ -79,7 +78,6 @@ namespace ShareDeployed.Controllers
 
 			using (var db = _unity)
 			{
-
 				List<Word> wordsList = new List<Word>();
 
 				foreach (string path in (state as List<string>))
@@ -120,6 +118,5 @@ namespace ShareDeployed.Controllers
 				}
 			}
 		}
-
 	}
 }

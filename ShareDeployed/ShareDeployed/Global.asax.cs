@@ -36,7 +36,7 @@ namespace ShareDeployed
 			Logger = LogManager.GetLogger(typeof(MvcApplication).FullName);
 			log4net.Config.XmlConfigurator.Configure();
 			Logger.Info("Application_Start()");
-			
+
 			try
 			{
 				System.Web.Hosting.HostingEnvironment.MaxConcurrentRequestsPerCPU = 500;
@@ -44,7 +44,7 @@ namespace ShareDeployed
 			}
 			catch (Exception ex) { Logger.Error("Error in configuring Hosting Environment", ex); }
 
-			Infrastructure.Bootstrapper.PreAppStart();
+			//Infrastructure.Bootstrapper.PreAppStart();
 
 			if (System.Web.WebPages.DisplayModeProvider.Instance.Modes != null)
 				System.Web.WebPages.DisplayModeProvider.Instance.Modes.Insert(2, new System.Web.WebPages.DefaultDisplayMode("iPhone")
@@ -67,6 +67,8 @@ namespace ShareDeployed
 			ControllerBuilder.Current.SetControllerFactory(typeof(ControllerFactory.DefaultMVCFactory));
 			System.Web.Mvc.DependencyResolver.SetResolver(new DependencyResolvers.MvcDependencyResolver(Infrastructure.Bootstrapper.Kernel));
 
+			Microsoft.AspNet.SignalR.GlobalHost.HubPipeline.AddModule(new Hubs.Pipelines.LoggingPipelineModule());
+
 			// Cache never expires.You must restart application pool when you add/delete a view.A non-expiring cache can lead to heavy server memory load.
 			ViewEngines.Engines.OfType<RazorViewEngine>().First().ViewLocationCache =
 			new DefaultViewLocationCache(System.Web.Caching.Cache.NoSlidingExpiration);
@@ -78,7 +80,6 @@ namespace ShareDeployed
 			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
 			Infrastructure.Bootstrapper.DoMigrations();
-
 			//Infrastructure.Bootstrapper.DoSomeeMigrations();
 
 			try
@@ -98,7 +99,7 @@ namespace ShareDeployed
 			if (Authorization.AuthTokenManagerEx.Instance != null)
 				Logger.Info("Module AuthTokenManagerEx is initialized");
 
-			Authorization.SessionTokenIssuer.Instance.SetPurgeTimeout(new TimeSpan(0, 3, 0));
+			Authorization.SessionTokenIssuer.Instance.SetPurgeTimeout(new TimeSpan(0, 5, 0));
 		}
 
 		private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

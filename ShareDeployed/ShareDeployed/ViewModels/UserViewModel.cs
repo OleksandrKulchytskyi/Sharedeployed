@@ -1,8 +1,5 @@
 ﻿using ShareDeployed.Common.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace ShareDeployed.ViewModels
 {
@@ -25,16 +22,27 @@ namespace ShareDeployed.ViewModels
 		}
 
 		public string Name { get; private set; }
+
 		public string Hash { get; private set; }
+
 		public bool Active { get; private set; }
+
 		public string Status { get; private set; }
+
 		public string Note { get; private set; }
+
 		public string AfkNote { get; private set; }
+
 		public bool IsAfk { get; private set; }
+
 		public string Flag { get; private set; }
+
 		public string Country { get; private set; }
+
 		public DateTime LastActivity { get; private set; }
+
 		public bool IsAdmin { get; private set; }
+
 		public string Id { get; private set; }
 	}
 }

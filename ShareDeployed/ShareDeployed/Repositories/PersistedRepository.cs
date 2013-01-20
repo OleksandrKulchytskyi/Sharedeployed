@@ -1,25 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Data.Entity;
+﻿using ShareDeployed.Common.Models;
 using ShareDeployed.DataAccess;
-using ShareDeployed.Common.Models;
 using ShareDeployed.Extension;
-using System.Data.Objects;
+using System;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
-using System.Data.Objects.DataClasses;
 using System.Data.Entity.Validation;
+using System.Data.Objects;
+using System.Data.Objects.DataClasses;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 namespace ShareDeployed.Repositories
 {
 	public class PersistedRepository : IMessangerRepository
 	{
-		bool _disposed = false;
+		private bool _disposed = false;
 
 		private readonly Lazy<Guid> _id = new Lazy<Guid>(() => Guid.NewGuid());
+
 		public Guid SessionId
 		{
 			get { return _id.Value; }
@@ -30,10 +29,13 @@ namespace ShareDeployed.Repositories
 
 		private static readonly Func<MessangerContext, string, MessangerUser> getUserByName = (db, userName) => db.Users.FirstOrDefault(u => u.Name == userName);
 		private static readonly Func<MessangerContext, string, MessangerUser> getUserById = (db, userId) => db.Users.FirstOrDefault(u => u.Id == userId);
+
 		private static readonly Func<MessangerContext, string, MessangerUser> getUserByIdentity = (db, userIdentity) => db.Users.
 																														FirstOrDefault(u => u.Identity == userIdentity);
+
 		private static readonly Func<MessangerContext, string, MessangerGroup> getGroupByName = (db, groupName) => db.Groups.FirstOrDefault(r => r.Name == groupName);
 		private static readonly Func<MessangerContext, string, MessangerClient> getClientById = (db, clientId) => db.Clients.FirstOrDefault(c => c.Id == clientId);
+
 		private static readonly Func<MessangerContext, string, MessangerClient> getClientByIdWithUser = (db, clientId) => db.Clients.Include(c => c.User).
 																														FirstOrDefault(u => u.Id == clientId);
 
@@ -186,6 +188,7 @@ namespace ShareDeployed.Repositories
 			catch (Exception ex)
 			{
 				MvcApplication.Logger.Error("PersistedRepository.DoMembershipInitialization", ex);
+
 				//throw new InvalidOperationException("The ASP.NET Simple Membership database could not be initialized."+
 				//"For more information, please see http://go.microsoft.com/fwlink/?LinkId=256588", ex);
 			}
@@ -194,11 +197,13 @@ namespace ShareDeployed.Repositories
 		private void RunNonLazy(Action action)
 		{
 			bool lazyOld = _dbMessanger.Configuration.LazyLoadingEnabled;
+
 			//bool proxyOld = _dbMessanger.Configuration.ProxyCreationEnabled;
 			//bool detectChangesOld = _dbMessanger.Configuration.AutoDetectChangesEnabled;
 			try
 			{
 				_dbMessanger.Configuration.LazyLoadingEnabled = false;
+
 				//_dbMessanger.Configuration.ProxyCreationEnabled = false;
 				//_dbMessanger.Configuration.AutoDetectChangesEnabled = false;
 				action();
@@ -206,6 +211,7 @@ namespace ShareDeployed.Repositories
 			finally
 			{
 				_dbMessanger.Configuration.LazyLoadingEnabled = lazyOld;
+
 				//_dbMessanger.Configuration.ProxyCreationEnabled = proxyOld;
 				//_dbMessanger.Configuration.AutoDetectChangesEnabled = detectChangesOld;
 			}
@@ -539,6 +545,7 @@ namespace ShareDeployed.Repositories
 		}
 
 		#region Disposable
+
 		public void Dispose()
 		{
 			Dispose(true);
@@ -562,6 +569,7 @@ namespace ShareDeployed.Repositories
 				_disposed = true;
 			}
 		}
-		#endregion
+
+		#endregion Disposable
 	}
 }

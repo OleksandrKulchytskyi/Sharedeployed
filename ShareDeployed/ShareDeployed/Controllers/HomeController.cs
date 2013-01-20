@@ -1,9 +1,4 @@
-﻿using ShareDeployed.DataAccess.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 
 namespace ShareDeployed.Controllers
 {
@@ -17,6 +12,7 @@ namespace ShareDeployed.Controllers
 		public ActionResult Index()
 		{
 			ViewBag.Message = "Modify this template to jump-start your ASP.NET MVC application.";
+
 			//ViewBag.Title = "<title>@ViewBag.Title - ShareDeployed MVC Application"; ;
 			return View();
 		}

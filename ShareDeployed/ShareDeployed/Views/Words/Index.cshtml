@@ -4,15 +4,13 @@
 @section Styles{
 	@Styles.Render("~/Content/bootstrap")
 	<style type="text/css">
-		#navcontainer ul
-		{
+		#navcontainer ul {
 			margin: 0;
 			padding: 0;
 			list-style-type: none;
 		}
 
-			#navcontainer ul li
-			{
+			#navcontainer ul li {
 				display: inline;
 			}
 	</style>
@@ -128,7 +126,7 @@
 						}
 
 						word.Complicated = true;
-						self.moveToPage(self.curPageIndex()-1);
+						self.moveToPage(self.curPageIndex() - 1);
 						self.words.valueHasMutated();
 					});
 			};
@@ -143,9 +141,9 @@
 						}
 
 						word.Complicated = false;
-						self.moveToPage(self.curPageIndex()-1);
+						self.moveToPage(self.curPageIndex() - 1);
 						self.words.valueHasMutated();
-						
+
 					});
 			};
 

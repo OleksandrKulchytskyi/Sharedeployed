@@ -21,7 +21,6 @@
  * Plugin that renders a customisable activity indicator (spinner) using SVG or VML.
  */
 (function ($) {
-
     $.fn.activity = function (opts) {
         this.each(function () {
             var $this = $(this);
@@ -75,7 +74,7 @@
     };
 
     /**
-	 * Default rendering strategy. If neither SVG nor VML is available, a div with class-name 'busy' 
+	 * Default rendering strategy. If neither SVG nor VML is available, a div with class-name 'busy'
 	 * is inserted, that can be styled with CSS to display an animated gif as fallback.
 	 */
     var render = function () {
@@ -102,7 +101,6 @@
     }
 
     if (document.createElementNS && document.createElementNS("http://www.w3.org/2000/svg", "svg").createSVGRect) {
-
         // =======================================================================================
         // SVG Rendering
         // =======================================================================================
@@ -139,7 +137,6 @@
         // than setTimeout() based animations.
 
         if (document.createElement('div').style.WebkitAnimationName !== undefined) {
-
             var animations = {};
 
             /**
@@ -163,7 +160,6 @@
             };
         }
         else {
-
             /**
 			 * Animation strategy that transforms a SVG element using setInterval().
 			 */
@@ -175,10 +171,8 @@
                 }, duration * 1000 / steps));
             };
         }
-
     }
     else {
-
         // =======================================================================================
         // VML Rendering
         // =======================================================================================
@@ -188,7 +182,6 @@
         $('body').append(s);
 
         if (s.get(0).adj) {
-
             // VML support detected. Insert CSS rules for group, shape and stroke.
             var sheet = document.createStyleSheet();
             $.each(['group', 'shape', 'stroke'], function () {
@@ -196,10 +189,9 @@
             });
 
             /**
-			 * Rendering strategy that creates a VML tree. 
+			 * Rendering strategy that creates a VML tree.
 			 */
             render = function (target, d) {
-
                 var innerRadius = d.width * 2 + d.space;
                 var r = (innerRadius + d.length + Math.ceil(d.width / 2) + 1);
                 var s = r * 2;
@@ -229,9 +221,7 @@
         }
         $(s).remove();
     }
-
 })(jQuery);
-
 
 // By: Hans Fjällemark and John Papa
 // https://github.com/CodeSeven/KoLite
@@ -363,7 +353,6 @@
         });
     };
 })(jQuery);
-
 
 ;(function ($, ko) {
     ko.bindingHandlers.activity = {

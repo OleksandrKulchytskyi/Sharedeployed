@@ -1,10 +1,10 @@
-﻿using System;
+﻿using ShareDeployed.Models;
+using System;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Threading;
 using System.Web.Mvc;
 using WebMatrix.WebData;
-using ShareDeployed.Models;
 
 namespace ShareDeployed.Filters
 {
@@ -13,6 +13,7 @@ namespace ShareDeployed.Filters
 	{
 		//private static SimpleMembershipInitializer _initializer;
 		private static SimpleMembershipInitializer2 _initializer;
+
 		private static object _initializerLock = new object();
 		private static bool _isInitialized;
 
@@ -35,6 +36,7 @@ namespace ShareDeployed.Filters
 						if (!context.Database.Exists())
 						{
 							MvcApplication.Logger.Info("Database is not exists");
+
 							// Create the SimpleMembership database without Entity Framework migration schema
 							((IObjectContextAdapter)context).ObjectContext.CreateDatabase();
 						}
@@ -70,6 +72,7 @@ namespace ShareDeployed.Filters
 				catch (Exception ex)
 				{
 					MvcApplication.Logger.Error("SimpleMembershipInitializer", ex);
+
 					//throw new InvalidOperationException("The ASP.NET Simple Membership database could not be initialized."+
 					//"For more information, please see http://go.microsoft.com/fwlink/?LinkId=256588", ex);
 				}

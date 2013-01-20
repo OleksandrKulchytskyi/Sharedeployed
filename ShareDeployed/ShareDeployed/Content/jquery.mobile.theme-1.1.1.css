@@ -25,10 +25,10 @@
 	background-image:      -o-linear-gradient( #3c3c3c /*{a-bar-background-start}*/, #111 /*{a-bar-background-end}*/); /* Opera 11.10+ */
 	background-image:         linear-gradient( #3c3c3c /*{a-bar-background-start}*/, #111 /*{a-bar-background-end}*/);
 }
-.ui-bar-a, 
-.ui-bar-a input, 
-.ui-bar-a select, 
-.ui-bar-a textarea, 
+.ui-bar-a,
+.ui-bar-a input,
+.ui-bar-a select,
+.ui-bar-a textarea,
 .ui-bar-a button {
 	font-family: Helvetica, Arial, sans-serif /*{global-font-family}*/;
 }
@@ -65,7 +65,7 @@
 	background-image:    -moz-linear-gradient( #444 /*{a-body-background-start}*/, #222 /*{a-body-background-end}*/); /* FF3.6 */
 	background-image:     -ms-linear-gradient( #444 /*{a-body-background-start}*/, #222 /*{a-body-background-end}*/); /* IE10 */
 	background-image:      -o-linear-gradient( #444 /*{a-body-background-start}*/, #222 /*{a-body-background-end}*/); /* Opera 11.10+ */
-	background-image:         linear-gradient( #444 /*{a-body-background-start}*/, #222 /*{a-body-background-end}*/);	
+	background-image:         linear-gradient( #444 /*{a-body-background-start}*/, #222 /*{a-body-background-end}*/);
 }
 .ui-overlay-a {
 	background-image: none;
@@ -158,7 +158,6 @@
 	font-family: Helvetica, Arial, sans-serif /*{global-font-family}*/;
 	text-decoration: none;
 }
-
 
 /* B
 -----------------------------------------------------------------------------------------------------------*/
@@ -309,7 +308,6 @@
 	text-decoration: none;
 }
 
-
 /* C
 -----------------------------------------------------------------------------------------------------------*/
 
@@ -459,7 +457,6 @@
 	text-decoration: none;
 }
 
-
 /* D
 -----------------------------------------------------------------------------------------------------------*/
 
@@ -608,7 +605,6 @@
 	font-family: Helvetica, Arial, sans-serif /*{global-font-family}*/;
 	text-decoration: none;
 }
-
 
 /* E
 -----------------------------------------------------------------------------------------------------------*/
@@ -760,13 +756,12 @@
 
 /* Structure */
 
-/* links within "buttons" 
+/* links within "buttons"
 -----------------------------------------------------------------------------------------------------------*/
 
 a.ui-link-inherit {
 	text-decoration: none !important;
 }
-
 
 /* Active class used as the "on" state across all themes
 -----------------------------------------------------------------------------------------------------------*/
@@ -792,7 +787,6 @@ a.ui-link-inherit {
 	color: 					#fff /*{global-active-color}*/;
 }
 
-
 /* button inner top highlight
 -----------------------------------------------------------------------------------------------------------*/
 
@@ -800,7 +794,6 @@ a.ui-link-inherit {
 	border-top: 1px solid 	#fff;
 	border-color: 			rgba(255,255,255,.3);
 }
-
 
 /* corner rounding classes
 -----------------------------------------------------------------------------------------------------------*/
@@ -907,7 +900,6 @@ a.ui-link-inherit {
 	border-radius: 						9px;
 }
 
-
 /* Alt icon color
 -----------------------------------------------------------------------------------------------------------*/
 
@@ -924,11 +916,10 @@ a.ui-link-inherit {
 @media only screen and (-webkit-min-device-pixel-ratio: 1.5),
        only screen and (min--moz-device-pixel-ratio: 1.5),
        only screen and (min-resolution: 240dpi) {
-	
 	.ui-icon-plus, .ui-icon-minus, .ui-icon-delete, .ui-icon-arrow-r,
 	.ui-icon-arrow-l, .ui-icon-arrow-u, .ui-icon-arrow-d, .ui-icon-check,
 	.ui-icon-gear, .ui-icon-refresh, .ui-icon-forward, .ui-icon-back,
-	.ui-icon-grid, .ui-icon-star, .ui-icon-alert, .ui-icon-info, .ui-icon-home, .ui-icon-search, .ui-icon-searchfield:after, 
+	.ui-icon-grid, .ui-icon-star, .ui-icon-alert, .ui-icon-info, .ui-icon-home, .ui-icon-search, .ui-icon-searchfield:after,
 	.ui-icon-checkbox-off, .ui-icon-checkbox-on, .ui-icon-radio-off, .ui-icon-radio-on {
 		background-image: url(images/icons-36-white.png);
 		-moz-background-size: 776px 18px;
@@ -1016,7 +1007,6 @@ a.ui-link-inherit {
 	background-position: 	-720px 50%;
 }
 
-
 /* checks,radios */
 .ui-checkbox .ui-icon {
 	-moz-border-radius: 3px;
@@ -1025,7 +1015,7 @@ a.ui-link-inherit {
 }
 .ui-icon-checkbox-off,
 .ui-icon-radio-off {
-	background-color: transparent;	
+	background-color: transparent;
 }
 .ui-checkbox-on .ui-icon,
 .ui-radio-on .ui-icon {
@@ -1037,7 +1027,6 @@ a.ui-link-inherit {
 	background: url(images/ajax-loader.gif);
 	background-size: 46px 46px;
 }
-
 
 /* Button corner classes
 -----------------------------------------------------------------------------------------------------------*/
@@ -1103,19 +1092,19 @@ a.ui-link-inherit {
 /* radius clip workaround for cleaning up corner trapping */
 .ui-corner-tl,
 .ui-corner-tr,
-.ui-corner-bl, 
+.ui-corner-bl,
 .ui-corner-br,
 .ui-corner-top,
-.ui-corner-bottom, 
+.ui-corner-bottom,
 .ui-corner-right,
 .ui-corner-left,
 .ui-corner-all,
 .ui-btn-corner-tl,
 .ui-btn-corner-tr,
-.ui-btn-corner-bl, 
+.ui-btn-corner-bl,
 .ui-btn-corner-br,
 .ui-btn-corner-top,
-.ui-btn-corner-bottom, 
+.ui-btn-corner-bottom,
 .ui-btn-corner-right,
 .ui-btn-corner-left,
 .ui-btn-corner-all {
@@ -1182,7 +1171,7 @@ a.ui-link-inherit {
 .ui-input-search.ui-focus {
 	-moz-box-shadow: 0px 0px 12px 			#387bbe /*{global-active-background-color}*/;
 	-webkit-box-shadow: 0px 0px 12px 		#387bbe /*{global-active-background-color}*/;
-	box-shadow: 0px 0px 12px 					#387bbe /*{global-active-background-color}*/;	
+	box-shadow: 0px 0px 12px 					#387bbe /*{global-active-background-color}*/;
 }
 
 /* unset box shadow in browsers that don't do it right

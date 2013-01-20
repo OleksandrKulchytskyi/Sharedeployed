@@ -15,27 +15,27 @@
 			themeDefault: 'c',
 			themeHeader: 'a',
 			mode: false,
-			
+
 			centerHoriz: false,
 			centerVert: false,
 			transition: 'pop',
 			useAnimation: true,
 			hideInput: false,
 			hideFixedToolbars: false,
-			
+
 			lockInput: true,
 			enhanceInput: true,
-			
+
 			zindex: '500',
 			clickEvent: 'vclick',
 			clickEventAlt: 'click',
 			resizeListener: true,
-			
+
 			defaultValue: false,
-			
+
 			dialogEnable: false,
 			dialogForce: false,
-			
+
 			useModal: false,
 			useInline: false,
 			useInlineBlind: false,
@@ -44,18 +44,18 @@
 			useNewStyle: false,
 			useAltIcon: false,
 			overrideStyleClass: false,
-			
+
 			useButton: true,
 			useFocus: false,
 			useClearButton: false,
 			useCollapsedBut: false,
 			usePlaceholder: false,
-			
+
 			openCallback: false,
 			openCallbackArgs: [],
 			closeCallback: false,
 			closeCallbackArgs: [],
-			
+
 			afterToday: false,
 			beforeToday: false,
 			notToday: false,
@@ -69,9 +69,9 @@
 			maxHour: false,
 			minuteStep: 1,
 			minuteStepRound: 0,
-			
+
 			rolloverMode: { 'm': true, 'd': true, 'h': true, 'i': true, 's': true },
-			
+
 			useLang: 'default',
 			lang: {
 				'default' : {
@@ -173,11 +173,11 @@
 				iso: function() {
 					return String(this.getFullYear()) + '-' + (( this.getMonth() < 9 ) ? "0" : "") + String(this.getMonth()+1) + '-' + ((this.getDate() < 10 ) ? "0" : "") + String(this.getDate());
 				},
-				comp: function () { 
-					return parseInt(this.iso().replace(/-/g,''),10); 
+				comp: function () {
+					return parseInt(this.iso().replace(/-/g,''),10);
 				},
-				getEpoch: function() { 
-					return (this.getTime() - this.getMilliseconds()) / 1000; 
+				getEpoch: function() {
+					return (this.getTime() - this.getMilliseconds()) / 1000;
 				},
 				getArray: function() {
 					return [this.getFullYear(), this.getMonth(), this.getDate(), this.getHours(), this.getMinutes(), this.getSeconds()];
@@ -185,7 +185,7 @@
 				setFirstDay: function (day) {
 					this.set(2,1).adj(2, (day - this.getDay()));
 					if ( this.get(2) > 10 ) { this.adj(2,7); }
-					return this; 
+					return this;
 				},
 				setWeek: function (type,num) {
 					if ( type === 4 ) {
@@ -195,7 +195,7 @@
 				},
 				getWeek: function (type) {
 					var t1, t2;
-					
+
 					switch ( type ) {
 						case 0:
 							t1 = this.copy([0,-1*this.getMonth()]).setFirstDay(0);
@@ -209,11 +209,11 @@
 							// this line is some bullshit.  but it does work.
 							// (trap for dec 29, 30, or 31st being in the new year's week - these are the
 							//  only 3 that can possibly fall like this)
-							if ( this.getMonth() === 11 && this.getDate() > 28 ) { return 1; } 
-							
+							if ( this.getMonth() === 11 && this.getDate() > 28 ) { return 1; }
+
 							t1 = this.copy([0,-1*this.getMonth()],true).setFirstDay(4).adj(2,-3);
 							t2 = Math.floor((this.getTime() - ( t1.getTime() + (( this.getTimezoneOffset() - t1.getTimezoneOffset()) * 60000))) / 6048e5) + 1;
-							
+
 							if ( t2 < 1 ) {
 								t1 = this.copy([-1,-1*this.getMonth()]).setFirstDay(4).adj(2,-3);
 								return Math.floor((this.getTime() - t1.getTime()) / 6048e5) + 1;
@@ -245,7 +245,7 @@
 						}
 						break;
 					case 'dooffset':
-						if (p.type) { w._offset(p.type, p.amount, true); } break; 
+						if (p.type) { w._offset(p.type, p.amount, true); } break;
 					case 'dorefresh':
 						w.refresh(); break;
 					case 'doreset':
@@ -273,7 +273,7 @@
 		__ : function(val) {
 			var o = this.options,
 				oride = 'override' + val.charAt(0).toUpperCase() + val.slice(1);
-				
+
 			if ( typeof o[oride] !== 'undefined' ) { return o[oride]; }
 			if ( typeof o.lang[o.useLang][val] !== 'undefined' ) { return o.lang[o.useLang][val]; }
 			if ( typeof o[o.mode+'lang'][val] !== 'undefined' ) { return o[o.mode+'lang'][val]; }
@@ -282,7 +282,7 @@
 		__fmt: function() {
 			var w = this,
 				o = this.options;
-			
+
 			switch ( o.mode ) {
 				case 'timebox':
 				case 'timeflipbox':
@@ -300,16 +300,16 @@
 			var start = 48,
 				end = 57,
 				adder = 1584,
-				i = null, 
+				i = null,
 				ch = null,
 				newd = '';
-				
+
 			if ( direction === -1 ) {
 				start += adder;
 				end += adder;
 				adder = -1584;
 			}
-			
+
 			for ( i=0; i<oper.length; i++ ) {
 				ch = oper.charCodeAt(i);
 				if ( ch >= start && ch <= end ) {
@@ -318,12 +318,12 @@
 					newd = newd + String.fromCharCode(ch);
 				}
 			}
-			
+
 			return newd;
 		},
 		_doIndic: function() {
 			var w = this;
-				
+
 			w.d.intHTML.find('*').each(function() {
 				if ( $(this).children().length < 1 ) {
 					$(this).text(w._dRep($(this).text()));
@@ -358,10 +358,10 @@
 				date = new w._date(),
 				d = { year: -1, mont: -1, date: -1, hour: -1, mins: -1, secs: -1, week: false, wtyp: 4, wday: false, yday: false, meri: 0 },
 				i;
-			
+
 			if ( typeof o.mode === 'undefined' ) { return date; }
 			if ( typeof w._parser[o.mode] !== 'undefined' ) { return w._parser[o.mode].apply(w,[str]); }
-			
+
 			if ( o.mode === 'durationbox' ) {
 				adv = adv.replace(/%D([a-z])/gi, function(match, oper) {
 					switch (oper) {
@@ -372,18 +372,18 @@
 						default: return '.+?';
 					}
 				});
-				
+
 				adv = new RegExp('^' + adv + '$');
 				exp_input = adv.exec(str);
 				exp_format = adv.exec(w.__fmt());
-				
+
 				if ( exp_input === null || exp_input.length !== exp_format.length ) {
 					if ( typeof o.defaultValue === "number" && o.defaultValue > 0 ) {
 						return new w._date((w.initDate.getEpoch() + parseInt(o.defaultValue,10))*1000);
-					} 
+					}
 					return new w._date(w.initDate.getTime());
-				} 
-				
+				}
+
 				exp_temp = w.initDate.getEpoch();
 				for ( i=0; i<exp_input.length; i++ ) { //0y 1m 2d 3h 4i 5s
 					if ( exp_format[i].match(/^%Dd$/i) )   { exp_temp = exp_temp + (parseInt(exp_input[i],10)*60*60*24); }
@@ -393,7 +393,7 @@
 				}
 				return new w._date((exp_temp*1000));
 			}
-			
+
 			adv = adv.replace(/%(0|-)*([a-z])/gi, function(match, pad, oper) {
 				exp_names.push(oper);
 				switch (oper) {
@@ -420,14 +420,14 @@
 					case 'E':
 					case 'G':
 					case 'Y': return '(' + match + '|' + '[0-9]{1,4}' + ')';
-					default: exp_names.pop(); return '.+?';	
+					default: exp_names.pop(); return '.+?';
 				}
 			});
-			
+
 			adv = new RegExp('^' + adv + '$');
 			exp_input = adv.exec(str);
 			exp_format = adv.exec(w.__fmt());
-			
+
 			if ( exp_input === null || exp_input.length !== exp_format.length ) {
 				if ( o.defaultValue !== false ) {
 					switch ( typeof o.defaultValue ) {
@@ -492,16 +492,16 @@
 					if ( d.meri === -1 && d.hour === 12 ) { d.hour = 0; }
 					if ( d.meri === 1 && d.hour !== 12 ) { d.hour = d.hour + 12; }
 				}
-				
+
 				date = new w._date(w._n(d.year,1),w._n(d.mont,1),w._n(d.date,1),w._n(d.hour,0),w._n(d.mins,0),w._n(d.secs,0),0);
-				
+
 				if ( d.year < 100 && d.year !== -1 ) { date.setFullYear(d.year); }
-				
+
 				if ( ( d.mont > -1 && d.date > -1 ) || ( d.hour > -1 && d.mins > -1 && d.secs > -1 ) ) { return date; }
-				
+
 				if ( d.week !== false ) {
 					date.setWeek(d.wtyp, d.week);
-					if ( d.date > -1 ) { date.setDate(d.date); } 
+					if ( d.date > -1 ) { date.setDate(d.date); }
 				}
 				if ( d.yday !== false ) { date.set(1,0).set(2,1).adj(2,(d.yday-1)); }
 				if ( d.wday !== false ) { date.adj(2,(d.wday - date.getDay())); }
@@ -517,19 +517,19 @@
 				dur = {
 					part: [0,0,0,0], tp: 0
 				};
-				
+
 				if ( o.mode === 'durationbox' ) {
 					dur.tp = this.theDate.getEpoch() - this.initDate.getEpoch();
 					dur.part[0] = parseInt( dur.tp / (60*60*24),10); dur.tp -=(dur.part[0]*60*60*24); // Days
 					dur.part[1] = parseInt( dur.tp / (60*60),10); dur.tp -= (dur.part[1]*60*60); // Hours
 					dur.part[2] = parseInt( dur.tp / (60),10); dur.tp -= (dur.part[2]*60); // Minutes
 					dur.part[3] = dur.tp; // Seconds
-			
+
 					if ( ! format.match(/%Dd/) ) { dur.part[1] += (dur.part[0]*24);}
 					if ( ! format.match(/%Dl/) ) { dur.part[2] += (dur.part[1]*60);}
 					if ( ! format.match(/%DM/) ) { dur.part[3] += (dur.part[2]*60);}
 				}
-				
+
 			format = format.replace(/%(D|X|0|-)*([1-9a-zA-Z])/g, function(match, pad, oper) {
 				if ( pad === 'X' ) {
 					if ( typeof w._customformat[o.mode] !== 'undefined' ) { return w._customformat[o.mode](oper, date); }
@@ -602,7 +602,7 @@
 						tmp = Math.ceil((date - tmp) / 86400000)+1;
 						return (( tmp < 100 ) ? (( tmp < 10 )? '00' : '0') : '' ) + String(tmp);
 					case 'G':
-						if ( date.getWeek(4) === 1 && date.getMonth() > 0 ) { return date.getFullYear() + 1; } 
+						if ( date.getWeek(4) === 1 && date.getMonth() > 0 ) { return date.getFullYear() + 1; }
 						if ( date.getWeek(4) > 51 && date.getMonth() < 11 ) { return date.getFullYear() - 1; }
 						return date.getFullYear();
 					case 'g':
@@ -613,11 +613,11 @@
 						return match;
 				}
 			});
-		
+
 			if ( w.__('useArabicIndic') === true ) {
 				format = w._dRep(format);
 			}
-		
+
 			return format;
 		},
 		_btwn: function(value, low, high) {
@@ -627,7 +627,7 @@
 			var tempMin = this.theDate.get(4), tmp,
 				w = this,
 				o = this.options;
-				
+
 			if ( o.minuteStep > 1 && tempMin % o.minuteStep > 0 ) {
 				if ( o.minuteStepRound < 0 ) {
 					tempMin = tempMin - (tempMin % o.minuteStep);
@@ -649,12 +649,12 @@
 			var w = this,
 				o = this.options,
 				ok = false;
-				
+
 			mode = (mode || "").toLowerCase();
-				
+
 			if ( typeof(update) === "undefined" ) { update = true; }
 			w.d.input.trigger('datebox', {'method':'offset', 'type':mode, 'amount':amount});
-			
+
 			if ( mode !== 'a' && ( typeof o.rolloverMode[mode] === 'undefined' || o.rolloverMode[mode] === true )) {
 				ok = $.inArray(mode, ['y','m','d','h','i','s']);
 			} else {
@@ -687,7 +687,7 @@
 		_create: function() {
 			// Create the widget, called automatically by widget system
 			$( document ).trigger( "dateboxcreate" );
-		
+
 			var w = this,
 				o = $.extend(this.options, (typeof this.element.jqmData('options') !== 'undefined') ? this.element.jqmData('options') : this._getLongOptions(this.element) ),
 				thisTheme = ( o.theme === false && typeof($(this).jqmData('theme')) === 'undefined' ) ?
@@ -721,26 +721,26 @@
 					tmp    : false
 				},
 				ns = (typeof $.mobile.ns !== 'undefined')?$.mobile.ns:'';
-				
+
 			$.extend(w, {d: d, ns: ns, drag: drag, touch:touch});
-			
+
 			if ( o.usePlaceholder !== false ) {
 				if ( o.usePlaceholder === true && w._grabLabel() !== false ) { w.d.input.attr('placeholder', w._grabLabel()); }
 				if ( typeof o.usePlaceholder === 'string' ) { w.d.input.attr('placeholder', o.usePlaceholder); }
 			}
-			
+
 			o.theme = thisTheme;
-			
+
 			w.clearFunc = false;
 			w.disabled = false;
 			w.runButton = false;
 			w._date = window.Date;
 			w._enhanceDate();
-			
+
 			w.initDate = new w._date();
 			w.theDate = (o.defaultValue) ? w._makeDate(o.defaultValue) : new w._date();
 			w.initDone = false;
-			
+
 			if ( o.useButton === true && o.useInline === false && o.useNewStyle === false ) {
 				w.d.open = $('<a href="#" class="ui-input-clear" title="'+this.__('tooltip')+'">'+this.__('tooltip')+'</a>')
 					.on(o.clickEvent, function(e) {
@@ -750,32 +750,32 @@
 					}).appendTo(w.d.wrap).buttonMarkup({icon: 'grid', iconpos: 'notext', corners:true, shadow:true})
 					.css({'vertical-align': 'middle', 'display': 'inline-block'});
 			}
-			
+
 			w.d.screen = $("<div>", {'class':'ui-datebox-screen ui-datebox-hidden'+((o.useModal)?' ui-datebox-screen-modal':'')})
 				.css({'z-index': o.zindex-1})
 				.on(o.clickEventAlt, function(e) {
 					e.preventDefault();
 					w.d.input.trigger('datebox', {'method':'close'});
 				});
-			
+
 			if ( o.enhanceInput === true && navigator.userAgent.match(/Android/i) ){
 				w.inputType = 'number';
 			} else {
 				w.inputType = 'text';
 			}
-			
+
 			if ( o.hideInput ) { w.d.wrap.hide(); }
-		
+
 			$('label[for=\''+w.d.input.attr('id')+'\']').addClass('ui-input-text').css('verticalAlign', 'middle');
 
 			w.d.wrap.on(o.clickEvent, function() {
-				if ( !w.disabled && ( o.noButtonFocusMode || o.focusMode ) ) { 
+				if ( !w.disabled && ( o.noButtonFocusMode || o.focusMode ) ) {
 					w.d.input.trigger('datebox', {'method': 'open'});
 					w.d.wrap.addClass('ui-focus');
 					w.d.input.removeClass('ui-focus');
 				}
 			});
-		
+
 			w.d.input
 				.removeClass('ui-corner-all ui-shadow-inset')
 				.bind(w.touch?'touchend':'click', function(e){
@@ -788,7 +788,7 @@
 				.focus(function(){
 					if ( w.disabled === false && o.useFocus === true ) {
 						w.d.input.trigger('datebox', {'method': 'open'}); w.d.wrap.addClass('ui-focus');
-					} 
+					}
 					if ( o.useNewStyle === false ) { w.d.input.removeClass('ui-focus'); }
 				})
 				.blur(function(){
@@ -801,22 +801,22 @@
 				})
 				.attr("readonly", o.lockInput)
 				.on('datebox', w._event);
-			
+
 			if ( o.useNewStyle === true ) {
 				w.d.input.addClass('ui-shadow-inset ui-corner-all '+((o.useAltIcon===true)?'ui-icon-datebox-alt':'ui-icon-datebox'));
 				if ( o.overrideStyleClass !== false ) { w.d.input.addClass(o.overrideStyleClass); }
 			}
-			
+
 			// Check if mousewheel plugin is loaded
 			if ( typeof $.event.special.mousewheel !== 'undefined' ) { w.wheelExists = true; }
-		
+
 			// Disable when done if element attribute disabled is true.
 			if ( w.d.input.is(':disabled') ) {
 				w.disable();
 			}
-			
+
 			if ( o.useInline === true || o.useInlineBlind ) { w.open(); }
-			
+
 			//Throw dateboxinit event
 			$( document ).trigger( "dateboxaftercreate" );
 		},
@@ -853,14 +853,14 @@
 					y: (o.centerVert) ? doc.t + ((doc.h / 2) - (size.h / 2)) : iput.y  - ( size.h / 2 ),
 					x: (doc.w < 400 || o.centerHoriz ) ? (doc.w / 2) - (size.w /2) : iput.x  - (size.w / 2)
 				};
-				
+
 			if ( o.centerVert === false ) {
 				if ( o.hideFixedToolbars === true && ( typeof fixd.f !== 'undefined' || typeof fixd.h !== 'undefined' )) {
 					$.mobile.activePage.find(":jqmData(position='fixed')").fixedtoolbar('hide');
 					fixd.f = undefined;
 					fixd.h = undefined;
 				}
-				
+
 				if ( typeof fixd.f !== 'undefined' ) {
 					if ( ( pos.y + size.h ) > ( doc.h - fixd.fh - 2 ) ) {
 						pos.y = doc.h - fixd.fh - 2 - size.h;
@@ -873,7 +873,7 @@
 						pos.y = doc.h + doc.t - size.h - 2;
 					}
 				}
-				
+
 				if ( typeof fixd.h !== 'undefined' ) {
 					if ( ( doc.t + fixd.hh + 2 ) > pos.y ) {
 						pos.y = doc.t + fixd.hh + 2;
@@ -897,12 +897,12 @@
 				o = this.options,
 				qns = 'data-'+this.ns,
 				trans = o.useAnimation ? o.transition : 'none';
-			
+
 			if ( o.useFocus === true && w.fastReopen === true ) { w.d.input.blur(); return false; }
 			if ( w.clearFunc !== false ) {
 				clearTimeout(w.clearFunc); w.clearFunc = false;
 			}
-			
+
 			// Call the open callback if provided. Additionally, if this
 			// returns false then the open/update will stop.
 			if ( o.openCallback !== false ) {
@@ -915,10 +915,10 @@
 				}
 				if ( o.openCallback.apply(w, $.merge([w.theDate],o.openCallbackArgs)) === false ) { return false; }
 			}
-				
+
 			w.theDate = w._makeDate(w.d.input.val());
 			w.d.input.blur();
-			
+
 			if ( typeof w._build[o.mode] === 'undefined' ) {
 				w._build['default'].apply(w,[]);
 			} else {
@@ -929,7 +929,7 @@
 			}
 			w.d.input.trigger('datebox', {'method':'refresh'});
 			if ( w.__('useArabicIndic') === true ) { w._doIndic(); }
-			
+
 			if ( ( o.useInline === true || o.useInlineBlind === true ) && w.initDone === false ) {
 				w.d.mainWrap.append(w.d.intHTML);
 				w.d.input.parent().parent().append(w.d.mainWrap);
@@ -943,16 +943,16 @@
 				w.initDone = false;
 				w.d.input.trigger('datebox',{'method':'postrefresh'});
 			}
-			
+
 			if ( o.useImmediate ) { w.d.input.trigger('datebox', {'method':'doset'}); }
 			if ( o.useInline ) { return true; }
-			if ( o.useInlineBlind ) { 
+			if ( o.useInlineBlind ) {
 				if ( w.initDone ) { w.d.mainWrap.slideDown();  }
 				else { w.initDone = true; }
 				return true;
 			}
 			if ( w.d.intHTML.is(':visible') ) { return false; } // Ignore if already open
-				
+
 			if ( o.dialogForce || ( o.dialogEnable && window.width() < 400 ) ) {
 				w.d.dialogPage = $("<div "+qns+"role='dialog' "+qns+"theme='"+o.theme+"' >" +
 					"<div "+qns+"role='header' "+qns+"theme='"+o.themeHeader+"'>" +
@@ -981,20 +981,19 @@
 				w.d.screen.appendTo($.mobile.activePage);
 				w.d.input.trigger('datebox',{'method':'postrefresh'});
 				w._applyCoords({widget:w});
-				
-				if ( o.useModal === true ) { 
+
+				if ( o.useModal === true ) {
 					if(o.useAnimation) {
                         w.d.screen.fadeIn('slow');
                     } else {
                         w.d.screen.show();
                     }
-
 				} else {
 					setTimeout(function () { w.d.screen.removeClass('ui-datebox-hidden');}, 500);
 				}
-				
+
 				w.d.mainWrap.addClass('ui-overlay-shadow in').removeClass('ui-datebox-hidden');
-				
+
 				$(document).on('orientationchange.datebox', {widget:w}, function(e) { w._applyCoords(e.data); });
 				if ( o.resizeListener === true ) {
 					$(window).on('resize.datebox', {widget:w}, function (e) { w._applyCoords(e.data); });
@@ -1004,17 +1003,17 @@
 		close: function() {
 			var w = this,
 				o = this.options;
-			
+
 			if ( o.useInlineBlind === true ) { w.d.mainWrap.slideUp(); return true;}
 			if ( o.useInline === true ) { return true; }
 
 			if ( w.d.dialogPage !== false ) {
 				$(w.d.dialogPage).dialog('close');
-				
+
 				if ( ! $.mobile.activePage.jqmData('page').options.domCache ) {
 					$.mobile.activePage.on('pagehide.remove', function () { $(this).remove(); });
 				}
-				
+
 				w.d.intHTML.detach().empty();
 				w.d.mainWrap.detach().empty();
 				w.d.wrap.removeClass('ui-focus');
@@ -1026,7 +1025,6 @@
                     } else {
                         w.d.screen.hide();
                     }
-
 				} else {
 					w.d.screen.addClass('ui-datebox-hidden');
 				}
@@ -1034,22 +1032,22 @@
 				w.d.mainWrap.addClass('ui-datebox-hidden').removeAttr('style').removeClass('in ui-overlay-shadow').empty().detach();
 				w.d.intHTML.detach();
 				w.d.wrap.removeClass('ui-focus');
-				
+
 				$(document).off('orientationchange.datebox');
 				if ( o.resizeListener === true ) {
 					$(window).off('resize.datebox');
 				}
 			}
-					
+
 			$(document).off(w.drag.eMove);
 			$(document).off(w.drag.eEnd);
 			$(document).off(w.drag.eEndA);
-			
-			if ( o.useFocus ) { 
+
+			if ( o.useFocus ) {
 				w.fastReopen = true;
 				setTimeout(function(t) { return function () { t.fastReopen = false; };}(w), 300);
 			}
-			
+
 			if ( o.closeCallback !== false ) {
 				if ( ! $.isFunction(o.closeCallback) ) {
 					if ( typeof window[o.closeCallback] !== 'undefined' ) {
@@ -1075,9 +1073,9 @@
 			var w = this,
 				td = null,
 				o = this.options;
-			
+
 			w.dateOK = true;
-			
+
 			if ( o.afterToday !== false ) {
 				td = new w._date();
 				if ( w.theDate < td ) { w.theDate = td; }
@@ -1115,8 +1113,8 @@
 				td = new w._date(o.minYear, 0, 1);
 				if ( w.theDate < td ) { w.theDate = td; }
 			}
-			
-			if ( $.inArray(o.mode, ['timebox','durationbox','timeflipbox']) > -1 ) { 
+
+			if ( $.inArray(o.mode, ['timebox','durationbox','timeflipbox']) > -1 ) {
 				if ( o.mode === 'timeflipbox' && o.validHours !== false ) {
 					if ( $.inArray(w.theDate.getHours(), o.validHours) < 0 ) { w.dateOK = false; }
 				}
@@ -1132,7 +1130,7 @@
 		_grabLabel: function() {
 			var w = this,
 				o = this.options;
-				
+
 			if ( typeof o.overrideDialogLabel === 'undefined' ) {
 				if ( typeof w.d.input.attr('title') !== 'undefined' ) { return w.d.input.attr('title'); }
 				if ( w.d.wrap.parent().find('label[for='+w.d.input.attr('id')+']').text() !== '' ) {
@@ -1145,9 +1143,9 @@
 		_makeEl: function(source, parts) {
 			var part = false,
 				retty = false;
-			
+
 			retty = source.clone();
-			
+
 			if ( typeof parts.attr !== 'undefined' ) {
 				for ( part in parts.attr ) {
 					if ( parts.attr.hasOwnProperty(part) ) {
@@ -1159,13 +1157,13 @@
 		},
 		_getLongOptions: function(element) {
 			var key, retty = {}, prefix, temp;
-			
-			if ( $.mobile.ns === "" ) { 
+
+			if ( $.mobile.ns === "" ) {
 				prefix = "datebox";
-			} else { 
+			} else {
 				prefix = $.mobile.ns.substr(0, $.mobile.ns.length - 1) + 'Datebox';
 			}
-			
+
 			for ( key in element.data() ) {
 				if ( key.substr(0, prefix.length) === prefix && key.length > prefix.length ) {
 					temp = key.substr(prefix.length);
@@ -1194,7 +1192,7 @@
 			this.refresh();
 		}
 	});
-	  
+
 	// Degrade date inputs to text inputs, suppress standard UI functions.
 	$( document ).on( "pagebeforecreate", function( e ) {
 		$( ":jqmData(role='datebox')", e.target ).each(function() {

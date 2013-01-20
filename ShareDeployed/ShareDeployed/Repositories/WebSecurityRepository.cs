@@ -1,8 +1,7 @@
-﻿using System;
+﻿using ShareDeployed.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using ShareDeployed.Models;
 
 namespace ShareDeployed.Repositories
 {
@@ -23,11 +22,12 @@ namespace ShareDeployed.Repositories
 			catch { }
 		}
 
-		bool _disposed = false;
+		private bool _disposed = false;
 		private readonly UsersContext _db;
 		private static readonly Func<UsersContext, string, UserProfile> getUserByName = (db, name) => db.UserProfiles.FirstOrDefault(u => u.UserName == name);
 		private static readonly Func<UsersContext, int, UserProfile> getUserById = (db, id) => db.UserProfiles.FirstOrDefault(u => u.UserId == id);
 		private static readonly Func<UsersContext, List<webpages_Roles>> getRoles = (db) => db.webpages_Roles.ToList();
+
 		private static readonly Func<UsersContext, string, webpages_Roles> getRole = (db, roleName) => db.webpages_Roles.
 																					FirstOrDefault(x => x.RoleName.Equals(roleName, StringComparison.OrdinalIgnoreCase));
 

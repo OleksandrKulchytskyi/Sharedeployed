@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
+using Microsoft.AspNet.SignalR.Infrastructure;
 using Ninject;
 using ShareDeployed.Common.Caching;
 using ShareDeployed.DataAccess;
@@ -17,12 +18,14 @@ using System.Web.Hosting;
 using System.Web.Http;
 using System.Web.Routing;
 
+[assembly: WebActivator.PreApplicationStartMethod(typeof(ShareDeployed.Infrastructure.Bootstrapper), "PreAppStart")]
 namespace ShareDeployed.Infrastructure
 {
 	public static class Bootstrapper
 	{
 		// Background task members
 		private static bool _sweeping;
+
 		private static bool _broadcasting;
 		private static Timer _timerClaen;
 		private static Timer _timerBroadcats;
@@ -71,6 +74,7 @@ namespace ShareDeployed.Infrastructure
 			kernel.Bind<ICache>().To<AspNetCache>().InSingletonScope();
 
 			#region for web api controllers
+
 			kernel.Bind<DataAccess.Interfaces.IContext>().To<ShareDeployedContext>();
 			kernel.Bind<DataAccess.Interfaces.IRepository<Common.Models.Expense>>().To<DataAccess.Implementation.ExpenseRepostitory>();
 			kernel.Bind<DataAccess.Interfaces.IRepository<Common.Models.Revenue>>().To<DataAccess.Implementation.RevenueRepostitory>();
@@ -87,24 +91,23 @@ namespace ShareDeployed.Infrastructure
 
 					return new DataAccess.Implementation.UnityOfWork(userRep, expenseRep, revenueRep, wordRep, icontext);
 				});
-			#endregion
 
-			var serializer = new Microsoft.AspNet.SignalR.JsonNetSerializer(new Newtonsoft.Json.JsonSerializerSettings
+			#endregion for web api controllers
+
+			var serializer = new Microsoft.AspNet.SignalR.Json.JsonNetSerializer(new Newtonsoft.Json.JsonSerializerSettings
 			{
 				DateFormatHandling = Newtonsoft.Json.DateFormatHandling.MicrosoftDateFormat,
 			});
 
 			Kernel = kernel;
-
 			_resolver = new ShareDeployed.DependencyResolvers.NinjectDependencyResolver(kernel);
 			ShareDeployed.App_Start.SignalRConfig.Register(_resolver);
-			//SetupRoutes(kernel);
 
+			//SetupRoutes(kernel);
 			//set up repository factory method
 			var repositoryFactory = new Func<Repositories.IMessangerRepository>(() => kernel.Get<IMessangerRepository>());
 
 			_timerClaen = new Timer(_ => Sweep(repositoryFactory, _resolver), null, _sweepInterval, _sweepInterval);
-
 			_timerBroadcats = new Timer(_ => BroadCastNewMessages(repositoryFactory, _resolver), null,
 								TimeSpan.FromSeconds(40), _broadcatsInterval);
 

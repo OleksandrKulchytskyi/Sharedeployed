@@ -1,16 +1,17 @@
-﻿using Microsoft.AspNet.SignalR.Hubs;
+﻿using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Hubs;
 using Newtonsoft.Json;
 using ShareDeployed.Common.Caching;
-using ShareDeployed.Common.Models;
 using ShareDeployed.Common.Extensions;
+using ShareDeployed.Common.Models;
 using ShareDeployed.Extension;
 using ShareDeployed.Repositories;
 using ShareDeployed.Services;
 using ShareDeployed.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -33,6 +34,7 @@ namespace ShareDeployed.Hubs
 							IAspUserRepository aspUsrRepos)//IResourceProcessor resourceProcessor)
 		{
 			_settings = settings;
+
 			//_resourceProcessor = resourceProcessor;
 			_service = service;
 			_repository = repository;
@@ -256,6 +258,7 @@ namespace ShareDeployed.Hubs
 				return null;
 
 			MessangerUser user = _repository.VerifyUserId(id);
+
 			// Make sure this client is being tracked
 			_service.AddClient(user, Context.ConnectionId, UserAgent);
 
@@ -297,15 +300,15 @@ namespace ShareDeployed.Hubs
 			return base.OnDisconnected();
 		}
 
-		public sealed override void Dispose()
+		protected override void Dispose(bool disposing)
 		{
 			if (_repository != null)
 				_repository.Dispose();
 
-			base.Dispose();
+			base.Dispose(disposing);
 		}
 
-		#endregion
+		#endregion methods which has been overridden
 
 		#region private methods
 
@@ -366,6 +369,7 @@ namespace ShareDeployed.Hubs
 				foreach (var group in user.Groups)
 				{
 					var userViewModel = new UserViewModel(user);
+
 					//Clients.Group(group.Name).leave(userViewModel, group.Name).Wait();
 					Groups.Remove(clientId, group.Name);
 				}
@@ -391,7 +395,7 @@ namespace ShareDeployed.Hubs
 			_repository.CommitChanges();
 		}
 
-		#endregion
+		#endregion private methods
 
 		#region INotification service
 
@@ -422,7 +426,7 @@ namespace ShareDeployed.Hubs
 				}
 				catch (Exception ex)
 				{
-					if ((ex is AggregateException) && 
+					if ((ex is AggregateException) &&
 						!((ex as AggregateException).InnerException is System.Threading.Tasks.TaskCanceledException))
 					{
 						MvcApplication.Logger.Error("INotificationService.LogOn", ex.InnerException);
@@ -472,6 +476,6 @@ namespace ShareDeployed.Hubs
 			Clients.Group(group.Name).userJoinedGroup(user);
 		}
 
-		#endregion
+		#endregion INotification service
 	}
 }

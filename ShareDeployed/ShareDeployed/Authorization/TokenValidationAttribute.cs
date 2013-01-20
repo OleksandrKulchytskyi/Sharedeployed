@@ -1,10 +1,10 @@
-﻿using System;
+﻿using ShareDeployed.Common.Crypt;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Web.Http.Filters;
 using System.Web.Http.Controllers;
-using ShareDeployed.Common.Crypt;
-using System.Collections.Generic;
+using System.Web.Http.Filters;
 
 namespace ShareDeployed.Authorization
 {
@@ -62,7 +62,6 @@ namespace ShareDeployed.Authorization
 	{
 		public override void OnActionExecuting(HttpActionContext actionContext)
 		{
-
 			var context = actionContext.Request.Properties["MS_HttpContext"] as System.Web.HttpContextBase;
 			string userIP = context.Request.UserHostAddress;
 			try

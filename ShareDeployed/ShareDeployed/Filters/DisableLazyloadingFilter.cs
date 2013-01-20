@@ -8,8 +8,10 @@ namespace ShareDeployed.Filters
 	[AttributeUsage(AttributeTargets.Method, Inherited = true)]
 	public class DisableLazyloadingFilter : ActionFilterAttribute
 	{
-		IMessangerRepository _repository;
+		private IMessangerRepository _repository;
+
 		public bool ProxyCreation { get; private set; }
+
 		public bool DetectChanges { get; private set; }
 
 		public DisableLazyloadingFilter()

@@ -38,7 +38,7 @@
             return accessor;
         };
     };
-    
+
     ko.bindingHandlers.command = {
         init: function(element, valueAccessor, allBindingsAccessor, viewModel) {
             var value = valueAccessor();

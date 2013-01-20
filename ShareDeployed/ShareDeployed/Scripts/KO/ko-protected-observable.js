@@ -53,7 +53,7 @@ ko.protectedObservableItemArray = function (sourceArray) {
     var drillItems=ko.utils.arrayMap(sourceArray, function(item){
         return new ko.protectedObservableItem(item);
     });
-	
+
     return drillItems;
 };
 
@@ -79,11 +79,11 @@ ko.observableArray.fn.pushAll = function(valuesToPush) {
 
 ko.observableArray.fn.sortByProperty = function(prop) {
     this.sort(function(obj1, obj2) {
-        if (obj1[prop] == obj2[prop]) 
+        if (obj1[prop] == obj2[prop])
             return 0;
-        else if (obj1[prop] < obj2[prop]) 
+        else if (obj1[prop] < obj2[prop])
             return -1 ;
-        else 
+        else
             return 1;
     });
 };

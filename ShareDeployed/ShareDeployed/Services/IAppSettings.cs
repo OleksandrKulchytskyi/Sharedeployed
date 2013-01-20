@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Web;
+﻿using System.Configuration;
 
 namespace ShareDeployed.Services
 {
@@ -13,6 +9,7 @@ namespace ShareDeployed.Services
 		string DefaultAdminUserName { get; }
 
 		string DefaultAdminPassword { get; }
+
 		string AuthAppId { get; }
 	}
 
@@ -41,7 +38,6 @@ namespace ShareDeployed.Services
 				return ConfigurationManager.AppSettings["defaultAdminPassword"];
 			}
 		}
-
 
 		public string AuthAppId
 		{

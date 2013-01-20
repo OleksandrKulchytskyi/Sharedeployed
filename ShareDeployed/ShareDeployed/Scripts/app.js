@@ -2,7 +2,7 @@
 //    {
 //        MainVM: function () {
 //            var self = this;
-            
+
 //            this.authToken = ko.observable("");
 //            this.userId = ko.observable(0);
 //        },

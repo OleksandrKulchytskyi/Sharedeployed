@@ -1,8 +1,5 @@
 ﻿using ShareDeployed.Common.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace ShareDeployed.ViewModels
 {
@@ -14,19 +11,23 @@ namespace ShareDeployed.ViewModels
 			From = message.From ?? string.Empty;
 			Content = message.Content ?? string.Empty;
 			Subject = message.Subject ?? string.Empty;
-			
+
 			if (message.User != null)
 				User = new UserViewModel(message.User);
-			
+
 			When = message.When;
 		}
 
 		public string Id { get; set; }
+
 		public string From { get; set; }
+
 		public string Subject { get; set; }
+
 		public string Content { get; set; }
 
 		public DateTimeOffset When { get; set; }
+
 		public UserViewModel User { get; set; }
 	}
 }

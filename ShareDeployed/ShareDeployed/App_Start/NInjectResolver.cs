@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Ninject;
+﻿using Ninject;
+using System;
 using System.Web.Http.Dependencies;
 
 namespace ShareDeployed.App_Start

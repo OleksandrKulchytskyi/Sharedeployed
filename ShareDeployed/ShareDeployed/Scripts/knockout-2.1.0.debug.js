@@ -884,7 +884,6 @@ ko.subscribable['fn'] = {
     extend: applyExtenders
 };
 
-
 ko.isSubscribable = function (instance) {
     return typeof instance.subscribe == "function" && typeof instance["notifySubscribers"] == "function";
 };
@@ -982,7 +981,6 @@ ko.isWriteableObservable = function (instance) {
     // Anything else
     return false;
 }
-
 
 ko.exportSymbol('observable', ko.observable);
 ko.exportSymbol('isObservable', ko.isObservable);
@@ -1209,7 +1207,6 @@ ko.dependentObservable = function (evaluatorFunctionOrOptions, evaluatorFunction
 
         dependentObservable["notifySubscribers"](_latestValue);
         _isBeingEvaluated = false;
-
     }
 
     function dependentObservable() {
@@ -2076,7 +2073,6 @@ ko.utils.arrayForEach(eventHandlersWithShortcuts, function(eventName) {
         }
     }
 });
-
 
 ko.bindingHandlers['event'] = {
     'init' : function (element, valueAccessor, allBindingsAccessor, viewModel) {
@@ -3006,7 +3002,6 @@ ko.exportSymbol('templateRewriting.applyMemoizedBindingsToNextSibling', ko.templ
             });
 
             ko.utils.setDomNodeChildrenFromArrayMapping(targetNode, filteredArray, executeTemplateForArrayItem, options, activateBindingsCallback);
-
         }, null, { 'disposeWhenNodeIsRemoved': targetNode });
     };
 

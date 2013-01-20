@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Http.Dependencies;
+﻿using Ninject.Activation;
 using Ninject.Syntax;
-using Ninject.Activation;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Web.Http.Dependencies;
 
 namespace ShareDeployed.App_Start
 {
 	public class NinjectScope : IDependencyScope
 	{
 		protected IResolutionRoot resolutionRoot;
-		bool _disposed = false;
+		private bool _disposed = false;
 
 		public NinjectScope(IResolutionRoot kernel)
 		{

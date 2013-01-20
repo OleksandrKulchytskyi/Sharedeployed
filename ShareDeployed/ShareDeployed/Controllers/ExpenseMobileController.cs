@@ -1,8 +1,6 @@
-﻿using ShareDeployed.Common.Models;
-using ShareDeployed.Common.Extensions;
+﻿using ShareDeployed.Common.Extensions;
+using ShareDeployed.Common.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
@@ -13,7 +11,8 @@ namespace ShareDeployed.Controllers
 	[Authorize]
 	public class ExpenseMobileController : Controller
 	{
-		Common.IRepository<User> _userRepository = null;
+		private Common.IRepository<User> _userRepository = null;
+
 		public ExpenseMobileController()
 		{
 			_userRepository = App_Start.NinjectWebCommon.GetInstanceOf<Common.IRepository<User>>();
@@ -97,6 +96,5 @@ namespace ShareDeployed.Controllers
 			}
 			base.Dispose(disposing);
 		}
-
 	}
 }

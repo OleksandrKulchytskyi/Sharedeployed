@@ -24,16 +24,16 @@ namespace ShareDeployed.Controllers.Api
 		// GET api/messangergroup
 		[HttpGet()]
 		[ActionName("GetAll")]
-		[Filters.DisableLazyloadingFilter(false,false)]
+		[Filters.DisableLazyloadingFilter(false, false)]
 		public IEnumerable<MessangerGroup> GetAll()
 		{
-			var groups=_repository.Groups.AsEnumerable();
+			var groups = _repository.Groups.AsEnumerable();
 			return groups;
 		}
 
 		[HttpGet()]
 		[ActionName("GetByName")]
-		[Filters.DisableLazyloadingFilter(false,false)]
+		[Filters.DisableLazyloadingFilter(false, false)]
 		public MessangerGroup GetByName(string groupName)
 		{
 			try
