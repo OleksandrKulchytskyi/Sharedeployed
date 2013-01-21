@@ -396,6 +396,7 @@
 			});
 
 			$.connection.hub.start().done(function () {
+				console.log("Done!!");
 				MsgsVM.SetMessangeR(messanger);
 				messanger.server.join();
 			});

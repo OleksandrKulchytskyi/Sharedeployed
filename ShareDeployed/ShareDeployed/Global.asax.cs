@@ -42,9 +42,10 @@ namespace ShareDeployed
 				System.Web.Hosting.HostingEnvironment.MaxConcurrentRequestsPerCPU = 500;
 				System.Web.Hosting.HostingEnvironment.MaxConcurrentThreadsPerCPU = 0;
 			}
-			catch (Exception ex) { Logger.Error("Error in configuring Hosting Environment", ex); }
-
-			//Infrastructure.Bootstrapper.PreAppStart();
+			catch (Exception ex)
+			{
+				Logger.Error("Error in configuring Hosting Environment", ex);
+			}
 
 			if (System.Web.WebPages.DisplayModeProvider.Instance.Modes != null)
 				System.Web.WebPages.DisplayModeProvider.Instance.Modes.Insert(2, new System.Web.WebPages.DefaultDisplayMode("iPhone")
@@ -127,7 +128,6 @@ namespace ShareDeployed
 #if DEBUG
 				System.Diagnostics.Debug.WriteLine("Removed " + HttpContext.Current.Session["_MyAppSession"] as string);
 #endif
-
 				//AuthTokenManager.Instance.RemoveToken(HttpContext.Current.Session["_MyAppSession"] as string);
 				HttpContext.Current.Session.Remove("_MyAppSession");
 			}
