@@ -116,6 +116,7 @@ namespace ShareDeployed.Controllers
 							tokenId = tokenIssuerId
 						});
 						var cookie = new HttpCookie(_msConst, state);
+						cookie.HttpOnly = false;
 						if (model.RememberMe)
 							cookie.Expires = DateTime.UtcNow.AddDays(30);
 						else
@@ -132,7 +133,9 @@ namespace ShareDeployed.Controllers
 							hash = mesUser.Hash,
 							tokenId = tokenIssuerId
 						});
+
 						var cookie = new HttpCookie(_msConst, state);
+						cookie.HttpOnly = false;
 						if (model.RememberMe)
 							cookie.Expires = DateTime.UtcNow.AddDays(30);
 						else
