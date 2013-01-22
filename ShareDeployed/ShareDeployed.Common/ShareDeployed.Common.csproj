@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Caching\ICache.cs" />
+    <Compile Include="Crypt\CryptExtensions.cs" />
     <Compile Include="Crypt\PassCrypt.cs" />
     <Compile Include="Crypt\PasswordHash.cs" />
     <Compile Include="Crypt\RSACrypt.cs" />
