@@ -64,6 +64,19 @@ namespace ShareDeployed.Common.Extensions
 			return result;
 		}
 
+		public static string CalculateSHA256Hash(this string input)
+		{
+			if (string.IsNullOrEmpty(input))
+				throw new ArgumentException("input");
+			// Encode the input string into a byte array.
+			byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+			// Create an instance of the SHA256 algorithm class and use it to calculate the hash.
+			SHA256Managed sha256 = new SHA256Managed();
+			byte[] outputBytes = sha256.ComputeHash(inputBytes);
+			// Convert the outputed hash to a string and return it.
+			return Convert.ToBase64String(outputBytes);
+		}
+
 		public static string FixUserName(this string username)
 		{
 			// simple for now, translate spaces to underscores

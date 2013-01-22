@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ShareDeployed.Mailgrabber.Helpers;
+using ShareDeployed.Common.Extensions;
 
 namespace ShareDeployed.Test
 {
@@ -11,6 +12,12 @@ namespace ShareDeployed.Test
 		public void TestMethod1()
 		{
 			string url = "http://localhost:1212/handlers/loginhandler.ashx";
+
+			var before = System.IO.File.ReadAllText("d:\\cookie.txt");
+			var after = before.CalculateSHA256Hash();
+			if (before.Length < after.Length)
+			{
+			}
 
 			//ShareDeployed.Common.Helper.WebRequesthelper.Do(url);
 
