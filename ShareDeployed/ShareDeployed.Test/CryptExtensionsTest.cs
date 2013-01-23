@@ -9,9 +9,19 @@ namespace ShareDeployed.Test
 		[TestMethod]
 		public void TestMethod1()
 		{
-			var salt=CryptExtensions.CreateSalt();
-			var hashedPass=CryptExtensions.HashPasswordBytes("vax1111", salt);
-			var actual=CryptExtensions.IsPasswordValid("vax1111", salt, hashedPass);
+			var salt = CryptExtensions.CreateSalt();
+			var hashedPass = CryptExtensions.HashPasswordBytes("vax1111", salt);
+			bool actual = false;
+			try
+			{
+				actual = CryptExtensions.IsPasswordValid("vax1111", salt, hashedPass);
+			}
+			catch (Exception ex)
+			{
+				if (ex.Message != null)
+					Assert.Fail();
+			}
+
 			Assert.IsTrue(actual);
 		}
 	}

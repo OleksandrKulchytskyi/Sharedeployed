@@ -9,8 +9,8 @@ namespace ShareDeployed.Common.Crypt
 		public static byte[] CreateSalt()
 		{
 			byte[] saltBytes;
-			int minSaltSize = 4;
-			int maxSaltSize = 8;
+			int minSaltSize = 8;
+			int maxSaltSize = 9;
 
 			// Generate a random number to determine the salt size.
 			Random random = new Random();
