@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ShareDeployed.Common.Crypt;
+using System.Text;
 namespace ShareDeployed.Test
 {
 	[TestClass]
@@ -19,7 +20,26 @@ namespace ShareDeployed.Test
 			catch (Exception ex)
 			{
 				if (ex.Message != null)
-					Assert.Fail();
+					Assert.Fail(ex.Message);
+			}
+
+			Assert.IsTrue(actual);
+		}
+
+		[TestMethod]
+		public void TestMacMethod()
+		{
+			var text = Encoding.UTF8.GetBytes("Hello world");
+			var key = Encoding.UTF8.GetBytes("pass1234");
+			var actual = false;
+			try
+			{
+				var mac = CryptExtensions.GenerateMac(text, key);
+				actual = CryptExtensions.IsMacValid(text, key, mac);
+			}
+			catch (Exception ex)
+			{
+				Assert.Fail(ex.Message);
 			}
 
 			Assert.IsTrue(actual);
