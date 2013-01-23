@@ -27,15 +27,15 @@ namespace ShareDeployed.Test
 		[TestMethod]
 		public void Base64()
 		{
-			string decode = "admin:vax804".toBase64Utf8();
-			if(decode!=null)
+			string encoded = "admin:vax804".toBase64Utf8();
+			if(encoded!=null)
 			{
 
 			}
 		}
 
 		[TestMethod]
-		public void DateTest()
+		public void SimpleDateTest()
 		{
 			var expire = DateTime.Now.AddMinutes(1);
 			while(expire>DateTime.Now)

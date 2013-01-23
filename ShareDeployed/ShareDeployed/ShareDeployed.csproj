@@ -206,6 +206,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Adapters\HttpCacheAdapter.cs" />
     <Compile Include="App_Start\AuthConfig.cs" />
     <Compile Include="Authorization\AuthenticateWithTimeStamp.cs" />
     <Compile Include="Authorization\SessionTokenIssuer.cs" />
@@ -221,6 +222,7 @@
     <Compile Include="DependencyResolvers\MvcDependencyResolver.cs" />
     <Compile Include="DependencyResolvers\NinjectDependencyResolver.cs" />
     <Compile Include="DependencyResolvers\NInjectWebApiDepResolver.cs" />
+    <Compile Include="Extension\BaseCacheMethod.cs" />
     <Compile Include="Filters\CheckModelForNullAttribute.cs" />
     <Compile Include="Filters\DisableLazyloadingFilter.cs" />
     <Compile Include="Filters\DropPreviousSessionFilter.cs" />
