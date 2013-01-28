@@ -55,6 +55,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -80,6 +81,7 @@
     <Compile Include="CookielessWebClientTest.cs" />
     <Compile Include="TimerTest.cs" />
     <Compile Include="CryptExtensionsTest.cs" />
+    <Compile Include="TrackableUnitTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ShareDeployed.Common\ShareDeployed.Common.csproj">

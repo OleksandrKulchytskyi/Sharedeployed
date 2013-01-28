@@ -102,6 +102,12 @@
     <Compile Include="Security\IProvidePrincipal.cs" />
     <Compile Include="Security\Secure.cs" />
     <Compile Include="Timers\Timer.cs" />
+    <Compile Include="Trackable\DataContractEqualityComparer.cs" />
+    <Compile Include="Trackable\GenericNetDataContractFormatter.cs" />
+    <Compile Include="Trackable\IGenericFormatter.cs" />
+    <Compile Include="Trackable\SerializationUtil.cs" />
+    <Compile Include="Trackable\TrackableObject.cs" />
+    <Compile Include="Trackable\TrackableObservableCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
