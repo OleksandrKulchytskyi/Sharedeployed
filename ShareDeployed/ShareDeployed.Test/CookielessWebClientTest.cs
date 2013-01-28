@@ -16,15 +16,14 @@ namespace ShareDeployed.Test
 			var before = System.IO.File.ReadAllText("d:\\cookie.txt");
 			var after = before.CalculateSHA256Hash();
 			if (before.Length < after.Length)
-			{
-			}
+			{ }
 
 			//ShareDeployed.Common.Helper.WebRequesthelper.Do(url);
 
 			string json = "{\"userId\":\"e6057d27-1567-4073-9a6b-b6187cd76988\",\"aspUserId\":1,\"userName\":\"admin\",\"hash\":\"3ad4343af2de4ae5c8277fd1f5c81b57\",\"tokenId\":\"b0fc100a-bd7b-4c25-a635-91c3d3131aba\"}";
 			byte[] jsonBytes = System.Text.Encoding.UTF8.GetBytes(json);
 			string base64 = System.Convert.ToBase64String(jsonBytes);
-			if (base64.Length < 0){ }
+			if (base64.Length < 0) { }
 
 			var guid = Guid.NewGuid();
 			System.Diagnostics.Debug.WriteLine(guid.ToString("N"));
@@ -66,8 +65,7 @@ namespace ShareDeployed.Test
 
 					string messanger_state = cookie["messanger.state"].Value;
 					if (string.IsNullOrEmpty(messanger_state))
-					{
-					}
+					{ }
 				}
 			}
 
@@ -86,9 +84,7 @@ namespace ShareDeployed.Test
 				if (client.GetCookies() != null)
 				{
 					var cookie = client.GetCookies().GetCookies(new Uri(url));
-					if (cookie != null)
-					{
-					}
+					if (cookie != null) { }
 				}
 			}
 		}
