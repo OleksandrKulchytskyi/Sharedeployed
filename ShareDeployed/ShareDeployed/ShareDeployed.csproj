@@ -223,6 +223,7 @@
     <Compile Include="DependencyResolvers\NinjectDependencyResolver.cs" />
     <Compile Include="DependencyResolvers\NInjectWebApiDepResolver.cs" />
     <Compile Include="Extension\BaseCacheMethod.cs" />
+    <Compile Include="Extension\HttpRequestMsgExt.cs" />
     <Compile Include="Filters\CheckModelForNullAttribute.cs" />
     <Compile Include="Filters\DisableLazyloadingFilter.cs" />
     <Compile Include="Filters\DropPreviousSessionFilter.cs" />
