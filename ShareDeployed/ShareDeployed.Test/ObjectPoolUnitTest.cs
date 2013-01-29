@@ -11,15 +11,37 @@ namespace ShareDeployed.Test
 		public void TestObjectPoolMethod()
 		{
 			int minCount = 1;
+			int max = 5;
 			// Creating a pool with minimum size of 5 and maximum size of 25, using custom Factory method to create and instance of ExpensiveResource
-			ObjectPool<ExpensiveResource> pool = new ObjectPool<ExpensiveResource>(minCount, 25, () => new ExpensiveResource(/* resource specific initialization */));
+			ObjectPool<ExpensiveResource> pool = new ObjectPool<ExpensiveResource>(minCount, max, () => new ExpensiveResource(/* resource specific initialization */));
 			Assert.IsTrue(pool.ObjectsInPoolCount == minCount);
+			
 			using (ExpensiveResource resource = pool.GetObject())
 			{
 				// Using the resource
 
 			} // Exiting the using scope will return the object back to the pool
-			Assert.IsTrue(pool.ObjectsInPoolCount == 3);
+			using (ExpensiveResource resource = pool.GetObject())
+			{
+				// Using the resource
+
+			} // Exiting the using scope will return the object back to the pool
+			using (ExpensiveResource resource = pool.GetObject())
+			{
+				// Using the resource
+
+			} // Exiting the using scope will return the object back to the pool
+			using (ExpensiveResource resource = pool.GetObject())
+			{
+				// Using the resource
+
+			} // Exiting the using scope will return the object back to the pool
+			using (ExpensiveResource resource = pool.GetObject())
+			{
+				// Using the resource
+
+			} // Exiting the using scope will return the object back to the pool
+			Assert.IsTrue(pool.ObjectsInPoolCount == 2);
 			// Creating a pool with wrapper object for managing external resources
 			ObjectPool<PooledObjectWrapper<ExternalExpensiveResource>> newPool = new ObjectPool<PooledObjectWrapper<ExternalExpensiveResource>>(() =>
 				new PooledObjectWrapper<ExternalExpensiveResource>(CreateNewResource())
@@ -32,6 +54,13 @@ namespace ShareDeployed.Test
 			{
 				// wrapper.InternalResource.DoStuff()
 			}
+
+			using (var wrapper = newPool.GetObject())
+			{
+				// wrapper.InternalResource.DoStuff()
+			}
+
+			Assert.IsTrue(newPool.ObjectsInPoolCount == 6);
 		}
 
 		private static ExternalExpensiveResource CreateNewResource()
