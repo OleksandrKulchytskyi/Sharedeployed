@@ -16,7 +16,6 @@ namespace ShareDeployed.Common.Pooling
 		public class ObjectPoolDiagnostics
 		{
 			#region Public Properties and backing fields
-
 			/// <summary>
 			/// gets the total count of live instances, both in the pool and in use.
 			/// </summary>
@@ -343,14 +342,10 @@ namespace ShareDeployed.Common.Pooling
 		{
 			T newObject;
 			if (FactoryMethod != null)
-			{
 				newObject = FactoryMethod();
-			}
 			else
-			{
 				// Throws an exception if the type doesn't have default ctor - on purpose! I've could've add a generic constraint with new (), but I didn't want to limit the user and force a parameterless c'tor
 				newObject = (T)Activator.CreateInstance(typeof(T));
-			}
 
 			// Diagnostics update
 			Diagnostics.IncrementObjectsCreatedCount();
