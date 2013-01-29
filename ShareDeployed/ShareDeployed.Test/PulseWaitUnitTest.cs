@@ -17,11 +17,11 @@ namespace ShareDeployed.Test
 			putThread.Start();
 			processThread.Start();
 
-			Thread.Sleep(TimeSpan.FromSeconds(20));
+			Thread.Sleep(TimeSpan.FromSeconds(30));
 
 			impl.Add(null);
 
-			Thread.Sleep(TimeSpan.FromSeconds(10));
+			Thread.Sleep(TimeSpan.FromSeconds(2));
 		}
 
 		void Put()
@@ -29,7 +29,7 @@ namespace ShareDeployed.Test
 			while (true)
 			{
 				impl.Add(new SimpObj() { Data = new Random().Next(1, 1999) });
-				Thread.Sleep(100);
+				Thread.Sleep(500);
 			}
 		}
 
@@ -43,11 +43,24 @@ namespace ShareDeployed.Test
 	{
 		private Queue<T> _queue = null;
 		private readonly object _locker;
+		private volatile bool _stopProcessed;
 
 		public ProcessQueue()
 		{
 			_queue = new Queue<T>();
 			_locker = new object();
+			_stopProcessed = false;
+		}
+
+		public void Add(T data)
+		{
+			if (_stopProcessed)
+				return;
+			lock (_locker)
+			{
+				_queue.Enqueue(data);
+				Monitor.Pulse(_locker);
+			}
 		}
 
 		public void Process()
@@ -60,26 +73,18 @@ namespace ShareDeployed.Test
 					while (_queue.Count == 0)
 					{
 						System.Diagnostics.Debug.WriteLine("Begin waiting....");
-						Monitor.Wait(_locker, TimeSpan.FromMilliseconds(500));
+						Monitor.Wait(_locker, TimeSpan.FromMilliseconds(300));
 						System.Diagnostics.Debug.WriteLine("END WAITING !!!");
 					}
 					item = _queue.Dequeue();
 				}
 				if (item == null)
 				{
+					_stopProcessed = true;
 					System.Diagnostics.Debug.WriteLine("Prepare for exit process");
 					return;         // This signals our exit.
 				}
 				System.Diagnostics.Debug.WriteLine(item.ToString());
-			}
-		}
-
-		public void Add(T data)
-		{
-			lock (_locker)
-			{
-				_queue.Enqueue(data);
-				Monitor.Pulse(_locker);
 			}
 		}
 	}
