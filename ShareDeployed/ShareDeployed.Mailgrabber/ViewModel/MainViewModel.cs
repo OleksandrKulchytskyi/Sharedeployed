@@ -194,7 +194,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 			if (wasChanged)
 				Infrastructure.LinkManager.Instance.SaveToFile(App.AppMsgsLinkPath);
 			wasChanged = false;
-			GalaSoft.MvvmLight.Threading.DispatcherHelper.InvokeAsync(() => LastObserved = DateTime.Now);
+			GalaSoft.MvvmLight.Threading.DispatcherHelper.InvokeAsync(() => LastObserved = DateTime.UtcNow);
 		}
 
 		private void Messagesinitializer()
@@ -230,7 +230,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 					message.FromEmail = evt.EventArgs.FromEmail;
 					message.Content = evt.EventArgs.Body;
 					message.Subject = evt.EventArgs.Subject;
-					message.When = DateTime.Now;
+					message.When = DateTime.UtcNow;
 					message.IsNew = true;
 					message.UserKey = LoggedUser.Key;
 					//this hint was applied for linking application and its sent messages
@@ -336,7 +336,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 												string.Format("/api/application/GetById?appId={0}", App.AppId));
 			if (appInst != null)
 			{
-				appInst.LastLoggedIn = DateTime.Now;
+				appInst.LastLoggedIn = DateTime.UtcNow;
 				appInst.MachineName = Environment.MachineName;
 				var data = HttpClientHelper.PutWithErrorInfo<string, MessangerApplication>(ConfigurationManager.AppSettings["baseUrl"],
 												 "/api/application/PutApplication", appInst, out reason);
@@ -355,7 +355,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 				{
 					AppId = App.AppId,
 					MachineName = Environment.MachineName,
-					LastLoggedIn = DateTime.Now
+					LastLoggedIn = DateTime.UtcNow
 				};
 				var data = HttpClientHelper.PostWithErrorInfo<string, MessangerApplication>(ConfigurationManager.AppSettings["baseUrl"],
 													"api/application/PostApplication", newAppinst, out reason);

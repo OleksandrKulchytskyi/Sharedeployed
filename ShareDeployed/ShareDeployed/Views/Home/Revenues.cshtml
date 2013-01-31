@@ -4,7 +4,7 @@
 
 	if (Model != null)
 	{
-		var now = DateTime.Now;
+		var now = DateTime.UtcNow;
 		Model.From = new DateTime(now.Year, now.Month, 1);
 		Model.To = now;
 	}

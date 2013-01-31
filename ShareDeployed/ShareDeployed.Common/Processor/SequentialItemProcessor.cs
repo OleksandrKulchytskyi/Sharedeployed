@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ShareDeployed.Common.Processor
@@ -28,7 +26,7 @@ namespace ShareDeployed.Common.Processor
 		/// A reference to the current Task that is processing an item in
 		/// ProcessItem method.
 		/// </summary>
-		private Task _currentProcessTask;
+		private Task _currentProcessTask = null;
 
 		/// <summary>
 		/// Indicates state of the item processing.
@@ -45,7 +43,7 @@ namespace ShareDeployed.Common.Processor
 		/// </summary>
 		private readonly object _syncObj = new object();
 
-		#endregion
+		#endregion Private fields
 
 		#region Constructor
 
@@ -59,7 +57,7 @@ namespace ShareDeployed.Common.Processor
 			_queue = new Queue<TItem>();
 		}
 
-		#endregion
+		#endregion Constructor
 
 		#region Public methods
 
@@ -118,13 +116,10 @@ namespace ShareDeployed.Common.Processor
 			{
 				_currentProcessTask.Wait();
 			}
-			catch
-			{
-
-			}
+			catch { }
 		}
 
-		#endregion
+		#endregion Public methods
 
 		#region Private methods
 
@@ -169,6 +164,6 @@ namespace ShareDeployed.Common.Processor
 			}
 		}
 
-		#endregion
+		#endregion Private methods
 	}
 }

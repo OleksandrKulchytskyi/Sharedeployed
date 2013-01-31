@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace ShareDeployed.Common.Extensions
 {
@@ -37,6 +38,46 @@ namespace ShareDeployed.Common.Extensions
 			{
 				input.CopyStream(file);
 			}
+		}
+
+		public static Task<int> ReadAsync(this Stream stream, byte[] buffer)
+		{
+			try
+			{
+				return Task.Factory.FromAsync((cb, state) => stream.BeginRead(buffer, 0, buffer.Length, cb, state), ar => stream.EndRead(ar), null);
+			}
+			catch (System.Exception ex)
+			{
+				return TaskAsyncHelper.FromError<int>(ex);
+			}
+		}
+
+		public static Task WriteAsync(this Stream stream, byte[] buffer)
+		{
+			try
+			{
+				return Task.Factory.FromAsync((cb, state) => stream.BeginWrite(buffer, 0, buffer.Length, cb, state), ar => stream.EndWrite(ar), null);
+			}
+			catch (System.Exception ex)
+			{
+				return TaskAsyncHelper.FromError(ex);
+			}
+		}
+
+		public static string FormatBytesLen(long bytes)
+		{
+			const int scale = 1024;
+			string[] orders = { "GB", "MB", "KB", "Bytes" };
+			long max = (long)System.Math.Pow(scale, orders.Length - 1);
+
+			foreach (var order in orders)
+			{
+				if (bytes > max)
+					return string.Format("{0:##.##} {1}", decimal.Divide(bytes, max), order);
+
+				max /= scale;
+			}
+			return "0 Bytes";
 		}
 	}
 }

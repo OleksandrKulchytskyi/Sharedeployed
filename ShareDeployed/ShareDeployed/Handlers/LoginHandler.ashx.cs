@@ -157,7 +157,7 @@ namespace ShareDeployed.Handlers
 						{
 							string tokenSesId = GetCookieValue(context, mesStateConst);
 							Authorization.SessionTokenIssuer.Instance.Remove(new Authorization.SessionInfo { Session = tokenSesId });
-							context.Response.Cookies.Add(new HttpCookie(mesStateConst) { Expires = DateTime.Now.AddDays(-1) });
+							context.Response.Cookies.Add(new HttpCookie(mesStateConst) { Expires = DateTime.UtcNow.AddDays(-1) });
 						}
 
 						context.Session.Clear();

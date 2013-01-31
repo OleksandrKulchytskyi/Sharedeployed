@@ -52,7 +52,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 				Name = NewGroup.GroupName,
 				Topic = string.Format("Topic of {0} group", NewGroup.GroupName),
 				Welcome = string.Format("Welcome to {0}", NewGroup.GroupName),
-				LastNudged = DateTime.Now
+				LastNudged = DateTime.UtcNow
 			};
 
 			string reason;

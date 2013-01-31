@@ -15,7 +15,7 @@ namespace ShareDeployed.Test
 		[TestMethod]
 		public void ToJsonString()
 		{
-			Revenue revenue=new Revenue() { Name = "Cake 5", UserId = 2, Amount = 23, Time = DateTime.Now , Description="Hello world", Id=3};
+			Revenue revenue=new Revenue() { Name = "Cake 5", UserId = 2, Amount = 23, Time = DateTime.UtcNow , Description="Hello world", Id=3};
 			JsonSerializer ser = new JsonSerializer();
 			var sb=new StringBuilder();
 			using (var tw = new StringWriter(sb))
@@ -37,8 +37,8 @@ namespace ShareDeployed.Test
 		[TestMethod]
 		public void SimpleDateTest()
 		{
-			var expire = DateTime.Now.AddMinutes(1);
-			while(expire>DateTime.Now)
+			var expire = DateTime.UtcNow.AddMinutes(1);
+			while(expire>DateTime.UtcNow)
 			{
 				System.Threading.Thread.Sleep(TimeSpan.FromSeconds(10));
 			}

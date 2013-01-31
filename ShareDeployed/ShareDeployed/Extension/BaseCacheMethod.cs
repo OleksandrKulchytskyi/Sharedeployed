@@ -77,7 +77,7 @@ namespace ShareDeployed.Extension
 				CacheManager.CurrentCache.Insert(CacheKey,
 												 localResult,
 												 null,
-												 DateTime.Now.AddSeconds(_Expiration),
+												 DateTime.UtcNow.AddSeconds(_Expiration),
 												 System.Web.Caching.Cache.NoSlidingExpiration,
 												 _Priority,
 												 new CacheItemRemovedCallback(LoadCache));
@@ -87,7 +87,7 @@ namespace ShareDeployed.Extension
 				CacheManager.CurrentCache.Insert(CacheKey,
 												 localResult,
 												 null,
-												 DateTime.Now.AddSeconds(_Expiration),
+												 DateTime.UtcNow.AddSeconds(_Expiration),
 												 System.Web.Caching.Cache.NoSlidingExpiration,
 												 _Priority,
 												 null);

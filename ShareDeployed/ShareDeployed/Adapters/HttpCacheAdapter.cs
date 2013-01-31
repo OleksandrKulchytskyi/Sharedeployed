@@ -21,7 +21,7 @@ namespace ShareDeployed.Adapters
 
 		public void Store(string key, object data)
 		{
-			HttpContext.Current.Cache.Insert(key, data, null, DateTime.Now.AddMinutes(10), System.Web.Caching.Cache.NoSlidingExpiration);
+			HttpContext.Current.Cache.Insert(key, data, null, DateTime.UtcNow.AddMinutes(10), System.Web.Caching.Cache.NoSlidingExpiration);
 		}
 
 		public T Retrieve<T>(string key)

@@ -13,7 +13,7 @@ namespace ShareDeployed.Common.Models
 		public Expense()
 		{
 			Id = 0;
-			Time = DateTime.Now;
+			Time = DateTime.UtcNow;
 			Description = string.Empty;
 		}
 

@@ -14,7 +14,7 @@ namespace ShareDeployed.Common.Models
 		public Revenue()
 		{
 			Id = 0;
-			Time = DateTime.Now;
+			Time = DateTime.UtcNow;
 			Description = string.Empty;
 		}
 

@@ -85,6 +85,7 @@
     <Compile Include="ObjectPoolUnitTest.cs" />
     <Compile Include="PulseWaitUnitTest.cs" />
     <Compile Include="SimpleObjectPoolTest.cs" />
+    <Compile Include="StreamAsyncTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ShareDeployed.Common\ShareDeployed.Common.csproj">

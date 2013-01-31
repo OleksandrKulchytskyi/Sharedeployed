@@ -64,7 +64,7 @@
 @{
 	if (Model != null)
 	{
-		Model.Time = DateTime.Now;
+		Model.Time = DateTime.UtcNow;
 	}
 }
 <form id="addExpenseForm" data-bind="submit: beginUpload">
