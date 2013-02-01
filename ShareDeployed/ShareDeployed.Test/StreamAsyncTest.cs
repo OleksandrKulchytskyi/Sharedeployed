@@ -144,7 +144,7 @@ namespace ShareDeployed.Test
 			Assert.IsTrue(i3 == 2);
 
 			int i4 = (1 ^ 16 ^ 18);
-			Assert.IsTrue(i4 == 35);
+			Assert.IsTrue(i4 == 3);
 		}
 
 		internal class SomeType
