@@ -70,6 +70,7 @@
     <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="Extensions\TaskAsyncHelper.cs" />
     <Compile Include="Extensions\ThreadSafeInvoker.cs" />
+    <Compile Include="Extensions\Tokenizer.cs" />
     <Compile Include="Helper\DateTimeExtender.cs" />
     <Compile Include="Helper\DisposalAccumulator.cs" />
     <Compile Include="Helper\GCWebClient.cs">
