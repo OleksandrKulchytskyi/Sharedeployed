@@ -64,6 +64,7 @@
     <Compile Include="Extensions\HashCodeHelper.cs" />
     <Compile Include="Extensions\HashExtension.cs" />
     <Compile Include="Extensions\HttpExtension.cs" />
+    <Compile Include="Extensions\RandomGenExtension.cs" />
     <Compile Include="Extensions\SingletonBase.cs" />
     <Compile Include="Extensions\StreamUtils.cs" />
     <Compile Include="Extensions\StringExtension.cs" />

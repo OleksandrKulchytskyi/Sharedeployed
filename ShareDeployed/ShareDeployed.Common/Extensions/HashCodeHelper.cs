@@ -7,11 +7,13 @@ namespace ShareDeployed.Common.Extensions
 {
 	public static class HashHelper
 	{
+		private static readonly int multiplier = 31;
+
 		public static int GetHashCode<T1, T2>(T1 arg1, T2 arg2)
 		{
 			unchecked
 			{
-				return 31 * arg1.GetHashCode() + arg2.GetHashCode();
+				return multiplier * arg1.GetHashCode() + arg2.GetHashCode();
 			}
 		}
 
@@ -20,8 +22,8 @@ namespace ShareDeployed.Common.Extensions
 			unchecked
 			{
 				int hash = arg1.GetHashCode();
-				hash = 31 * hash + arg2.GetHashCode();
-				return 31 * hash + arg3.GetHashCode();
+				hash = multiplier * hash + arg2.GetHashCode();
+				return multiplier * hash + arg3.GetHashCode();
 			}
 		}
 
@@ -30,9 +32,9 @@ namespace ShareDeployed.Common.Extensions
 			unchecked
 			{
 				int hash = arg1.GetHashCode();
-				hash = 31 * hash + arg2.GetHashCode();
-				hash = 31 * hash + arg3.GetHashCode();
-				return 31 * hash + arg4.GetHashCode();
+				hash = multiplier * hash + arg2.GetHashCode();
+				hash = multiplier * hash + arg3.GetHashCode();
+				return multiplier * hash + arg4.GetHashCode();
 			}
 		}
 
@@ -43,7 +45,7 @@ namespace ShareDeployed.Common.Extensions
 				int hash = 0;
 				foreach (var item in list)
 				{
-					hash = 31 * hash + item.GetHashCode();
+					hash = multiplier * hash + item.GetHashCode();
 				}
 				return hash;
 			}
@@ -56,7 +58,7 @@ namespace ShareDeployed.Common.Extensions
 				int hash = 0;
 				foreach (var item in list)
 				{
-					hash = 31 * hash + item.GetHashCode();
+					hash = multiplier * hash + item.GetHashCode();
 				}
 				return hash;
 			}
@@ -78,7 +80,7 @@ namespace ShareDeployed.Common.Extensions
 					hash += item.GetHashCode();
 					count++;
 				}
-				return 31 * hash + count.GetHashCode();
+				return multiplier * hash + count.GetHashCode();
 			}
 		}
 
@@ -92,7 +94,7 @@ namespace ShareDeployed.Common.Extensions
 		{
 			unchecked
 			{
-				return 31 * hashCode + arg.GetHashCode();
+				return multiplier * hashCode + arg.GetHashCode();
 			}
 		}
 	}
