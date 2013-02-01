@@ -28,5 +28,10 @@ namespace ShareDeployed.Mailgrabber.Model
 			set { _save = value; base.RaisePropertyChanged(() => SaveCredentials); }
 		}
 
+
+		public override int GetHashCode()
+		{
+			return ShareDeployed.Common.Extensions.HashHelper.GetHashCode(LoginName, Password, SaveCredentials);
+		}
 	}
 }

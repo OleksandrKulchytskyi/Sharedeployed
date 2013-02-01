@@ -43,5 +43,9 @@ namespace ShareDeployed.Mailgrabber.Model
 			set { _isAuthorized = value; }
 		}
 
+		public override int GetHashCode()
+		{
+			return ShareDeployed.Common.Extensions.HashHelper.GetHashCode(AuthToken, UserId, UserIdentity, IsAuthorized);
+		}
 	}
 }

@@ -116,5 +116,71 @@ namespace ShareDeployed.Test
 				vt = new Version();
 			}
 		}
+
+		[TestMethod]
+		public void TM4()
+		{
+			MyClass mc = new MyClass();
+			int hashCode = mc.GetHashCode();
+			if (hashCode > 0)
+			{
+
+			}
+
+			Boolean t1 = (true ^ false);
+			Boolean t2 = (false ^ true);
+			Boolean t3 = (false ^ false);
+			Assert.IsTrue(t1);
+			Assert.IsTrue(t2);
+			Assert.IsFalse(t3);
+
+			int i1 = (0 ^ 1 ^ 2);
+			Assert.IsTrue(i1 == 3);
+
+			int i2 = (18 ^ 16);
+			Assert.IsTrue(i2 == 2);
+
+			int i3 = (19 ^ 16 ^ 1);
+			Assert.IsTrue(i3 == 2);
+
+			int i4 = (1 ^ 16 ^ 18);
+			Assert.IsTrue(i4 == 35);
+		}
+
+		internal class SomeType
+		{
+			public override int GetHashCode()
+			{
+				return 0;
+			}
+		}
+
+		internal class AnotherType
+		{
+			public override int GetHashCode()
+			{
+				return 1;
+			}
+		}
+
+		internal class LastType
+		{
+			public override int GetHashCode()
+			{
+				return 2;
+			}
+		}
+
+		internal class MyClass
+		{
+			SomeType a = new SomeType();
+			AnotherType b = new AnotherType();
+			LastType c = new LastType();
+
+			public override int GetHashCode()
+			{
+				return a.GetHashCode() ^ b.GetHashCode() ^ c.GetHashCode();
+			}
+		}
 	}
 }

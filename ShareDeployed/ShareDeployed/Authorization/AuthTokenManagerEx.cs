@@ -309,7 +309,7 @@ namespace ShareDeployed.Authorization
 
 		public int GetHashCode(AuthClientData obj)
 		{
-			return obj.IpAddress.Length + obj.MachineName.Length;
+			return ShareDeployed.Common.Extensions.HashHelper.GetHashCode(obj.IpAddress, obj.MachineName);
 		}
 	}
 
@@ -332,7 +332,7 @@ namespace ShareDeployed.Authorization
 
 		public int GetHashCode(ClientInfo obj)
 		{
-			return obj.Id + obj.UserName.Length;
+			return ShareDeployed.Common.Extensions.HashHelper.GetHashCode(obj.Id, obj.UserName);
 		}
 	}
 

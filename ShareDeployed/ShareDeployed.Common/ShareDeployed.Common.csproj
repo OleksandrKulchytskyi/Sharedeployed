@@ -61,6 +61,8 @@
     <Compile Include="Dynamic\ExpandoObject.cs" />
     <Compile Include="Extensions\DisposableAction.cs" />
     <Compile Include="Extensions\FileHelper.cs" />
+    <Compile Include="Extensions\HashCodeHelper.cs" />
+    <Compile Include="Extensions\HashExtension.cs" />
     <Compile Include="Extensions\HttpExtension.cs" />
     <Compile Include="Extensions\SingletonBase.cs" />
     <Compile Include="Extensions\StreamUtils.cs" />

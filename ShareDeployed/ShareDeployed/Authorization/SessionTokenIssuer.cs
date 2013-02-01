@@ -252,6 +252,11 @@ namespace ShareDeployed.Authorization
 		{
 			return this.Session;
 		}
+
+		public override int GetHashCode()
+		{
+			return ShareDeployed.Common.Extensions.HashHelper.GetHashCode(Session);
+		}
 	}
 
 	public class SessionInfoComparer : IEqualityComparer<SessionInfo>
@@ -263,7 +268,7 @@ namespace ShareDeployed.Authorization
 
 		public int GetHashCode(SessionInfo obj)
 		{
-			return obj.Session.GetHashCode();
+			return ShareDeployed.Common.Extensions.HashHelper.GetHashCode(obj.Session);
 		}
 	}
 }
