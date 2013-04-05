@@ -3,7 +3,7 @@
 	function init() {
 		// all singleton code goes here
 		return {
-			messanger: messangerHub()
+			messanger: new messangerHub()
 		}
 	}
 
