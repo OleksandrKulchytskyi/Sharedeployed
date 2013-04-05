@@ -1,4 +1,4 @@
-﻿var messangerHub = (function () {
+﻿function messangerHub() {
 
 	var messanger = $.connection.messangerHub;
 
@@ -49,17 +49,18 @@
 		if (count == 3) {
 			$("#connectionStatuses").empty();
 		}
-		$('#connectionStatuses').append('<li> There seems to be some connectivity issues...</li>');
+		$('#connectionStatuses').append('<li>There seems to be some connectivity issues...</li>');
 	});
 
-	$.connection.hub.start().done(function () {
-		console.log("Hub is started.");
-		MsgsVM.SetMessangeR(messanger);
-		messanger.server.join();
-	}).
-	fail(function () {
-		console.log("Fail!!");
-	});
+	//$.connection.hub.start().done(function () {
+	//	console.log("Hub is started.");
+	//	console.log("Calling join method on server hub.");
+	//	//MsgsVM.SetMessangeR(messanger);
+	//	messanger.server.join();
+	//}).
+	//fail(function () {
+	//	console.log("Fail!!");
+	//});
 
 	return messanger;
-})();
+};

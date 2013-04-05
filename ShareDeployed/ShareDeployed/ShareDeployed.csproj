@@ -420,7 +420,7 @@
     <Content Include="Scripts\MessangeR.js" />
     <Content Include="Scripts\MessangerHub.js" />
     <Content Include="Scripts\modernizr-2.5.3.js" />
-    <Content Include="Scripts\singletonHub.js" />
+    <Content Include="Scripts\SingletonHub.js" />
     <Content Include="Scripts\SingletonMessangeR.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

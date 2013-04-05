@@ -5,7 +5,7 @@
 	<title>@ViewBag.Title - ShareDeployed MVC Application</title>
 	<link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<meta name="keywords" content="sharedeployed,realtime messanger,signalr,webapi" />
+	<meta name="keywords" content="Sharedeployed,realtime messanger,SignalR,WebApi" />
 	@Styles.Render("~/Content/themes/base/css", "~/Content/css")
 	@Scripts.Render("~/bundles/modernizr")
 	@RenderSection("Styles", false)
@@ -278,14 +278,16 @@
 		// DOM has been initialized
 		$(document).ready(function () {
 
+			console.log(singletonHub.getInstance());
+
 			var MsgsVM = new NewMessagesViewModel();
 			ko.applyBindings(MsgsVM);
 			MsgsVM.SetResponseDialogState(false);
 
 			$('#btnCheckNew').click(function () {
-				console.log(singletonHub.getInstance().messanger);
 				if (singletonHub.getInstance().messanger !== undefined) {
-					messanger.server.checkForNewMessages();
+					console.log(singletonHub.getInstance().messanger);
+					singletonHub.getInstance().messanger.server.checkForNewMessages();
 				}
 			});
 
@@ -347,62 +349,12 @@
 				}
 			});
 
-			/////messanger hub declaration section
-			//var messanger = $.connection.messangerHub;
-
-			//messanger.client.onMessage = function (message) { };
-
-			//messanger.client.onStatus = function (status) {
-			//	var count = $("#connectionStatuses").children().length;
-			//	if (count === 3) {
-			//		$("#connectionStatuses").empty();
-			//	}
-			//	$('#connectionStatuses').append('<li> ' + status + '</li>');
-			//};
-
-			//messanger.client.markInactive = function (userVMList) {
-			//	console.log(userVMList);
-			//};
-
-			//messanger.client.broadcastMessages = function (grpName, messages) {
-			//	if (MsgsVM.IsResponseOpened() === true) {
-			//		return;
-			//	}
-			//	var mappedMsgs = $.map(messages, function (item) { return new Message(item) });
-			//	MsgsVM.Initialize(mappedMsgs);
-
-			//	if ($("#NewMessagesDialogDiv").dialog("isOpen") === true) {
-			//		$("#NewMessagesDialogDiv").dialog("close");
-			//	}
-			//	var msgsCount = 'You have ' + messages.length.toString() + ' new message(s), Group:' + grpName;
-			//	$("#NewMessagesDialogDiv").dialog({ title: msgsCount });
-			//	$("#NewMessagesDialogDiv").dialog('open');
-			//};
-
-			//messanger.client.OnNewMessagesResponse = function (data) {
-			//	MsgsVM.initGroupsMessages(data);
-
-			//	if ($("#CheckMessagesDialog").dialog("isOpen") === true) {
-			//		$("#CheckMessagesDialog").dialog("close");
-			//	}
-
-			//	$("#CheckMessagesDialog").dialog({ title: "All messages" });
-			//	$("#CheckMessagesDialog").dialog('open');
-			//};
-
-			//$.connection.hub.connectionSlow(function () {
-			//	var count = $("#connectionStatuses").children().length;
-			//	if (count == 3) {
-			//		$("#connectionStatuses").empty();
-			//	}
-			//	$('#connectionStatuses').append('<li> There seems to be some connectivity issues...</li>');
-			//});
-
-			//$.connection.hub.start().done(function () {
-			//	console.log("Done!!");
-			//	MsgsVM.SetMessangeR(messanger);
-			//	messanger.server.join();
-			//});
+			if (singletonHub.getInstance().messanger !== undefined) {
+				console.log("singletonHub.getInstance().messanger:" + singletonHub.getInstance().messanger);
+				
+				singletonHub.getInstance().startHub();					
+				singletonHub.getInstance().initViewModel(MsgsVM);
+			}
 		});
 	</script>
 </body>

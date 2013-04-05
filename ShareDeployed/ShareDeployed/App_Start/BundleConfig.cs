@@ -23,8 +23,9 @@ namespace ShareDeployed
 			bundles.Add(new ScriptBundle("~/bundles/jquerybase64").Include("~/Scripts/base64/jquery.base64*"));
 
 			bundles.Add(new ScriptBundle("~/bundles/app").Include("~/Scripts/app*"));
-			bundles.Add(new ScriptBundle("~/bundles/singletonHub").Include("~/Scripts/singletonHub*",
-																			"~/Scripts/MessangerHub.js"));
+			bundles.Add(new ScriptBundle("~/bundles/singletonHub").Include(
+										"~/Scripts/SingletonHub*",
+										"~/Scripts/MessangerHub.js"));
 			bundles.Add(new ScriptBundle("~/messanger").Include("~/messanger.utils.js"));
 
 			bundles.Add(new ScriptBundle("~/bundles/SignalR").Include("~/Scripts/jquery.signalR*"));
@@ -48,7 +49,7 @@ namespace ShareDeployed
 						"~/Content/themes/base/jquery.ui.theme.css"));
 
 			bundles.Add(new StyleBundle("~/Content/bootstrap").Include("~/Content/Bootstrap/bootstrap.min.css"));
-
+			
 			BundleTable.EnableOptimizations = true;
 		}
 	}

@@ -320,19 +320,18 @@ namespace ShareDeployed.Hubs
 			ClientState clientState = null;
 
 			if (String.IsNullOrEmpty(jabbrState))
-				clientState = new ClientState();
+				clientState = new ClientState();//initializing new client state
 			else
 			{
 				try
 				{
 					clientState = JsonConvert.DeserializeObject<ClientState>(jabbrState);
 				}
-				catch (Exception ex)
+				catch (JsonException ex)
 				{
 					MvcApplication.Logger.Error("Hub -> GetClientState", ex);
 				}
 			}
-
 			// Read the id from the caller if there's no cookie
 			clientState.UserId = clientState.UserId ?? Clients.Caller.uid;
 
