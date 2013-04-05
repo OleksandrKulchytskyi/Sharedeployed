@@ -224,7 +224,6 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 				Observable.FromEventPattern<Outlook.NewMailReceivedEventArgs>(_outlookManager, "MailReceived", Scheduler.ThreadPool).
 				Throttle(TimeSpan.FromSeconds(.7)).ObserveOn(Scheduler.ThreadPool).Subscribe(evt =>
 				{
-
 					var message = new Common.Models.Message();
 					message.From = evt.EventArgs.FromUser;
 					message.FromEmail = evt.EventArgs.FromEmail;
@@ -267,6 +266,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 		}
 
 		#region broadcasted message handler
+
 		private void LoginPerformed(Message.LoginMessage loginMsg)
 		{
 			if (loginMsg != null)
@@ -278,6 +278,8 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 			var window = App.Current.MainWindow.OwnedWindows.Cast<Window>().FirstOrDefault();
 			if (window != null)
 				window.Close();
+
+			GC.Collect();
 		}
 
 		private void ProcessLoginResult(Message.LoginResultMessage message)

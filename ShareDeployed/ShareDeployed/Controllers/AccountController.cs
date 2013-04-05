@@ -317,9 +317,17 @@ namespace ShareDeployed.Controllers
 		{
 			bool result = false;
 			var cont = Infrastructure.Bootstrapper.Kernel.Get<Models.UsersContext>();
-			using (cont)
+			try
 			{
-				result = cont.UserProfiles.Any(x => x.Email == email);
+				using (cont)
+				{
+					result = cont.UserProfiles.Any(x => x.Email == email);
+				}
+			}
+			catch (Exception ex)
+			{
+				MvcApplication.Logger.Error("CheckEmailAvaliability", ex);
+				throw;
 			}
 			return Json(!result, JsonRequestBehavior.AllowGet);
 		}

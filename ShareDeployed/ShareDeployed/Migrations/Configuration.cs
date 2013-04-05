@@ -6,7 +6,7 @@ namespace ShareDeployed.Migrations
 	{
 		public Configuration()
 		{
-			AutomaticMigrationsEnabled = true;
+			AutomaticMigrationsEnabled = false;
 		}
 
 		protected override void Seed(ShareDeployed.Models.UsersContext context)

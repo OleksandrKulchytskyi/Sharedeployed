@@ -80,8 +80,16 @@ namespace ShareDeployed
 
 			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-			Infrastructure.Bootstrapper.DoMigrations();
-			//Infrastructure.Bootstrapper.DoSomeeMigrations();
+			try
+			{
+				//Infrastructure.Bootstrapper.DoSomeeMigrations();
+				Infrastructure.Bootstrapper.DoMigrations();
+			}
+			catch (Exception ex)
+			{
+				Logger.Error(ex.Message, ex);
+				throw;
+			}
 
 			try
 			{

@@ -12,6 +12,8 @@ using Newtonsoft.Json;
 using System.Configuration;
 using System.Reactive.Linq;
 using System.Reactive.Concurrency;
+using System.Windows;
+using System.Windows.Data;
 
 namespace ShareDeployed.Mailgrabber.ViewModel
 {
@@ -58,15 +60,18 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 			webClient.Headers.Add("pass", LoginData.Password);
 			webClient.Headers.Add("logonType", "0");
 			GenericWeakReference<WebClient> weakClient = new GenericWeakReference<WebClient>(webClient);
-			
+
 			var eventStream = Observable.FromEventPattern<DownloadDataCompletedEventArgs>(weakClient.Target, "DownloadDataCompleted").
-				SubscribeOn(Scheduler.NewThread).Select(newData => newData.EventArgs.Result);
+								SubscribeOn(Scheduler.NewThread).Select(newData => newData.EventArgs.Result);
 
 			subscription = eventStream.ObserveOn(System.Threading.SynchronizationContext.Current).Subscribe(OnDatareceived,
 				//on error
 				ex =>
 				{
-					System.Windows.MessageBox.Show(ex.Message);
+					if (ex is AggregateException)
+						System.Windows.MessageBox.Show((ex as AggregateException).Flatten().Message);
+					else
+						System.Windows.MessageBox.Show(ex.Message);
 					ViewModel.ViewModelLocator.Logger.Error(string.Empty, ex);
 				});
 
@@ -134,6 +139,12 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 		{
 			if (!IsLoginButtonPressed)
 				LocalStateContainer.LoginMessenger.Send<Message.NotAuthorizedMessage>(new Message.NotAuthorizedMessage(false));
+
+			var wind = App.Current.Windows.Cast<Window>().FirstOrDefault(x => x.Title.IndexOf("login", StringComparison.OrdinalIgnoreCase) != -1);
+			if (wind != null)
+			{
+				BindingOperations.ClearAllBindings(wind);//Clearing all bindings including the command bindings.
+			}
 		}
 	}
 }
