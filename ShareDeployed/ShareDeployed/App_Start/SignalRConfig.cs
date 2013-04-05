@@ -22,7 +22,9 @@ namespace ShareDeployed.App_Start
 			var pipeline = resolver.Resolve<IHubPipeline>();
 			configuration.ConnectionTimeout = TimeSpan.FromSeconds(30);
 			configuration.DisconnectTimeout = TimeSpan.FromSeconds(30);
-			pipeline.EnableAutoRejoiningGroups();
+			
+			//this was disappear since v 1.0,this feature is turned on by defult in v1.0 >
+			//pipeline.EnableAutoRejoiningGroups();
 			//RouteTable.Routes.MapHubs();
 		}
 	}
