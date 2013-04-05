@@ -1,4 +1,5 @@
-﻿var messangerHub=(function(){
+﻿var messangerHub = (function () {
+
 	var messanger = $.connection.messangerHub;
 
 	messanger.client.onMessage = function (message) { };
@@ -19,12 +20,14 @@
 		if (MsgsVM.IsResponseOpened() === true) {
 			return;
 		}
+
 		var mappedMsgs = $.map(messages, function (item) { return new Message(item) });
 		MsgsVM.Initialize(mappedMsgs);
 
 		if ($("#NewMessagesDialogDiv").dialog("isOpen") === true) {
 			$("#NewMessagesDialogDiv").dialog("close");
 		}
+
 		var msgsCount = 'You have ' + messages.length.toString() + ' new message(s), Group:' + grpName;
 		$("#NewMessagesDialogDiv").dialog({ title: msgsCount });
 		$("#NewMessagesDialogDiv").dialog('open');
@@ -50,9 +53,12 @@
 	});
 
 	$.connection.hub.start().done(function () {
-		console.log("Done!!");
+		console.log("Hub is started.");
 		MsgsVM.SetMessangeR(messanger);
 		messanger.server.join();
+	}).
+	fail(function () {
+		console.log("Fail!!");
 	});
 
 	return messanger;

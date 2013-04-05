@@ -30,8 +30,8 @@ namespace ShareDeployed.Hubs
 		private static readonly Version _version = typeof(MessangerHub).Assembly.GetName().Version;
 		private static readonly string _versionString = _version.ToString();
 
-		public MessangerHub(IAppSettings settings, IMessangerService service, IMessangerRepository repository, ICache cache,
-							IAspUserRepository aspUsrRepos)//IResourceProcessor resourceProcessor)
+		public MessangerHub(IAppSettings settings, IMessangerService service, IMessangerRepository repository,
+							ICache cache, IAspUserRepository aspUsrRepos)//IResourceProcessor resourceProcessor)
 		{
 			_settings = settings;
 
@@ -68,7 +68,6 @@ namespace ShareDeployed.Hubs
 			SetVersion();
 			ClientState clientState = GetClientState();
 			MessangerUser user = _repository.GetUserById(clientState.UserId);
-
 			// Threre's no user being tracked
 			if (user == null)
 				return false;
@@ -98,11 +97,9 @@ namespace ShareDeployed.Hubs
 
 		public bool CheckStatus()
 		{
-			bool outOfSync = OutOfSync;
-
+			bool notSync = OutOfSync;
 			SetVersion();
-
-			return outOfSync;
+			return notSync;
 		}
 
 		public bool SendMsg(Message message)
@@ -197,7 +194,6 @@ namespace ShareDeployed.Hubs
 					return;
 
 				message.Response = new MessageResponse() { ResponseText = responseText };
-
 				_repository.Update(message);
 			}
 			catch (Exception ex)
@@ -319,10 +315,8 @@ namespace ShareDeployed.Hubs
 		}
 
 		private ClientState GetClientState()
-		{
-			// New client state
+		{	// New client state
 			var jabbrState = GetCookieValue("messanger.state");
-
 			ClientState clientState = null;
 
 			if (String.IsNullOrEmpty(jabbrState))
@@ -378,7 +372,6 @@ namespace ShareDeployed.Hubs
 				foreach (var group in user.Groups)
 				{
 					var userViewModel = new UserViewModel(user);
-
 					//Clients.Group(group.Name).leave(userViewModel, group.Name).Wait();
 					Groups.Remove(clientId, group.Name);
 				}
@@ -388,7 +381,6 @@ namespace ShareDeployed.Hubs
 		private void UpdateActivity(MessangerUser user, MessangerGroup group)
 		{
 			UpdateActivity(user);
-
 			OnUpdateActivity(user, group);
 		}
 
