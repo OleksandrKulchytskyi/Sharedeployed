@@ -23,13 +23,12 @@ namespace ShareDeployed
 			bundles.Add(new ScriptBundle("~/bundles/jquerybase64").Include("~/Scripts/base64/jquery.base64*"));
 
 			bundles.Add(new ScriptBundle("~/bundles/app").Include("~/Scripts/app*"));
-
+			bundles.Add(new ScriptBundle("~/bundles/singletonHub").Include("~/Scripts/singletonHub*",
+																			"~/Scripts/MessangerHub.js"));
 			bundles.Add(new ScriptBundle("~/messanger").Include("~/messanger.utils.js"));
 
 			bundles.Add(new ScriptBundle("~/bundles/SignalR").Include("~/Scripts/jquery.signalR*"));
-
 			bundles.Add(new ScriptBundle("~/bundles/cookie").Include("~/Scripts/jquery.cookie.js"));
-
 			bundles.Add(new ScriptBundle("~/bundles/KoProtectedObservable").Include("~/Scripts/KO/ko-protected-observable.js"));
 
 			bundles.Add(new StyleBundle("~/Content/css").Include("~/Content/Site.css", "~/Content/items.css")); // ,"~/Content/jquery.mobile*"));

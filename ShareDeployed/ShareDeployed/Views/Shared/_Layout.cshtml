@@ -97,6 +97,7 @@
 	@Scripts.Render("~/bundles/cookie")
 	@Scripts.Render("~/bundles/app")
 	@Scripts.Render("~/bundles/SignalR")
+	@Scripts.Render("~/bundles/singletonHub")
 	@RenderSection("scripts", required: false)
 	<script type="text/javascript" src="~/signalr/hubs"></script>
 	<script type="text/html" id="newMessage-template">
@@ -274,14 +275,16 @@
 			};
 		}
 
-		///// DOM has been initialized
+		// DOM has been initialized
 		$(document).ready(function () {
+
 			var MsgsVM = new NewMessagesViewModel();
 			ko.applyBindings(MsgsVM);
 			MsgsVM.SetResponseDialogState(false);
 
 			$('#btnCheckNew').click(function () {
-				if (messanger !== undefined) {
+				console.log(singletonHub.getInstance().messanger);
+				if (singletonHub.getInstance().messanger !== undefined) {
 					messanger.server.checkForNewMessages();
 				}
 			});
@@ -344,62 +347,62 @@
 				}
 			});
 
-			///messanger hub declaration section
-			var messanger = $.connection.messangerHub;
+			/////messanger hub declaration section
+			//var messanger = $.connection.messangerHub;
 
-			messanger.client.onMessage = function (message) { };
+			//messanger.client.onMessage = function (message) { };
 
-			messanger.client.onStatus = function (status) {
-				var count = $("#connectionStatuses").children().length;
-				if (count === 3) {
-					$("#connectionStatuses").empty();
-				}
-				$('#connectionStatuses').append('<li> ' + status + '</li>');
-			};
+			//messanger.client.onStatus = function (status) {
+			//	var count = $("#connectionStatuses").children().length;
+			//	if (count === 3) {
+			//		$("#connectionStatuses").empty();
+			//	}
+			//	$('#connectionStatuses').append('<li> ' + status + '</li>');
+			//};
 
-			messanger.client.markInactive = function (userVMList) {
-				console.log(userVMList);
-			};
+			//messanger.client.markInactive = function (userVMList) {
+			//	console.log(userVMList);
+			//};
 
-			messanger.client.broadcastMessages = function (grpName, messages) {
-				if (MsgsVM.IsResponseOpened() === true) {
-					return;
-				}
-				var mappedMsgs = $.map(messages, function (item) { return new Message(item) });
-				MsgsVM.Initialize(mappedMsgs);
+			//messanger.client.broadcastMessages = function (grpName, messages) {
+			//	if (MsgsVM.IsResponseOpened() === true) {
+			//		return;
+			//	}
+			//	var mappedMsgs = $.map(messages, function (item) { return new Message(item) });
+			//	MsgsVM.Initialize(mappedMsgs);
 
-				if ($("#NewMessagesDialogDiv").dialog("isOpen") === true) {
-					$("#NewMessagesDialogDiv").dialog("close");
-				}
-				var msgsCount = 'You have ' + messages.length.toString() + ' new message(s), Group:' + grpName;
-				$("#NewMessagesDialogDiv").dialog({ title: msgsCount });
-				$("#NewMessagesDialogDiv").dialog('open');
-			};
+			//	if ($("#NewMessagesDialogDiv").dialog("isOpen") === true) {
+			//		$("#NewMessagesDialogDiv").dialog("close");
+			//	}
+			//	var msgsCount = 'You have ' + messages.length.toString() + ' new message(s), Group:' + grpName;
+			//	$("#NewMessagesDialogDiv").dialog({ title: msgsCount });
+			//	$("#NewMessagesDialogDiv").dialog('open');
+			//};
 
-			messanger.client.OnNewMessagesResponse = function (data) {
-				MsgsVM.initGroupsMessages(data);
+			//messanger.client.OnNewMessagesResponse = function (data) {
+			//	MsgsVM.initGroupsMessages(data);
 
-				if ($("#CheckMessagesDialog").dialog("isOpen") === true) {
-					$("#CheckMessagesDialog").dialog("close");
-				}
+			//	if ($("#CheckMessagesDialog").dialog("isOpen") === true) {
+			//		$("#CheckMessagesDialog").dialog("close");
+			//	}
 
-				$("#CheckMessagesDialog").dialog({ title: "All messages" });
-				$("#CheckMessagesDialog").dialog('open');
-			};
+			//	$("#CheckMessagesDialog").dialog({ title: "All messages" });
+			//	$("#CheckMessagesDialog").dialog('open');
+			//};
 
-			$.connection.hub.connectionSlow(function () {
-				var count = $("#connectionStatuses").children().length;
-				if (count == 3) {
-					$("#connectionStatuses").empty();
-				}
-				$('#connectionStatuses').append('<li> There seems to be some connectivity issues...</li>');
-			});
+			//$.connection.hub.connectionSlow(function () {
+			//	var count = $("#connectionStatuses").children().length;
+			//	if (count == 3) {
+			//		$("#connectionStatuses").empty();
+			//	}
+			//	$('#connectionStatuses').append('<li> There seems to be some connectivity issues...</li>');
+			//});
 
-			$.connection.hub.start().done(function () {
-				console.log("Done!!");
-				MsgsVM.SetMessangeR(messanger);
-				messanger.server.join();
-			});
+			//$.connection.hub.start().done(function () {
+			//	console.log("Done!!");
+			//	MsgsVM.SetMessangeR(messanger);
+			//	messanger.server.join();
+			//});
 		});
 	</script>
 </body>
