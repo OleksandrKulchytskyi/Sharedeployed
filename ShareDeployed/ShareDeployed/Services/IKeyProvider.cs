@@ -8,7 +8,6 @@ namespace ShareDeployed.Services
 	public interface IKeyProvider
 	{
 		byte[] EncryptionKey { get; }
-
 		byte[] VerificationKey { get; }
 	}
 
@@ -57,8 +56,8 @@ namespace ShareDeployed.Services
 					string[] lines = File.ReadAllLines(keyFile);
 
 					if (lines.Length == 2 &&
-						!String.IsNullOrEmpty(lines[0]) &&
-						!String.IsNullOrEmpty(lines[1]))
+						!string.IsNullOrEmpty(lines[0]) &&
+						!string.IsNullOrEmpty(lines[1]))
 					{
 						try
 						{

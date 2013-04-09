@@ -69,6 +69,11 @@ namespace ShareDeployed.Infrastructure
 
 			kernel.Bind<ICryptoService>().To<CryptoService>().InSingletonScope();
 			kernel.Bind<IAppSettings>().To<AppSettings>().InSingletonScope();
+
+			kernel.Bind<IAuthenticationTokenService>().To<AuthenticationTokenService>();
+			kernel.Bind<IMembershipService>().To<DefaultMembershipService>();
+			kernel.Bind<IKeyProvider>().ToConstant(new FileBasedKeyProvider());
+
 			kernel.Bind<IVirtualPathUtil>().To<VirtualPathUtil>();
 			kernel.Bind<IJavaScriptMinifier>().To<AjaxMinMinifier>().InSingletonScope();
 			kernel.Bind<ICache>().To<AspNetCache>().InSingletonScope();

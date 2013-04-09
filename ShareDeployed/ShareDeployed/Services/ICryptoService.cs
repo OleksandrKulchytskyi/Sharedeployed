@@ -10,7 +10,6 @@ namespace ShareDeployed.Services
 
 		//was extended
 		byte[] Protect(byte[] plainText);
-
 		byte[] Unprotect(byte[] payload);
 	}
 
@@ -32,7 +31,6 @@ namespace ShareDeployed.Services
 			using (var crypto = new RNGCryptoServiceProvider())
 			{
 				crypto.GetBytes(data);
-
 				return Convert.ToBase64String(data);
 			}
 		}

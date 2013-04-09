@@ -61,5 +61,10 @@ namespace ShareDeployed.Common.Models
 
 		// List of messages that have been read BY THIS USER
 		public virtual ICollection<Message> ReadMessages { get; set; }
+
+		public bool HasCredentials()
+		{
+			return !string.IsNullOrEmpty(HashedPassword) && !string.IsNullOrEmpty(Name);
+		}
 	}
 }

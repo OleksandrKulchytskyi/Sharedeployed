@@ -87,6 +87,7 @@
     <Compile Include="SimpleObjectPoolTest.cs" />
     <Compile Include="StreamAsyncTest.cs" />
     <Compile Include="HashHelperTest.cs" />
+    <Compile Include="CryptoHelperTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ShareDeployed.Common\ShareDeployed.Common.csproj">

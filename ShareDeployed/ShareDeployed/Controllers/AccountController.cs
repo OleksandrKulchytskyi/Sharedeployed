@@ -7,7 +7,9 @@ using ShareDeployed.Common.Extensions;
 using ShareDeployed.Common.Models;
 using ShareDeployed.Extension;
 using ShareDeployed.Filters;
+using ShareDeployed.Infrastructure;
 using ShareDeployed.Models;
+using ShareDeployed.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,7 +77,7 @@ namespace ShareDeployed.Controllers
 				}
 				InitializeSessionValiable(model);
 
-				using (var mesRepo = Infrastructure.Bootstrapper.Kernel.Get<Repositories.IMessangerRepository>())
+				using (var mesRepo = Bootstrapper.Kernel.Get<Repositories.IMessangerRepository>())
 				{
 					var mesUser = mesRepo.GetUserByIdentity(string.Format("{0}_{1}", model.UserName, userId));
 
@@ -83,7 +85,7 @@ namespace ShareDeployed.Controllers
 					if (mesUser == null)
 					{
 						string email = string.Empty;
-						using (var aspRepo = Infrastructure.Bootstrapper.Kernel.Get<Repositories.IAspUserRepository>())
+						using (var aspRepo = Bootstrapper.Kernel.Get<Repositories.IAspUserRepository>())
 						{
 							//get user email from asp db login
 							if (aspRepo != null)
@@ -103,6 +105,14 @@ namespace ShareDeployed.Controllers
 						};
 						mesRepo.Add(mesUser);
 					}
+					else if (mesUser != null && string.IsNullOrEmpty(mesUser.Salt))
+					{
+						mesUser.Salt = Bootstrapper.Kernel.Get<ICryptoService>().CreateSalt();
+						mesUser.HashedPassword = model.Password.ToSha256(mesUser.Salt);
+						mesRepo.CommitChanges();
+					}
+
+					AddAuthCookie(model.RememberMe, mesUser);
 
 					// save messanger state to cookies object
 					if (mesUser != null && Request.Cookies.Get(_msConst) != null)
@@ -116,7 +126,7 @@ namespace ShareDeployed.Controllers
 							tokenId = tokenIssuerId
 						});
 						var cookie = new HttpCookie(_msConst, state);
-						cookie.HttpOnly = false;
+						cookie.HttpOnly = true;
 						if (model.RememberMe)
 							cookie.Expires = DateTime.UtcNow.AddDays(30);
 						else
@@ -135,7 +145,7 @@ namespace ShareDeployed.Controllers
 						});
 
 						var cookie = new HttpCookie(_msConst, state);
-						cookie.HttpOnly = false;
+						cookie.HttpOnly = true;
 						if (model.RememberMe)
 							cookie.Expires = DateTime.UtcNow.AddDays(30);
 						else
@@ -150,6 +160,18 @@ namespace ShareDeployed.Controllers
 			// If we got this far, something failed, redisplay form
 			ModelState.AddModelError("", "The user name or password provided is incorrect.");
 			return View(model);
+		}
+
+		private void AddAuthCookie(bool remember, MessangerUser mesUser)
+		{
+			IAuthenticationTokenService tokenService = Bootstrapper.Kernel.Get<IAuthenticationTokenService>();
+			if (tokenService == null)
+				throw new InvalidOperationException("Fail to resolve IAuthenticationTokenService.");
+			string token = tokenService.GetAuthenticationToken(mesUser);
+			HttpCookie cookieTokn = new HttpCookie(Constants.UserTokenCookie, token);
+			cookieTokn.HttpOnly = true;
+			cookieTokn.Expires = remember ? (DateTime.Now + TimeSpan.FromDays(30)) : DateTime.UtcNow.AddMinutes(40);
+			Response.Cookies.Add(cookieTokn);
 		}
 
 		// POST: /Account/LogOff
@@ -210,7 +232,7 @@ namespace ShareDeployed.Controllers
 				try
 				{
 					int webSecUID = -1;
-					var messangerRepo = Infrastructure.Bootstrapper.Kernel.Get<Repositories.IMessangerRepository>();
+					var messangerRepo = Bootstrapper.Kernel.Get<Repositories.IMessangerRepository>();
 					MessangerUser mesUsr = null;
 					using (messangerRepo)
 					{
@@ -224,7 +246,7 @@ namespace ShareDeployed.Controllers
 						WebSecurity.Login(model.UserName, model.Password);
 						FormsAuthentication.SetAuthCookie(model.UserName, false);
 
-						var shareContext = Infrastructure.Bootstrapper.Kernel.Get<DataAccess.ShareDeployedContext>();
+						var shareContext = Bootstrapper.Kernel.Get<DataAccess.ShareDeployedContext>();
 						using (shareContext)
 						{
 							if (shareContext.User.Any(x => x.Name == model.UserName))
@@ -236,6 +258,7 @@ namespace ShareDeployed.Controllers
 
 						webSecUID = WebSecurity.CurrentUserId > 0 ? WebSecurity.CurrentUserId : WebSecurity.GetUserId(model.UserName);
 						InitializeSessionValiable(model.UserName, webSecUID);
+						string genSalt = Bootstrapper.Kernel.Get<ICryptoService>().CreateSalt();
 						mesUsr = new Common.Models.MessangerUser()
 						{
 							Name = model.UserName,
@@ -244,11 +267,15 @@ namespace ShareDeployed.Controllers
 							Hash = model.Email.ToMD5(),
 							Identity = string.Format("{0}_{1}", model.UserName, webSecUID),
 							Id = Guid.NewGuid().ToString("d"),
-							LastActivity = DateTime.UtcNow
+							LastActivity = DateTime.UtcNow,
+							Salt = genSalt,
+							HashedPassword = model.Password.ToSha256(genSalt)
 						};
 
 						messangerRepo.Add(mesUsr);
 						messangerRepo.CommitChanges();
+
+						AddAuthCookie(false, mesUsr);
 
 						string ip = Extension.WebHelper.GetIpAddress();
 						string clientName;
@@ -303,7 +330,7 @@ namespace ShareDeployed.Controllers
 		public JsonResult CheckNameAvaliability(string username)
 		{
 			bool result = false;
-			var cont = Infrastructure.Bootstrapper.Kernel.Get<Models.UsersContext>();
+			var cont = Bootstrapper.Kernel.Get<Models.UsersContext>();
 			using (cont)
 			{
 				result = cont.UserProfiles.Any(x => x.UserName == username);
@@ -316,7 +343,7 @@ namespace ShareDeployed.Controllers
 		public JsonResult CheckEmailAvaliability(string email)
 		{
 			bool result = false;
-			var cont = Infrastructure.Bootstrapper.Kernel.Get<Models.UsersContext>();
+			var cont = Bootstrapper.Kernel.Get<Models.UsersContext>();
 			try
 			{
 				using (cont)

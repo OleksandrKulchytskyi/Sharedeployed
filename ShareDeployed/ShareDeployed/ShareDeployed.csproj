@@ -215,6 +215,7 @@
     <Compile Include="Authorization\SessionTokenIssuer.cs" />
     <Compile Include="Authorization\TokenValidationAttribute.cs" />
     <Compile Include="Controllers\Api\ApplicationController.cs" />
+    <Compile Include="Controllers\Api\NewAuthenticateController.cs" />
     <Compile Include="Controllers\Api\PingController.cs" />
     <Compile Include="Controllers\Api\MessangerController.cs" />
     <Compile Include="Controllers\Api\MessangerGroupController.cs" />
@@ -277,6 +278,8 @@
     <Compile Include="HttpModules\MobileRouterModule.cs" />
     <Compile Include="Hubs\MessangerHub.cs" />
     <Compile Include="Infrastructure\AjaxMinifier.cs" />
+    <Compile Include="Infrastructure\Constants.cs" />
+    <Compile Include="Infrastructure\CryptoHelper.cs" />
     <Compile Include="Infrastructure\CustomJsonSerializer.cs" />
     <Compile Include="Infrastructure\DynamicTrace.cs" />
     <Compile Include="Migrations\201211291513121_Initial.cs" />
@@ -292,7 +295,10 @@
     <Compile Include="Repositories\WebSecurityRepository.cs" />
     <Compile Include="Repositories\WordsRepository.cs" />
     <Compile Include="Services\IAppSettings.cs" />
+    <Compile Include="Services\IAuthenticationTokenService.cs" />
     <Compile Include="Services\ICryptoService.cs" />
+    <Compile Include="Services\IKeyProvider.cs" />
+    <Compile Include="Services\IMembershipService.cs" />
     <Compile Include="Services\IMessangerService.cs" />
     <Compile Include="Services\INotificationService.cs" />
     <Compile Include="Services\IVirtualPathUtil.cs" />

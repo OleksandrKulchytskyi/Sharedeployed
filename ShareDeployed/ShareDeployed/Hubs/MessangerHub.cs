@@ -34,12 +34,11 @@ namespace ShareDeployed.Hubs
 							ICache cache, IAspUserRepository aspUsrRepos)//IResourceProcessor resourceProcessor)
 		{
 			_settings = settings;
-
-			//_resourceProcessor = resourceProcessor;
 			_service = service;
 			_repository = repository;
 			_cache = cache;
 			_aspUserRepos = aspUsrRepos;
+			//_resourceProcessor = resourceProcessor;
 		}
 
 		private string UserAgent
@@ -47,9 +46,7 @@ namespace ShareDeployed.Hubs
 			get
 			{
 				if (Context.Headers != null)
-				{
 					return Context.Headers["User-Agent"];
-				}
 				return null;
 			}
 		}
@@ -59,7 +56,7 @@ namespace ShareDeployed.Hubs
 			get
 			{
 				string version = Clients.Caller.version;
-				return String.IsNullOrEmpty(version) || new Version(version) != _version;
+				return string.IsNullOrEmpty(version) || new Version(version) != _version;
 			}
 		}
 
@@ -72,8 +69,7 @@ namespace ShareDeployed.Hubs
 			if (user == null)
 				return false;
 
-			if (!String.IsNullOrEmpty(_settings.AuthApiKey) &&
-				String.IsNullOrEmpty(user.Identity))
+			if (!string.IsNullOrEmpty(_settings.AuthApiKey) && string.IsNullOrEmpty(user.Identity))
 				return false;
 
 			_service.UpdateActivity(user, Context.ConnectionId, UserAgent);
@@ -87,10 +83,8 @@ namespace ShareDeployed.Hubs
 		{
 			// Update the active room on the client (only if it's still a valid room)
 			if (user.Groups.Any(room => room.Name.Equals(clientState.ActiveGroup, StringComparison.OrdinalIgnoreCase)))
-			{
 				// Update the active room on the client (only if it's still a valid room)
 				Clients.Caller.activeRoom = clientState.ActiveGroup;
-			}
 
 			(this as INotificationService).LogOn(user, Context.ConnectionId);
 		}
@@ -118,7 +112,7 @@ namespace ShareDeployed.Hubs
 
 			// REVIEW: Is it better to use _repository.VerifyRoom(message.Room, mustBeOpen: false) here?
 			if (group.Closed)
-				throw new InvalidOperationException(String.Format("You cannot post messages to '{0}'. The group is closed.", message.Group.Name));
+				throw new InvalidOperationException(string.Format("You cannot post messages to '{0}'. The group is closed.", message.Group.Name));
 
 			// Update activity *after* ensuring the user, this forces them to be active
 			UpdateActivity(user, group);
@@ -223,7 +217,7 @@ namespace ShareDeployed.Hubs
 													Include(x => x.OwnedGroups).FirstOrDefault();
 				if (user != null)
 				{
-					if (!String.IsNullOrEmpty(user.Email) && String.IsNullOrEmpty(user.Hash))
+					if (!string.IsNullOrEmpty(user.Email) && string.IsNullOrEmpty(user.Hash))
 					{
 						user.Hash = user.Email.ToMD5();
 						_repository.CommitChanges();
@@ -250,7 +244,7 @@ namespace ShareDeployed.Hubs
 
 			string id = GetUserId();
 
-			if (String.IsNullOrEmpty(id))
+			if (string.IsNullOrEmpty(id))
 				return null;
 
 			MessangerUser user = _repository.VerifyUserId(id);
@@ -319,7 +313,7 @@ namespace ShareDeployed.Hubs
 			var jabbrState = GetCookieValue("messanger.state");
 			ClientState clientState = null;
 
-			if (String.IsNullOrEmpty(jabbrState))
+			if (string.IsNullOrEmpty(jabbrState))
 				clientState = new ClientState();//initializing new client state
 			else
 			{
