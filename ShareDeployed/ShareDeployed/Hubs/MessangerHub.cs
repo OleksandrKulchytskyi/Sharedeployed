@@ -317,6 +317,8 @@ namespace ShareDeployed.Hubs
 				clientState = new ClientState();//initializing new client state
 			else
 			{
+				if (!jabbrState.EndsWith("}"))
+					jabbrState = jabbrState + "}";
 				try
 				{
 					clientState = JsonConvert.DeserializeObject<ClientState>(jabbrState);
