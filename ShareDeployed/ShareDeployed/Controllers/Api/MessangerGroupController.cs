@@ -15,9 +15,7 @@ namespace ShareDeployed.Controllers.Api
 
 		public MessangerGroupController(IMessangerRepository repository)
 		{
-			if (repository == null)
-				throw new ArgumentNullException("repository");
-
+			System.Diagnostics.Contracts.Contract.Requires<ArgumentNullException>(repository != null);
 			_repository = repository;
 		}
 

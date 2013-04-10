@@ -7,7 +7,7 @@ namespace ShareDeployed.Services
 		string ToAbsolute(string relativePath);
 	}
 
-	public class VirtualPathUtil : IVirtualPathUtil
+	public sealed class VirtualPathUtil : IVirtualPathUtil
 	{
 		public string ToAbsolute(string virtualPath)
 		{

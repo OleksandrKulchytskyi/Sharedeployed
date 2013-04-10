@@ -66,7 +66,8 @@ namespace ShareDeployed.Infrastructure
 			if (record.Request != null)
 				msgBuilder.AppendMessage(record.Request.Method.ToString(), Common.Extensions.Common.notEmpty).
 					AppendMessage(record.Request.RequestUri.ToString(), Common.Extensions.Common.notEmpty).
-					AppendMessage(record.Request.Content != null ? record.Request.Content.ToString() : string.Empty, Common.Extensions.Common.notEmpty);
+					AppendMessage(record.Request.Content != null ?
+								record.Request.Content.ToString() : string.Empty, Common.Extensions.Common.notEmpty);
 
 			msgBuilder.AppendMessage(record.Category, Common.Extensions.Common.notEmpty).
 					AppendMessage(record.Operator, Common.Extensions.Common.notEmpty).
@@ -85,33 +86,34 @@ namespace ShareDeployed.Infrastructure
 
 		private void LogToNLog(TraceRecord record)
 		{
-			var message = string.Empty;
+			StringBuilder sb = new StringBuilder();
 
 			if (record.Request != null)
 			{
 				if (record.Request.Method != null)
-					message += " " + record.Request.Method.ToString();
+					sb.AppendMessage(" ").AppendMessage(record.Request.Method.ToString());
 
 				if (record.Request.RequestUri != null)
-					message += " " + record.Request.RequestUri.ToString();
+					sb.AppendMessage(" ").AppendMessage(record.Request.RequestUri.ToString());
 			}
 
 			if (!string.IsNullOrWhiteSpace(record.Category))
-				message += " " + record.Category;
+				sb.AppendMessage(" ").AppendMessage(record.Category);
 
 			if (!string.IsNullOrWhiteSpace(record.Operator))
-				message += " " + record.Operator + " " + record.Operation;
+				sb.AppendMessage(" ").AppendMessage(record.Operator).AppendMessage(" ").AppendMessage(record.Operation);
 
 			if (!string.IsNullOrWhiteSpace(record.Message))
-				message += " " + record.Message;
+				sb.AppendMessage(" ").AppendMessage(record.Message);
 
 			if (record.Exception != null)
 			{
 				if (record.Exception.GetBaseException().Message != null)
-					message += record.Exception.GetBaseException().Message;
+					sb.AppendMessage(record.Exception.GetBaseException().Message);
 			}
 
-			_nlogLogger[record.Level](message);
+			_nlogLogger[record.Level](sb.ToString());
+			sb.Clear(); sb = null;
 		}
 	}
 }

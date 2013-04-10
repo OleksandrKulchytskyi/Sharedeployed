@@ -16,6 +16,7 @@ namespace ShareDeployed.Controllers.Api
 
 		public ResponseController(IMessangerRepository rep)
 		{
+			System.Diagnostics.Contracts.Contract.Requires<ArgumentNullException>(rep != null);
 			_repository = rep;
 		}
 

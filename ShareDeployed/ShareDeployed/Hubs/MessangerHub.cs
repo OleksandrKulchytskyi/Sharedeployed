@@ -11,6 +11,7 @@ using ShareDeployed.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -33,6 +34,12 @@ namespace ShareDeployed.Hubs
 		public MessangerHub(IAppSettings settings, IMessangerService service, IMessangerRepository repository,
 							ICache cache, IAspUserRepository aspUsrRepos)//IResourceProcessor resourceProcessor)
 		{
+			Contract.Requires<ArgumentNullException>(settings != null);
+			Contract.Requires<ArgumentNullException>(service != null);
+			Contract.Requires<ArgumentNullException>(repository != null);
+			Contract.Requires<ArgumentNullException>(cache != null);
+			Contract.Requires<ArgumentNullException>(aspUsrRepos != null);
+
 			_settings = settings;
 			_service = service;
 			_repository = repository;
@@ -308,6 +315,7 @@ namespace ShareDeployed.Hubs
 			Clients.Caller.version = _versionString;
 		}
 
+
 		private ClientState GetClientState()
 		{	// New client state
 			var jabbrState = GetCookieValue("messanger.state");
@@ -321,6 +329,7 @@ namespace ShareDeployed.Hubs
 					jabbrState = jabbrState + "}";
 				try
 				{
+					//TODO: for some reason this won't work properly cause data which stores in cookie has invalid format
 					clientState = JsonConvert.DeserializeObject<ClientState>(jabbrState);
 				}
 				catch (JsonException ex)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Web.Http;
 
 namespace ShareDeployed.Controllers.Api
@@ -10,6 +11,7 @@ namespace ShareDeployed.Controllers.Api
 
 		public UserRolesController(Repositories.IAspUserRepository repository)
 		{
+			System.Diagnostics.Contracts.Contract.Requires<ArgumentNullException>(repository != null);
 			_repo = repository;
 		}
 

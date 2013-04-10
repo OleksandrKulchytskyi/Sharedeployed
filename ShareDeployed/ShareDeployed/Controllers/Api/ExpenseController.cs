@@ -16,6 +16,7 @@ namespace ShareDeployed.Controllers.Api
 
 		public ExpenseController(DataAccess.Interfaces.IUnityOfWork unity)
 		{
+			System.Diagnostics.Contracts.Contract.Requires<ArgumentNullException>(unity != null);
 			_unity = unity;
 		}
 

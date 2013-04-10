@@ -6,11 +6,10 @@ using System.Text;
 
 namespace ShareDeployed.Infrastructure
 {
-	public class CryptoHelper
+	public sealed class CryptoHelper
 	{
 		// AES uses a 16 byte IV
 		private const int IVLength = 16;
-
 		// HMAC 256
 		private const int HMacLength = 32;
 
@@ -87,8 +86,7 @@ namespace ShareDeployed.Infrastructure
 
 		[MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
 		private static void ValidateHashBytes(byte[] payload, byte[] hash, int payloadOffset)
-		{
-			// Just because
+		{	// Just because
 			checked
 			{
 				bool ok = true;
@@ -99,8 +97,7 @@ namespace ShareDeployed.Infrastructure
 				}
 
 				if (!ok)
-				{
-					// Tsk tsk tsk, stop tampering with my data (BAD TOUCH!)
+				{	// Tsk tsk tsk, stop tampering with my data (BAD TOUCH!)
 					throw new InvalidOperationException();
 				}
 			}

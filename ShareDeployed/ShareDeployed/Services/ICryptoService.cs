@@ -13,14 +13,13 @@ namespace ShareDeployed.Services
 		byte[] Unprotect(byte[] payload);
 	}
 
-	public class CryptoService : ICryptoService
+	public sealed class CryptoService : ICryptoService
 	{
 		private IKeyProvider _provider;
 
 		public CryptoService(IKeyProvider provider)
 		{
-			if (provider == null)
-				throw new ArgumentNullException("provider");
+			System.Diagnostics.Contracts.Contract.Requires<ArgumentNullException>(provider != null);
 			_provider = provider;
 		}
 

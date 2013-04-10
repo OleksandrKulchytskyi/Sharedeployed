@@ -14,13 +14,16 @@ namespace ShareDeployed.Services
 		MessangerUser AddUser(string userName, string email, string password);
 	}
 
-	public class DefaultMembershipService : IMembershipService
+	public sealed class DefaultMembershipService : IMembershipService
 	{
 		private readonly IMessangerRepository _repository;
 		private readonly ICryptoService _crypto;
 
 		public DefaultMembershipService(IMessangerRepository repository, ICryptoService cryptoServ)
 		{
+			System.Diagnostics.Contracts.Contract.Requires<ArgumentNullException>(repository != null);
+			System.Diagnostics.Contracts.Contract.Requires<ArgumentNullException>(cryptoServ != null);
+
 			_repository = repository;
 			_crypto = cryptoServ;
 		}

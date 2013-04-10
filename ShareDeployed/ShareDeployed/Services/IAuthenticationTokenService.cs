@@ -20,6 +20,8 @@ namespace ShareDeployed.Services
 
 		public AuthenticationTokenService(ICryptoService cryptoService)
 		{
+			System.Diagnostics.Contracts.Contract.Requires<ArgumentNullException>(cryptoService != null);
+
 			_cryptoService = cryptoService;
 		}
 
@@ -28,13 +30,10 @@ namespace ShareDeployed.Services
 			try
 			{
 				byte[] buffer = TokenDencode(authenticationToken);
-
 				buffer = _cryptoService.Unprotect(buffer);
-
 				userId = _encoding.GetString(buffer);
 
-				// REVIEW: Should we verify the user id with the db on every request?
-				// it would need to be cached.
+				// REVIEW: Should we verify the user id with the db on every request? it would need to be cached.
 				return true;
 			}
 			catch
@@ -47,9 +46,7 @@ namespace ShareDeployed.Services
 		public string GetAuthenticationToken(MessangerUser user)
 		{
 			byte[] buffer = _encoding.GetBytes(user.Id);
-
 			buffer = _cryptoService.Protect(buffer);
-
 			return TokenEncode(buffer);
 		}
 

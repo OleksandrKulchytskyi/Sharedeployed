@@ -17,8 +17,7 @@ namespace ShareDeployed.Controllers
 
 		public WordsController(IUnityOfWork unity)
 		{
-			if (null == unity)
-				throw new ArgumentNullException("unity");
+			System.Diagnostics.Contracts.Contract.Requires<ArgumentNullException>(unity != null);
 			_unity = unity;
 		}
 

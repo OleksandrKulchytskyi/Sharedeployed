@@ -16,6 +16,7 @@ namespace ShareDeployed.Controllers.Api
 
 		public RevenueController(DataAccess.Interfaces.IUnityOfWork unity)
 		{
+			System.Diagnostics.Contracts.Contract.Requires<ArgumentNullException>(unity != null);
 			_unity = unity;
 		}
 
