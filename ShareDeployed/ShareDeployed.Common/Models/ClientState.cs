@@ -5,9 +5,14 @@ using System.Text;
 
 namespace ShareDeployed.Common.Models
 {
-	public class ClientState
+	public sealed class ClientState
 	{
 		public string UserId { get; set; }
 		public string ActiveGroup { get; set; }
+
+		public static ClientState Default
+		{
+			get { return new ClientState(); }
+		}
 	}
 }

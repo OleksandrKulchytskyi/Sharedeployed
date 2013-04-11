@@ -16,7 +16,8 @@
 				});
 			},
 			initViewModel: function (MsgsVM) {
-				console.log(MsgsVM);
+			    console.log("initViewModel");
+			    console.log(MsgsVM);
 				MsgsVM.SetMessangeR(singletonHub.getInstance().messanger);
 			}
 		}

@@ -322,14 +322,13 @@ namespace ShareDeployed.Hubs
 			ClientState clientState = null;
 
 			if (string.IsNullOrEmpty(jabbrState))
-				clientState = new ClientState();//initializing new client state
+				clientState = ClientState.Default; //initializing default client state
 			else
 			{
 				if (!jabbrState.EndsWith("}"))
 					jabbrState = jabbrState + "}";
 				try
 				{
-					//TODO: for some reason this won't work properly cause data which stores in cookie has invalid format
 					clientState = JsonConvert.DeserializeObject<ClientState>(jabbrState);
 				}
 				catch (JsonException ex)
@@ -339,12 +338,13 @@ namespace ShareDeployed.Hubs
 			}
 			// Read the id from the caller if there's no cookie
 			clientState.UserId = clientState.UserId ?? Clients.Caller.uid;
-
 			return clientState;
 		}
 
 		private string GetCookieValue(string key)
 		{
+			if (Context == null || !Context.RequestCookies.ContainsKey(key))
+				return null;
 			var cookie = Context.RequestCookies[key];
 			string value = cookie != null ? cookie.Value : null;
 			return value != null ? HttpUtility.UrlDecode(value) : null;

@@ -27,6 +27,8 @@ namespace ShareDeployed.Controllers
 	{
 		private const string _msConst = "messanger.state";
 		private const string _aspSesId = "ASP.NET_SessionId";
+		private const string _userIDConst = "UserId";
+		private const string _userNameConst = "UserName";
 
 		// GET: /Account/Login
 		//[HandleError(ExceptionType = typeof(System.Data.DataException), View = "Shared/Error")]
@@ -113,7 +115,6 @@ namespace ShareDeployed.Controllers
 					}
 
 					AddAuthCookie(model.RememberMe, mesUser);
-
 					// save messanger state to cookies object
 					if (mesUser != null && Request.Cookies.Get(_msConst) != null)
 					{
@@ -125,7 +126,8 @@ namespace ShareDeployed.Controllers
 							hash = mesUser.Hash,
 							tokenId = tokenIssuerId
 						});
-						var cookie = new HttpCookie(_msConst, state);
+
+						var cookie = new HttpCookie(_msConst, HttpUtility.UrlEncode(state));
 						cookie.HttpOnly = true;
 						if (model.RememberMe)
 							cookie.Expires = DateTime.UtcNow.AddDays(30);
@@ -144,7 +146,7 @@ namespace ShareDeployed.Controllers
 							tokenId = tokenIssuerId
 						});
 
-						var cookie = new HttpCookie(_msConst, state);
+						var cookie = new HttpCookie(_msConst, HttpUtility.UrlEncode(state));
 						cookie.HttpOnly = true;
 						if (model.RememberMe)
 							cookie.Expires = DateTime.UtcNow.AddDays(30);
@@ -158,7 +160,7 @@ namespace ShareDeployed.Controllers
 			}
 
 			// If we got this far, something failed, redisplay form
-			ModelState.AddModelError("", "The user name or password provided is incorrect.");
+			ModelState.AddModelError(string.Empty, "The user name or password provided is incorrect.");
 			return View(model);
 		}
 
@@ -187,10 +189,10 @@ namespace ShareDeployed.Controllers
 
 				string userName = string.Empty;
 				int userId = -1;
-				if (Session["UserName"] != null)
-					userName = Session["UserName"] as string;
-				if (Session["UserId"] != null)
-					userId = (int)Session["UserId"];
+				if (Session[_userNameConst] != null)
+					userName = Session[_userNameConst] as string;
+				if (Session[_userIDConst] != null)
+					userId = (int)Session[_userIDConst];
 				Authorization.AuthTokenManagerEx.Instance.RemoveClientInfo(new ClientInfo() { UserName = userName, Id = userId });
 			}
 
@@ -204,7 +206,8 @@ namespace ShareDeployed.Controllers
 				Response.Cookies.Add(msC);
 			}
 
-			Response.Cookies.Add(new HttpCookie(_aspSesId, ""));
+			Response.Cookies.Add(new HttpCookie(_aspSesId, string.Empty));
+			Response.Cookies.Add(new HttpCookie(Constants.UserTokenCookie, string.Empty));
 			Response.Cookies.Remove(".ASPXAUTH");
 			Response.Cookies.Clear();
 
@@ -238,7 +241,7 @@ namespace ShareDeployed.Controllers
 					{
 						if (messangerRepo.GetUserByName(model.UserName) != null)
 						{
-							ModelState.AddModelError("UserName", "User with the same name already exist in DB");
+							ModelState.AddModelError(_userNameConst, "User with the same name already exist in DB");
 							return View(model);
 						}
 
@@ -425,7 +428,7 @@ namespace ShareDeployed.Controllers
 					if (changePasswordSucceeded)
 						return RedirectToAction("Manage", new { Message = ManageMessageId.ChangePasswordSuccess });
 					else
-						ModelState.AddModelError("", "The current password is incorrect or the new password is invalid.");
+						ModelState.AddModelError(string.Empty, "The current password is incorrect or the new password is invalid.");
 				}
 			}
 			else
@@ -444,7 +447,7 @@ namespace ShareDeployed.Controllers
 					}
 					catch (Exception e)
 					{
-						ModelState.AddModelError("", e);
+						ModelState.AddModelError(string.Empty, e);
 					}
 				}
 			}
@@ -521,7 +524,7 @@ namespace ShareDeployed.Controllers
 					if (user == null)
 					{
 						// Insert name into the profile table
-						db.UserProfiles.Add(new UserProfile { UserName = model.UserName, Email = "" });
+						db.UserProfiles.Add(new UserProfile { UserName = model.UserName, Email = string.Empty });
 						db.SaveChanges();
 
 						OAuthWebSecurity.CreateOrUpdateAccount(provider, providerUserId, model.UserName);
@@ -530,7 +533,7 @@ namespace ShareDeployed.Controllers
 						return RedirectToLocal(returnUrl);
 					}
 					else
-						ModelState.AddModelError("UserName", "User name already exists. Please enter a different user name.");
+						ModelState.AddModelError(_userNameConst, "User name already exists. Please enter a different user name.");
 				}
 			}
 
@@ -666,11 +669,11 @@ namespace ShareDeployed.Controllers
 		{
 			if (HttpContext != null && HttpContext.Session != null)
 			{
-				if (HttpContext.Session["UserName"] == null)
-					HttpContext.Session["UserName"] = username;
+				if (HttpContext.Session[_userNameConst] == null)
+					HttpContext.Session[_userNameConst] = username;
 
 				int userId = usrId == -1 ? WebSecurity.GetUserId(username) : usrId;
-				HttpContext.Session["UserId"] = userId;
+				HttpContext.Session[_userIDConst] = userId;
 				HttpContext.Session["UserIdentit"] = string.Format("{0}_{1}", username, userId);
 			}
 		}
