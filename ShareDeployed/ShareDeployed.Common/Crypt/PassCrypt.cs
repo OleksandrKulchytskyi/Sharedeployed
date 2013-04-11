@@ -453,7 +453,7 @@ namespace ShareDeployed.Common.Crypt
 			int logRounds = Convert.ToInt32(salt.Substring(startingOffset, 2));
 			string extractedSalt = salt.Substring(startingOffset + 3, 22);
 
-			byte[] inputBytes = Encoding.UTF8.GetBytes((input + (minor >= 'a' ? "\0" : "")));
+			byte[] inputBytes = Encoding.UTF8.GetBytes((input + (minor >= 'a' ? "\0" : string.Empty)));
 			byte[] saltBytes = DecodeBase64(extractedSalt, PassCrypt_SALT_LEN);
 
 			PassCrypt PassCrypt = new PassCrypt();

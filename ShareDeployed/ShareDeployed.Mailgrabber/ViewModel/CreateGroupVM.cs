@@ -64,7 +64,7 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 			{
 				IsCreated = true;
 				var workflowWind = App.Current.MainWindow.OwnedWindows.Cast<System.Windows.Window>().FirstOrDefault();
-				MessageBox.Show(workflowWind, "Group has been successfully created", "", MessageBoxButton.OK, MessageBoxImage.Information);
+				MessageBox.Show(workflowWind, "Group has been successfully created", string.Empty, MessageBoxButton.OK, MessageBoxImage.Information);
 				Task.Factory.StartNew(() =>
 				{
 					var newlyCreatedGroup = HttpClientHelper.GetSimple<Common.Models.MessangerGroup>(System.Configuration.ConfigurationManager.AppSettings["baseUrl"],

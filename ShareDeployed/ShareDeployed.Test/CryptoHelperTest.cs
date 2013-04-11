@@ -60,7 +60,7 @@ namespace ShareDeployed.Test
 		{
 			var buffer = new byte[] { 1, 2, 3, 4, 25, 15 };
 
-			var bitConv = BitConverter.ToString(buffer).Replace("-", "");
+			var bitConv = BitConverter.ToString(buffer).Replace("-", string.Empty);
 			var hex = CryptoHelper.ToHex(buffer);
 			Assert.AreEqual(bitConv, hex);
 			Assert.AreEqual("01020304190F", hex);
@@ -84,7 +84,7 @@ namespace ShareDeployed.Test
 			{
 				var buffer = GenerateRandomBytes();
 				string hex = CryptoHelper.ToHex(buffer);
-				var bitConverter = BitConverter.ToString(buffer).Replace("-", "");
+				var bitConverter = BitConverter.ToString(buffer).Replace("-", string.Empty);
 				Assert.AreEqual(bitConverter, hex);
 
 				var fromBytes = CryptoHelper.FromHex(hex);

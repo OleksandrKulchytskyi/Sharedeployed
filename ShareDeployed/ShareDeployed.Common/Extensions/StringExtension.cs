@@ -45,7 +45,7 @@ namespace ShareDeployed.Common.Extensions
 			string result = string.Empty;
 			using (MD5 md5 = MD5.Create())
 			{
-				result = string.Join("", md5.ComputeHash(Encoding.Default.GetBytes(value))
+				result = string.Join(string.Empty, md5.ComputeHash(Encoding.Default.GetBytes(value))
 							 .Select(b => b.ToString("x2")));
 			}
 			return result;
@@ -53,7 +53,7 @@ namespace ShareDeployed.Common.Extensions
 
 		public static string ToSha256(this string value, string salt)
 		{
-			string saltedValue = ((salt ?? "") + value);
+			string saltedValue = ((salt ?? string.Empty) + value);
 
 			string result = string.Empty;
 			using (SHA256 sha256 = SHA256.Create())

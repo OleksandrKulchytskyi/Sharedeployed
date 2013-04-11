@@ -46,11 +46,11 @@ namespace ShareDeployed.Mailgrabber.ViewModel
 				{
 					UserGroups.Remove(SelectedGroup);
 					MessageBox.Show(App.Current.MainWindow.OwnedWindows.Cast<Window>().FirstOrDefault(),
-									"Group has been successfully deleted.", "", MessageBoxButton.OK, MessageBoxImage.Information);
+									"Group has been successfully deleted.", string.Empty, MessageBoxButton.OK, MessageBoxImage.Information);
 				}
 				else
 				MessageBox.Show(App.Current.MainWindow.OwnedWindows.Cast<Window>().FirstOrDefault(),
-									"Fail to delete group.", "", MessageBoxButton.OK, MessageBoxImage.Information);
+									"Fail to delete group.", string.Empty, MessageBoxButton.OK, MessageBoxImage.Information);
 			}
 		}
 
