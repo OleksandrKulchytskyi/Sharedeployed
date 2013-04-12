@@ -17,12 +17,13 @@
 	};
 
 	messanger.client.broadcastMessages = function (grpName, messages) {
-		if (MsgsVM.IsResponseOpened() === true) {
+		if (singletonHub.getInstance().MsgsVM().IsResponseOpened() === true) {
 			return;
 		}
 
 		var mappedMsgs = $.map(messages, function (item) { return new Message(item) });
-		MsgsVM.Initialize(mappedMsgs);
+
+		singletonHub.getInstance().MsgsVM().Initialize(mappedMsgs);
 
 		if ($("#NewMessagesDialogDiv").dialog("isOpen") === true) {
 			$("#NewMessagesDialogDiv").dialog("close");
@@ -34,7 +35,7 @@
 	};
 
 	messanger.client.OnNewMessagesResponse = function (data) {
-		MsgsVM.initGroupsMessages(data);
+		singletonHub.getInstance().MsgsVM().initGroupsMessages(data);
 
 		if ($("#CheckMessagesDialog").dialog("isOpen") === true) {
 			$("#CheckMessagesDialog").dialog("close");
@@ -51,16 +52,6 @@
 		}
 		$('#connectionStatuses').append('<li>There seems to be some connectivity issues...</li>');
 	});
-
-	//$.connection.hub.start().done(function () {
-	//	console.log("Hub is started.");
-	//	console.log("Calling join method on server hub.");
-	//	//MsgsVM.SetMessangeR(messanger);
-	//	messanger.server.join();
-	//}).
-	//fail(function () {
-	//	console.log("Fail!!");
-	//});
 
 	return messanger;
 };

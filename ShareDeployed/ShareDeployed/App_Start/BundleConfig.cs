@@ -25,7 +25,9 @@ namespace ShareDeployed
 			bundles.Add(new ScriptBundle("~/bundles/app").Include("~/Scripts/app*"));
 			bundles.Add(new ScriptBundle("~/bundles/singletonHub").Include(
 										"~/Scripts/SingletonHub*",
-										"~/Scripts/MessangerHub.js"));
+										"~/Scripts/MessangerHub.js",
+										"~/Scripts/MessangerVM.js"));
+
 			bundles.Add(new ScriptBundle("~/messanger").Include("~/messanger.utils.js"));
 
 			bundles.Add(new ScriptBundle("~/bundles/SignalR").Include("~/Scripts/jquery.signalR*"));
