@@ -32,6 +32,7 @@ namespace ShareDeployed.Controllers.Api
 			}
 			catch
 			{
+				ShareDeployed.Common.Helper.OrderedLock lock1;
 				return Request.CreateResponse(HttpStatusCode.BadRequest);
 			}
 
