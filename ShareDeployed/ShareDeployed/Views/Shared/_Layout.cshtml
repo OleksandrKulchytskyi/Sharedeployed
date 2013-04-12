@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using ShareDeployed.Extension;
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
@@ -99,39 +100,8 @@
 	@Scripts.Render("~/bundles/SignalR")
 	@Scripts.Render("~/bundles/singletonHub")
 	@RenderSection("scripts", required: false)
+	@*@Html.RenderTemplates("~/Templates")*@
 	<script type="text/javascript" src="~/signalr/hubs"></script>
-	<script type="text/html" id="newMessage-template">
-		<li class="ui-widget-content ui-corner-all">
-			<h3 data-bind="text: Subject" class="ui-widget-header"></h3>
-			<div>
-				<span data-bind="text: From || 'From?'"></span>
-			</div>
-			<div>
-				<span data-bind="stringOfDate: When"></span>
-			</div>
-			<div><a href='#' data-bind='click: $root.markAsRead'>Mark as read</a></div>
-		</li>
-	</script>
-	<script type="text/html" id="groupMessagesTempl">
-		<li>
-			<h3 data-bind="text: GroupName" class="ui-widget-header"></h3>
-			<ul data-bind="{template: {name:'MsgTemplate', foreach:Messages }}">
-			</ul>
-		</li>
-	</script>
-	<script type="text/html" id="MsgTemplate">
-		<li class="ui-widget-content ui-corner-all">
-			<h4 data-bind="text: Subject" class="ui-widget-header"></h4>
-			<div>
-				<span data-bind="text: From || 'From?'"></span>
-			</div>
-			<div>
-				<span data-bind="stringOfDate: When"></span>
-			</div>
-			<div><a href='#' data-bind='click: $root.deleteMsg'>Delete</a></div>
-			<div><a href='#' data-bind='click: $root.onResponseToMsg'>Reply</a></div>
-		</li>
-	</script>
 	<script type="text/javascript">
 		$.fx.speeds._default = 800;
 
@@ -155,14 +125,16 @@
 		// DOM has been initialized
 		$(document).ready(function () {
 
-			console.log(singletonHub.getInstance());
+			$.get("/Templates/UITemplates.tmpl.htm" , function(templates) {
+				$("body").append(templates);
+			});
+
 			var MsgsVM = singletonHub.getInstance().MsgsVM();
 			ko.applyBindings(MsgsVM);
 			MsgsVM.SetResponseDialogState(false);
 
 			$('#btnCheckNew').click(function () {
 				if (singletonHub.getInstance().messanger !== undefined) {
-					console.log(singletonHub.getInstance().messanger);
 					singletonHub.getInstance().messanger.server.checkForNewMessages();
 				}
 			});
@@ -227,8 +199,7 @@
 
 			if (singletonHub.getInstance().messanger !== undefined
 				&& singletonHub.getInstance().HubStarted===false) {
-				console.log("singletonHub.getInstance().messanger:" + singletonHub.getInstance().messanger);
-				console.log("_Layout.cshtml -> starting hub");
+
 				singletonHub.getInstance().startHub();
 			}
 		});

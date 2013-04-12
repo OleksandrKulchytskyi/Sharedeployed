@@ -262,6 +262,7 @@
     <Compile Include="DependencyResolvers\NinjectDependencyResolver.cs" />
     <Compile Include="DependencyResolvers\NInjectWebApiDepResolver.cs" />
     <Compile Include="Extension\BaseCacheMethod.cs" />
+    <Compile Include="Extension\HtmlHelperExtensions.cs" />
     <Compile Include="Extension\HttpRequestMsgExt.cs" />
     <Compile Include="Filters\CheckModelForNullAttribute.cs" />
     <Compile Include="Filters\DisableLazyloadingFilter.cs" />
@@ -464,6 +465,7 @@
     <Content Include="Scripts\modernizr-2.5.3.js" />
     <Content Include="Scripts\SingletonHub.js" />
     <Content Include="Scripts\SingletonMessangeR.js" />
+    <Content Include="Templates\UITemplates.tmpl.htm" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

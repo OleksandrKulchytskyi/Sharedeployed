@@ -26,7 +26,8 @@ namespace ShareDeployed
 			bundles.Add(new ScriptBundle("~/bundles/singletonHub").Include(
 										"~/Scripts/SingletonHub*",
 										"~/Scripts/MessangerHub.js",
-										"~/Scripts/MessangerVM.js"));
+										"~/Scripts/MessangerVM.js",
+										"~/Scripts/Templates/UITemplates.js"));
 
 			bundles.Add(new ScriptBundle("~/messanger").Include("~/messanger.utils.js"));
 
@@ -51,7 +52,12 @@ namespace ShareDeployed
 						"~/Content/themes/base/jquery.ui.theme.css"));
 
 			bundles.Add(new StyleBundle("~/Content/bootstrap").Include("~/Content/Bootstrap/bootstrap.min.css"));
-			
+
+			var templateBundle = new DynamicFolderBundle("htm", "*.htm", true);
+			var context = new BundleContext(new System.Web.HttpContextWrapper(System.Web.HttpContext.Current), new BundleCollection(), "~/Templates");
+			templateBundle.EnumerateFiles(context);
+			BundleTable.Bundles.Add(templateBundle);
+
 			BundleTable.EnableOptimizations = true;
 		}
 	}
