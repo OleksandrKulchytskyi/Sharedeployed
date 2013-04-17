@@ -90,6 +90,7 @@
     <Compile Include="HashHelperTest.cs" />
     <Compile Include="CryptoHelperTest.cs" />
     <Compile Include="DynamicAssemblyUnitTest.cs" />
+    <Compile Include="ProxyFactoryUnitTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ShareDeployed.Common\ShareDeployed.Common.csproj">
@@ -103,6 +104,10 @@
     <ProjectReference Include="..\ShareDeployed.Outlook\ShareDeployed.Outlook.csproj">
       <Project>{510f87e1-f628-45e6-aa4d-999cdd86f4c4}</Project>
       <Name>ShareDeployed.Outlook</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ShareDeployed.Proxy\ShareDeployed.Proxy.csproj">
+      <Project>{389ae307-214f-400e-b8d4-c46dd9ab35a3}</Project>
+      <Name>ShareDeployed.Proxy</Name>
     </ProjectReference>
     <ProjectReference Include="..\ShareDeployed\ShareDeployed.csproj">
       <Project>{f7b4ed77-bf88-4d99-9bfc-0f530fdd668d}</Project>

@@ -22,37 +22,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Automation", "Automation", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureSessionModule", "SecureSessionModule\SecureSessionModule.csproj", "{8068F6CC-9643-4ABB-8D2A-C94B60F0D369}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShareDeployed.Proxy", "ShareDeployed.Proxy\ShareDeployed.Proxy.csproj", "{389AE307-214F-400E-B8D4-C46DD9AB35A3}"
+EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 9
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs24
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = ShareDeployed.Common\\ShareDeployed.Common.csproj
-		SccProjectName1 = ShareDeployed.Common
-		SccLocalPath1 = ShareDeployed.Common
-		SccProjectUniqueName2 = ShareDeployed\\ShareDeployed.csproj
-		SccProjectName2 = ShareDeployed
-		SccLocalPath2 = ShareDeployed
-		SccProjectUniqueName3 = ShareDeployed.Test\\ShareDeployed.Test.csproj
-		SccProjectName3 = ShareDeployed.Test
-		SccLocalPath3 = ShareDeployed.Test
-		SccProjectUniqueName4 = ShareDeployed.DataAccess\\ShareDeployed.DataAccess.csproj
-		SccProjectName4 = ShareDeployed.DataAccess
-		SccLocalPath4 = ShareDeployed.DataAccess
-		SccProjectUniqueName5 = ShareDeployed.Mailgrabber\\ShareDeployed.Mailgrabber.csproj
-		SccProjectName5 = ShareDeployed.Mailgrabber
-		SccLocalPath5 = ShareDeployed.Mailgrabber
-		SccProjectUniqueName6 = ShareDeployed.RoutingHelper\\ShareDeployed.RoutingHelper.csproj
-		SccProjectName6 = ShareDeployed.RoutingHelper
-		SccLocalPath6 = ShareDeployed.RoutingHelper
-		SccProjectUniqueName7 = ShareDeployed.Outlook\\ShareDeployed.Outlook.csproj
-		SccProjectName7 = ShareDeployed.Outlook
-		SccLocalPath7 = ShareDeployed.Outlook
-		SccProjectUniqueName8 = SecureSessionModule\\SecureSessionModule.csproj
-		SccProjectName8 = SecureSessionModule
-		SccLocalPath8 = SecureSessionModule
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -90,6 +62,10 @@ Global
 		{8068F6CC-9643-4ABB-8D2A-C94B60F0D369}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8068F6CC-9643-4ABB-8D2A-C94B60F0D369}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8068F6CC-9643-4ABB-8D2A-C94B60F0D369}.Release|Any CPU.Build.0 = Release|Any CPU
+		{389AE307-214F-400E-B8D4-C46DD9AB35A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{389AE307-214F-400E-B8D4-C46DD9AB35A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{389AE307-214F-400E-B8D4-C46DD9AB35A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{389AE307-214F-400E-B8D4-C46DD9AB35A3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

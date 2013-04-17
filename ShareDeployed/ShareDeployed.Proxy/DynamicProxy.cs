@@ -7,16 +7,58 @@ using System.Linq;
 
 namespace ShareDeployed.Common.Proxy
 {
+	public enum ExecutionInjectionMode
+	{
+		None = 0,
+		Before,
+		After,
+		OnError
+	}
+
+	public interface IInvokeable
+	{
+	}
+
 	public sealed class DynamicProxy : DynamicObject
 	{
 		private readonly object _target;
+
+		private GenericWeakReference<DynamicProxyMapper> _weakMapper;
+
+		private InterceptionsInfo _intercInfo;
 
 		public DynamicProxy(object target)
 		{
 			if (target == null)
 				throw new ArgumentNullException("Parameter target cannot be a null.");
 
+			_weakMapper = new GenericWeakReference<DynamicProxyMapper>(DynamicProxyMapper.Instance);
 			_target = target;
+
+			InitMappings();
+		}
+
+		private void InitMappings()
+		{
+			Type targetType = _target.GetType();
+			if (!_weakMapper.Target.Contains(targetType))
+			{
+				object[] attributes = targetType.GetCustomAttributes(false);
+				if (attributes != null && attributes.Length > 0)
+				{
+					var items = attributes.Where(x => x.GetType().IsAssignableFrom(typeof(IInvokeable))).Select(x => x.GetType()).ToArray();
+					int len = items.Length;
+					_intercInfo = new InterceptionsInfo(new Type[len]);
+
+					for (int i = 0; i < len; i++)
+					{
+						_intercInfo.Interceptors[i] = items[i];
+					}
+
+					_weakMapper.Target.Add(targetType, _intercInfo);
+				}
+			}
+
 		}
 
 		public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)

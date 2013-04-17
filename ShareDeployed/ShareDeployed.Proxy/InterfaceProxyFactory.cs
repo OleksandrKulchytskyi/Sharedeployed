@@ -49,6 +49,7 @@ namespace ShareDeployed.Common.Proxy
 			AppDomain appDomain = Thread.GetDomain();
 			AssemblyName assemblyName = new AssemblyName();
 			assemblyName.Name = "InterfaceObjectFactoryAsm";
+			assemblyName.Version = new Version(1, 0, 0);
 
 			AssemblyBuilder assemblyBuilder = appDomain.DefineDynamicAssembly(
 				assemblyName, AssemblyBuilderAccess.RunAndSave);
@@ -239,9 +240,8 @@ namespace ShareDeployed.Common.Proxy
 		public class TypeIsNotAnInterface : Exception
 		{
 			internal TypeIsNotAnInterface(Type type)
-				: base("The InterfaceObjectFactory only works with interfaces.  "
-					+ "An attempt was made to create an object for the following type, "
-					+ "which is not an interface: " + type.FullName)
+				: base(@"The InterfaceObjectFactory only works with interfaces.
+ An attempt was made to create an object for the following type, which is not an interface: " + type.FullName)
 			{ }
 		}
 	}
