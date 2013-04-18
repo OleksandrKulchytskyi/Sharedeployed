@@ -8,6 +8,13 @@ using System.Threading;
 
 namespace ShareDeployed.Common.Proxy
 {
+	[System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct, AllowMultiple = true, Inherited = false)]
+	public sealed class InterceptorAttribute : Attribute
+	{
+		public Type InterceptorType { get; set; }
+		public ExecutionInjectionMode Mode { get; set; }
+	}
+
 	public class InterceptorInfo
 	{
 		public InterceptorInfo(Type interceptorType, ExecutionInjectionMode mode)
@@ -29,7 +36,7 @@ namespace ShareDeployed.Common.Proxy
 		private DynamicProxyMapper()
 		{
 			_instance = new Lazy<DynamicProxyMapper>(() => new DynamicProxyMapper(), true);
-			_interceptorsMappings = new ConcurrentDictionary<Type, InterceptionsInfo>();
+			_interceptorsMappings = new ConcurrentDictionary<Type, SafeCollection<InterceptorInfo>>();
 		}
 
 		public static DynamicProxyMapper Instance
@@ -44,21 +51,51 @@ namespace ShareDeployed.Common.Proxy
 		{
 			if (!_interceptorsMappings.ContainsKey(type))
 			{
-				return _interceptorsMappings.TryAdd(type, info);
+
+				bool added = _interceptorsMappings.TryAdd(type, new SafeCollection<InterceptorInfo>());
+				if (added)
+				{
+					_interceptorsMappings[type].Add(info);
+					return added;
+				}
+				else
+					return false;
 			}
 			return false;
 		}
 
-		public InterceptionsInfo GetInterceptions(Type type)
+		public bool EmptyAndAddRange(Type type, SafeCollection<InterceptorInfo> interceptors)
 		{
-			InterceptionsInfo info = default(InterceptionsInfo); ;
-			if (_interceptorsMappings.ContainsKey(type))
-				if (_interceptorsMappings.TryGetValue(type, out info))
+			if (!_interceptorsMappings.ContainsKey(type))
+			{
+				bool added = _interceptorsMappings.TryAdd(type, new SafeCollection<InterceptorInfo>());
+				if (added)
 				{
-					return info;
+					_interceptorsMappings[type].AddRange(interceptors);
+					return added;
 				}
+				else
+					return false;
+			}
+			else
+			{
+				_interceptorsMappings[type].Clear();
+				_interceptorsMappings[type].AddRange(interceptors);
+				return true;
+			}
+			return false;
+		}
 
-			return info;
+		public SafeCollection<InterceptorInfo> GetInterceptions(Type type)
+		{
+			SafeCollection<InterceptorInfo> infos = default(SafeCollection<InterceptorInfo>); ;
+			if (_interceptorsMappings.ContainsKey(type))
+			{
+				_interceptorsMappings.TryGetValue(type, out infos);
+				return infos;
+			}
+
+			return infos;
 		}
 
 		public bool Contains(Type t)
@@ -72,8 +109,8 @@ namespace ShareDeployed.Common.Proxy
 				return false;
 			else
 			{
-				InterceptionsInfo info;
-				return _interceptorsMappings.TryRemove(type, out info);
+				SafeCollection<InterceptorInfo> infos;
+				return _interceptorsMappings.TryRemove(type, out infos);
 			}
 		}
 	}
@@ -81,11 +118,17 @@ namespace ShareDeployed.Common.Proxy
 	public sealed class SafeCollection<T> : ICollection<T>
 	{
 		private readonly ConcurrentDictionary<T, bool> _inner;
-		int counter;
+		private int counter;
 
 		public SafeCollection()
 		{
 			_inner = new ConcurrentDictionary<T, bool>();
+			counter = 0;
+		}
+
+		public SafeCollection(int capacity)
+		{
+			_inner = new ConcurrentDictionary<T, bool>(4, capacity);
 			counter = 0;
 		}
 
@@ -95,9 +138,19 @@ namespace ShareDeployed.Common.Proxy
 				Interlocked.Increment(ref counter);
 		}
 
+		public void AddRange(IEnumerable<T> items)
+		{
+			foreach (T item in items)
+			{
+				if (_inner.TryAdd(item, true))
+					Interlocked.Increment(ref counter);
+			}
+		}
+
 		public void Clear()
 		{
-			_inner.Clear(); Interlocked.Exchange(ref counter, 0);
+			_inner.Clear();
+			Interlocked.Exchange(ref counter, 0);
 		}
 
 		public bool Contains(T item)
@@ -126,7 +179,7 @@ namespace ShareDeployed.Common.Proxy
 		public bool Remove(T item)
 		{
 			bool value;
-			if( _inner.TryRemove(item, out value))
+			if (_inner.TryRemove(item, out value))
 			{
 				Interlocked.Decrement(ref counter);
 				return true;
@@ -144,5 +197,4 @@ namespace ShareDeployed.Common.Proxy
 			return GetEnumerator();
 		}
 	}
-
 }

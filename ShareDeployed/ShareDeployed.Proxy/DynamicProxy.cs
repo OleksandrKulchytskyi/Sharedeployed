@@ -25,7 +25,7 @@ namespace ShareDeployed.Common.Proxy
 
 		private GenericWeakReference<DynamicProxyMapper> _weakMapper;
 
-		private InterceptionsInfo _intercInfo;
+		private SafeCollection<InterceptorInfo> _interceptors;
 
 		public DynamicProxy(object target)
 		{
@@ -43,19 +43,21 @@ namespace ShareDeployed.Common.Proxy
 			Type targetType = _target.GetType();
 			if (!_weakMapper.Target.Contains(targetType))
 			{
-				object[] attributes = targetType.GetCustomAttributes(false);
+				object[] attributes = targetType.GetCustomAttributes(typeof(InterceptorAttribute), false);
 				if (attributes != null && attributes.Length > 0)
 				{
-					var items = attributes.Where(x => x.GetType().IsAssignableFrom(typeof(IInvokeable))).Select(x => x.GetType()).ToArray();
-					int len = items.Length;
-					_intercInfo = new InterceptionsInfo(new Type[len]);
+					_interceptors = new SafeCollection<InterceptorInfo>(attributes.Length);
 
-					for (int i = 0; i < len; i++)
+					for (int i = 0; i < attributes.Length; i++)
 					{
-						_intercInfo.Interceptors[i] = items[i];
+						InterceptorAttribute attr = (attributes[i] as InterceptorAttribute);
+						if (attr != null)
+						{
+							InterceptorInfo info = new InterceptorInfo(attr.InterceptorType, attr.Mode);
+							_interceptors.Add(info);
+						}
 					}
-
-					_weakMapper.Target.Add(targetType, _intercInfo);
+					_weakMapper.Target.EmptyAndAddRange(targetType, _interceptors);
 				}
 			}
 
