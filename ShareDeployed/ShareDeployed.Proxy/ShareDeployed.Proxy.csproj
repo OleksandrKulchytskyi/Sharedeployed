@@ -50,8 +50,10 @@
     <Compile Include="IProxy.cs" />
     <Compile Include="IProxyInvocationHandler.cs" />
     <Compile Include="MetadataFactory.cs" />
+    <Compile Include="ObjectCreatorHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SafeCollection.cs" />
+    <Compile Include="ServicesMapper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -8,22 +8,22 @@ using System.Threading;
 
 namespace ShareDeployed.Common.Proxy
 {
-	public sealed class DynamicProxyMapper
+	public sealed class DynamicAttributesMapper
 	{
 		private static ConcurrentDictionary<Type, SafeCollection<InterceptorInfo>> _interceptorsMappings;
-		private static Lazy<DynamicProxyMapper> _instance;
+		private static Lazy<DynamicAttributesMapper> _instance;
 
-		static DynamicProxyMapper()
+		static DynamicAttributesMapper()
 		{
-			_instance = new Lazy<DynamicProxyMapper>(() => new DynamicProxyMapper(), true);
+			_instance = new Lazy<DynamicAttributesMapper>(() => new DynamicAttributesMapper(), true);
 			_interceptorsMappings = new ConcurrentDictionary<Type, SafeCollection<InterceptorInfo>>();
 		}
 
-		private DynamicProxyMapper()
+		private DynamicAttributesMapper()
 		{
 		}
 
-		public static DynamicProxyMapper Instance
+		public static DynamicAttributesMapper Instance
 		{
 			get
 			{
