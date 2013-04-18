@@ -31,6 +31,16 @@ namespace ShareDeployed.Test
 		}
 
 		[TestMethod]
+		public void DynamicProxyMapperTest()
+		{
+			dynamic dp = new DynamicProxy(new DynamicTestData());
+			dp.DoStuff();
+
+			dynamic dp2 = new DynamicProxy(new DynamicTestData());
+			dp2.DoStuff();
+		}
+
+		[TestMethod]
 		[ExpectedException(typeof(RuntimeBinderException))]
 		public void DynamicProxyErrorTest()
 		{
@@ -38,13 +48,60 @@ namespace ShareDeployed.Test
 			dp.DoNonExistentMethod();
 		}
 
+		[TestMethod]
+		public void DynamicProxyFieldAccessTest()
+		{
+			dynamic dp = new DynamicProxy(new DynamicTestData());
+			dp.data = "12";
+			dp.Id = 12;
+			Console.WriteLine(dp.Id);
+			dp.WriteDataValue();
+		}
+
+		[TestMethod]
+		public void DynamicProxyExceptionIntercepterTest()
+		{
+			dynamic dp = new DynamicProxy(new ErrorProneClass());
+			dp.data = "12";
+			dp.Id = 12;
+			Console.WriteLine(dp.Id);
+			dp.WriteDataValue();
+		}
+
+		[Interceptor(InterceptorType = typeof(DynamicTestData), Mode = ExecutionInjectionMode.After)]
 		class DynamicTestData
 		{
+			public string data;
+
 			public int Id { get; set; }
 
 			public void DoStuff()
 			{
 				Console.WriteLine("Hello");
+			}
+
+			public void WriteDataValue()
+			{
+				Console.WriteLine(data);
+			}
+		}
+
+		[Interceptor(InterceptorType = typeof(ExceptionInterceptor), Mode = ExecutionInjectionMode.OnError, EatException = false)]
+		class ErrorProneClass
+		{
+			public string data;
+
+			public int Id { get; set; }
+
+			public void DoStuff()
+			{
+				Console.WriteLine("Hello");
+			}
+
+			public void WriteDataValue()
+			{
+				Console.WriteLine(data);
+				throw new InvalidOperationException("Some error message");
 			}
 		}
 

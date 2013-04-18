@@ -15,17 +15,39 @@ namespace ShareDeployed.Common.Proxy
 		OnError
 	}
 
-	public interface IInvokeable
+	public class InterceptorInfo
 	{
+		public InterceptorInfo(Type interceptorType, ExecutionInjectionMode mode) :
+			this(interceptorType, mode, false)
+		{
+		}
+
+		public InterceptorInfo(Type interceptorType, ExecutionInjectionMode mode, bool eatException)
+		{
+			Interceptor = interceptorType;
+			Mode = mode;
+			EatException = eatException;
+		}
+
+		public Type Interceptor { get; private set; }
+		public ExecutionInjectionMode Mode { get; private set; }
+		public bool EatException { get; private set; }
 	}
 
-	public sealed class DynamicProxy : DynamicObject
+	[System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct, AllowMultiple = true, Inherited = false)]
+	public sealed class InterceptorAttribute : Attribute
+	{
+		public Type InterceptorType { get; set; }
+		public ExecutionInjectionMode Mode { get; set; }
+		public bool EatException { get; set; }
+	}
+
+	public class DynamicProxy : DynamicObject
 	{
 		private readonly object _target;
-
 		private GenericWeakReference<DynamicProxyMapper> _weakMapper;
-
 		private SafeCollection<InterceptorInfo> _interceptors;
+		private Type _targerType;
 
 		public DynamicProxy(object target)
 		{
@@ -34,16 +56,16 @@ namespace ShareDeployed.Common.Proxy
 
 			_weakMapper = new GenericWeakReference<DynamicProxyMapper>(DynamicProxyMapper.Instance);
 			_target = target;
+			_targerType = _target.GetType();
 
 			InitMappings();
 		}
 
-		private void InitMappings()
+		protected void InitMappings()
 		{
-			Type targetType = _target.GetType();
-			if (!_weakMapper.Target.Contains(targetType))
+			if (!_weakMapper.Target.Contains(_targerType))
 			{
-				object[] attributes = targetType.GetCustomAttributes(typeof(InterceptorAttribute), false);
+				object[] attributes = _targerType.GetCustomAttributes(typeof(InterceptorAttribute), false);
 				if (attributes != null && attributes.Length > 0)
 				{
 					_interceptors = new SafeCollection<InterceptorInfo>(attributes.Length);
@@ -57,20 +79,94 @@ namespace ShareDeployed.Common.Proxy
 							_interceptors.Add(info);
 						}
 					}
-					_weakMapper.Target.EmptyAndAddRange(targetType, _interceptors);
+					_weakMapper.Target.EmptyAndAddRange(_targerType, _interceptors);
 				}
 			}
-
+			else
+				_interceptors = _weakMapper.Target.GetInterceptions(_targerType);
 		}
 
 		public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
 		{
+			var beforeInterceptors = _interceptors.Where(x => x.Mode == ExecutionInjectionMode.Before);
 			Console.WriteLine("before invoking " + binder.Name);
 
-			result = _target.GetType().InvokeMember(binder.Name, BindingFlags.InvokeMethod, null, _target, args);
+			try
+			{
+				result = _targerType.InvokeMember(binder.Name, (BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Instance),
+													null, _target, args);
+			}
+			catch (Exception ex)
+			{
+				var errorInterceptors = _interceptors.Where(x => x.Mode == ExecutionInjectionMode.OnError);
+				if (errorInterceptors != null)
+				{
+					foreach (InterceptorInfo interceptor in errorInterceptors)
+					{
+						IInterceptor real = Activator.CreateInstance(interceptor.Interceptor) as IInterceptor;
+						if (real != null)
+						{
+							real.Intercept(CastToExceptionalInvocation(binder, _target, args, ex));
+						}
+					}
+				}
+				throw;
+			}
 
+			var afterInterceptors = _interceptors.Where(x => x.Mode == ExecutionInjectionMode.After);
 			Console.WriteLine("after invoking " + binder.Name);
 			return true;
+		}
+
+		protected IInvocation CastToInvocation(InvokeMemberBinder binder, object _target, object[] args)
+		{
+			return new DefaultIInvocation(_target, binder, args);
+		}
+
+		protected IInvocation CastToExceptionalInvocation(InvokeMemberBinder binder, object _target, object[] args, Exception ex)
+		{
+			IInvocation invocator = new DefaultIInvocation(_target, binder, args);
+			invocator.SetException(ex);
+			return invocator;
+		}
+
+		public override bool TryGetMember(GetMemberBinder binder, out object result)
+		{
+			result = null;
+			MemberInfo member = _targerType.GetMember(binder.Name).FirstOrDefault();
+			switch (member.MemberType)
+			{
+				case MemberTypes.Field:
+					result = ((FieldInfo)member).GetValue(_target);
+					break;
+				case MemberTypes.Property:
+					result = ((PropertyInfo)member).GetValue(_target, null);
+					break;
+				default:
+					throw new ArgumentException("MemberInfo must be if type FieldInfo or PropertyInfo", "member");
+			}
+
+			return true;
+		}
+
+		public override bool TrySetMember(SetMemberBinder binder, object value)
+		{
+			FieldInfo fieldInfo = _targerType.GetField(binder.Name);
+			if (fieldInfo != null)
+			{
+				fieldInfo.SetValue(_target, value);
+				return true;
+			}
+			else
+			{
+				PropertyInfo pInfo = _targerType.GetProperty(binder.Name);
+				if (pInfo != null)
+				{
+					pInfo.SetValue(_target, value, null);
+					return true;
+				}
+			}
+			return false;
 		}
 	}
 
@@ -80,16 +176,14 @@ namespace ShareDeployed.Common.Proxy
 		{
 			Type typeOfT = typeof(T);
 			var methodInfos = typeOfT.GetMethods();
-			AssemblyName assName = new AssemblyName("testAssembly");
+			AssemblyName assName = new AssemblyName("DefaultProxyAssembly");
+			assName.Version = new Version(1, 0, 0);
 			var assBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assName, AssemblyBuilderAccess.RunAndSave);
-			var moduleBuilder = assBuilder.DefineDynamicModule("testModule", "test.dll");
+			var moduleBuilder = assBuilder.DefineDynamicModule("DefaultProxyModule", "test.dll");
 			var typeBuilder = moduleBuilder.DefineType(typeOfT.Name + "Proxy", TypeAttributes.Public);
 
 			typeBuilder.AddInterfaceImplementation(typeOfT);
-			var ctorBuilder = typeBuilder.DefineConstructor(
-					  MethodAttributes.Public,
-					  CallingConventions.Standard,
-					  new Type[] { });
+			var ctorBuilder = typeBuilder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, new Type[] { });
 			var ilGenerator = ctorBuilder.GetILGenerator();
 			ilGenerator.EmitWriteLine("Creating Proxy instance");
 			ilGenerator.Emit(OpCodes.Ret);

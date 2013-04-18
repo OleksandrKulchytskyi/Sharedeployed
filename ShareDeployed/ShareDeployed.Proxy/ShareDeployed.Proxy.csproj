@@ -42,13 +42,16 @@
     <Compile Include="DynamicAssemblyBuilder.cs" />
     <Compile Include="DynamicProxy.cs" />
     <Compile Include="DynamicProxyMapper.cs" />
+    <Compile Include="ExceptionInterceptor.cs" />
     <Compile Include="GenericsHelper.cs" />
     <Compile Include="GenericWeakReference.cs" />
+    <Compile Include="IInterceptor.cs" />
     <Compile Include="InterfaceProxyFactory.cs" />
     <Compile Include="IProxy.cs" />
     <Compile Include="IProxyInvocationHandler.cs" />
     <Compile Include="MetadataFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SafeCollection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
