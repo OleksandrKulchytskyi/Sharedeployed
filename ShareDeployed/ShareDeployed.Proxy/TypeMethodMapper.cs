@@ -5,6 +5,7 @@ using System.Reflection;
 
 namespace ShareDeployed.Common.Proxy
 {
+	#region MethodCallInfo struct
 	public struct MethodCallInfo : IEquatable<MethodCallInfo>
 	{
 		public MethodCallInfo(string methodName, int argsCount, IEnumerable<string> argsName)
@@ -81,14 +82,15 @@ namespace ShareDeployed.Common.Proxy
 		{
 			return string.Format("{0} - {1} - {3}", MethodName, ArgumentsCount, string.Join(",", ArgumentsName));
 		}
-	}
-
+	} 
+	#endregion
 
 	public sealed class TypeMethodMapper
 	{
 		private static ConcurrentDictionary<Type, ConcurrentDictionary<MethodCallInfo, MethodInfo>> _mappings;
 		private static Lazy<TypeMethodMapper> _instance;
 
+		#region ctors
 		static TypeMethodMapper()
 		{
 			_instance = new Lazy<TypeMethodMapper>(() => new TypeMethodMapper(), true);
@@ -97,7 +99,8 @@ namespace ShareDeployed.Common.Proxy
 
 		private TypeMethodMapper()
 		{
-		}
+		} 
+		#endregion
 
 		public static TypeMethodMapper Instance
 		{
@@ -107,6 +110,7 @@ namespace ShareDeployed.Common.Proxy
 			}
 		}
 
+		#region public methods
 		public void Add(Type type, MethodCallInfo mci, MethodInfo mi)
 		{
 			if (!_mappings.ContainsKey(type))
@@ -131,6 +135,7 @@ namespace ShareDeployed.Common.Proxy
 				return mi;
 			}
 			return null;
-		}
+		} 
+		#endregion
 	}
 }

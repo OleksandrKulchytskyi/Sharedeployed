@@ -25,6 +25,19 @@ namespace ShareDeployed.Common.Proxy
 			InitMappings();
 		}
 
+		#region protected methods
+		protected IInvocation CastToInvocation(InvokeMemberBinder binder, object _target, object[] args)
+		{
+			return new DefaultIInvocation(_target, binder, args);
+		}
+
+		protected IInvocation CastToExceptionalInvocation(InvokeMemberBinder binder, object _target, object[] args, Exception ex)
+		{
+			IInvocation invocator = new DefaultIInvocation(_target, binder, args);
+			invocator.SetException(ex);
+			return invocator;
+		}
+
 		protected void InitMappings()
 		{
 			if (!_weakMapper.Target.Contains(_targerType))
@@ -49,7 +62,9 @@ namespace ShareDeployed.Common.Proxy
 			else
 				_interceptors = _weakMapper.Target.GetInterceptions(_targerType);
 		}
+		#endregion
 
+		#region DynamicObject overrides
 		public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
 		{
 			result = null;
@@ -79,7 +94,11 @@ namespace ShareDeployed.Common.Proxy
 				{
 					foreach (InterceptorInfo interceptor in errorInterceptors)
 					{
-						IInterceptor real = Activator.CreateInstance(interceptor.Interceptor) as IInterceptor;
+						//old way
+						//IInterceptor real = Activator.CreateInstance(interceptor.Interceptor) as IInterceptor;
+						//new way
+						var instDel = ObjectCreatorHelper.ObjectInstantiater(interceptor.Interceptor, false);
+						IInterceptor real = instDel() as IInterceptor;
 						if (real != null)
 						{
 							real.Intercept(CastToExceptionalInvocation(binder, _target, args, ex));
@@ -92,18 +111,6 @@ namespace ShareDeployed.Common.Proxy
 			var afterInterceptors = _interceptors.Where(x => x.Mode == ExecutionInjectionMode.After);
 			Console.WriteLine("after invoking " + binder.Name);
 			return true;
-		}
-
-		protected IInvocation CastToInvocation(InvokeMemberBinder binder, object _target, object[] args)
-		{
-			return new DefaultIInvocation(_target, binder, args);
-		}
-
-		protected IInvocation CastToExceptionalInvocation(InvokeMemberBinder binder, object _target, object[] args, Exception ex)
-		{
-			IInvocation invocator = new DefaultIInvocation(_target, binder, args);
-			invocator.SetException(ex);
-			return invocator;
 		}
 
 		public override bool TryGetMember(GetMemberBinder binder, out object result)
@@ -136,7 +143,7 @@ namespace ShareDeployed.Common.Proxy
 			else
 			{
 				PropertyInfo pInfo = _targerType.GetProperty(binder.Name);
-				if (pInfo != null)
+				if (pInfo != null && pInfo.CanWrite)
 				{
 					pInfo.SetValue(_target, value, null);
 					return true;
@@ -144,6 +151,7 @@ namespace ShareDeployed.Common.Proxy
 			}
 			return false;
 		}
+		#endregion
 	}
 
 	public static class DynamicProxyGeneratorDefault

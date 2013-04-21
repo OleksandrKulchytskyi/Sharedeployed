@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 
 namespace ShareDeployed.Common.Proxy
 {
@@ -13,6 +8,7 @@ namespace ShareDeployed.Common.Proxy
 		private static ConcurrentDictionary<Type, SafeCollection<InterceptorInfo>> _interceptorsMappings;
 		private static Lazy<TypeAttributesMapper> _instance;
 
+		#region ctors
 		static TypeAttributesMapper()
 		{
 			_instance = new Lazy<TypeAttributesMapper>(() => new TypeAttributesMapper(), true);
@@ -21,7 +17,8 @@ namespace ShareDeployed.Common.Proxy
 
 		private TypeAttributesMapper()
 		{
-		}
+		} 
+		#endregion
 
 		public static TypeAttributesMapper Instance
 		{
@@ -31,6 +28,7 @@ namespace ShareDeployed.Common.Proxy
 			}
 		}
 
+		#region public methods
 		public bool Add(Type type, InterceptorInfo info)
 		{
 			if (!_interceptorsMappings.ContainsKey(type))
@@ -93,6 +91,7 @@ namespace ShareDeployed.Common.Proxy
 				SafeCollection<InterceptorInfo> infos;
 				return _interceptorsMappings.TryRemove(type, out infos);
 			}
-		}
+		} 
+		#endregion
 	}
 }

@@ -29,8 +29,7 @@ namespace ShareDeployed.Common.Proxy
 		/// <typeparam name="T">T must be an interface that is public.</typeparam>
 		/// <returns>An object that implements the T interface</returns>
 		/// <exception cref="TypeIsNotAnInterface">Thrown if T is not an interface</exception>
-		public static T New<T>()
-			where T : class
+		public static T New<T>() where T : class
 		{
 			Type type = typeof(T);
 
