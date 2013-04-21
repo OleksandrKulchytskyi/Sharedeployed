@@ -39,9 +39,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common.cs" />
     <Compile Include="DynamicAssemblyBuilder.cs" />
     <Compile Include="DynamicProxy.cs" />
-    <Compile Include="DynamicProxyMapper.cs" />
+    <Compile Include="DynamicAttributesMapper.cs" />
     <Compile Include="ExceptionInterceptor.cs" />
     <Compile Include="GenericsHelper.cs" />
     <Compile Include="GenericWeakReference.cs" />
@@ -50,6 +51,7 @@
     <Compile Include="IProxy.cs" />
     <Compile Include="IProxyInvocationHandler.cs" />
     <Compile Include="MetadataFactory.cs" />
+    <Compile Include="TypeMethodMapper.cs" />
     <Compile Include="ObjectCreatorHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SafeCollection.cs" />

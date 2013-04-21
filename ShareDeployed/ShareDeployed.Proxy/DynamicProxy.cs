@@ -1,47 +1,11 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Dynamic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Linq;
 
 namespace ShareDeployed.Common.Proxy
 {
-	public enum ExecutionInjectionMode
-	{
-		None = 0,
-		Before,
-		After,
-		OnError
-	}
-
-	public class InterceptorInfo
-	{
-		public InterceptorInfo(Type interceptorType, ExecutionInjectionMode mode) :
-			this(interceptorType, mode, false)
-		{
-		}
-
-		public InterceptorInfo(Type interceptorType, ExecutionInjectionMode mode, bool eatException)
-		{
-			Interceptor = interceptorType;
-			Mode = mode;
-			EatException = eatException;
-		}
-
-		public Type Interceptor { get; private set; }
-		public ExecutionInjectionMode Mode { get; private set; }
-		public bool EatException { get; private set; }
-	}
-
-	[System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct, AllowMultiple = true, Inherited = false)]
-	public sealed class InterceptorAttribute : Attribute
-	{
-		public Type InterceptorType { get; set; }
-		public ExecutionInjectionMode Mode { get; set; }
-		public bool EatException { get; set; }
-	}
-
 	public class DynamicProxy : DynamicObject
 	{
 		private readonly object _target;
@@ -88,13 +52,25 @@ namespace ShareDeployed.Common.Proxy
 
 		public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
 		{
+			result = null;
 			var beforeInterceptors = _interceptors.Where(x => x.Mode == ExecutionInjectionMode.Before);
 			Console.WriteLine("before invoking " + binder.Name);
 
 			try
 			{
-				result = _targerType.InvokeMember(binder.Name, (BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Instance),
-													null, _target, args);
+				MethodCallInfo mci = new MethodCallInfo(binder.Name, binder.CallInfo.ArgumentCount, binder.CallInfo.ArgumentNames);
+				MethodInfo mi = null;
+				if ((mi = TypeMethodMapper.Instance.Get(_targerType, mci)) != null)
+					result = mi.Invoke(_target, args);
+				else
+				{
+					mi = _targerType.GetMethod(binder.Name, (BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Instance));
+					if (mi != null)
+					{
+						TypeMethodMapper.Instance.Add(_targerType, mci, mi);
+						result = mi.Invoke(_target, args);
+					}
+				}
 			}
 			catch (Exception ex)
 			{

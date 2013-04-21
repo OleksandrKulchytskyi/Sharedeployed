@@ -1,0 +1,136 @@
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Reflection;
+
+namespace ShareDeployed.Common.Proxy
+{
+	public struct MethodCallInfo : IEquatable<MethodCallInfo>
+	{
+		public MethodCallInfo(string methodName, int argsCount, IEnumerable<string> argsName)
+		{
+			_methodName = methodName;
+			_argsCount = argsCount;
+			_argumentsName = new List<string>(argsCount);
+			if (argsCount > 0)
+				ArgumentsName.AddRange(argsName);
+		}
+
+		private string _methodName;
+		public string MethodName
+		{
+			get { return _methodName; }
+			set { _methodName = value; }
+		}
+
+		private int _argsCount;
+		public int ArgumentsCount
+		{
+			get { return _argsCount; }
+			set { _argsCount = value; }
+		}
+
+		private List<string> _argumentsName;
+		public List<string> ArgumentsName
+		{
+			get { return _argumentsName; }
+			set { _argumentsName = value; }
+		}
+
+
+		public bool Equals(MethodCallInfo other)
+		{
+			return (string.Equals(MethodName, other.MethodName, StringComparison.InvariantCulture) &&
+					ArgumentsCount == other.ArgumentsCount &&
+					IsArgumentsNameEquals(other));
+		}
+
+		private bool IsArgumentsNameEquals(MethodCallInfo compare)
+		{
+			bool result = true;
+			if (ArgumentsName.Count != compare.ArgumentsName.Count)
+				return false;
+
+			foreach (string agrument in ArgumentsName)
+			{
+				if (!compare.ArgumentsName.Contains(agrument))
+				{
+					result = false;
+					break;
+				}
+			}
+
+			return result;
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj is MethodCallInfo)
+			{
+				return Equals((MethodCallInfo)obj);
+			}
+			return false;
+		}
+
+		public override int GetHashCode()
+		{
+			return _methodName.GetHashCode() + _argsCount;
+		}
+
+		public override string ToString()
+		{
+			return string.Format("{0} - {1} - {3}", MethodName, ArgumentsCount, string.Join(",", ArgumentsName));
+		}
+	}
+
+
+	public sealed class TypeMethodMapper
+	{
+		private static ConcurrentDictionary<Type, ConcurrentDictionary<MethodCallInfo, MethodInfo>> _mappings;
+		private static Lazy<TypeMethodMapper> _instance;
+
+		static TypeMethodMapper()
+		{
+			_instance = new Lazy<TypeMethodMapper>(() => new TypeMethodMapper(), true);
+			_mappings = new ConcurrentDictionary<Type, ConcurrentDictionary<MethodCallInfo, MethodInfo>>();
+		}
+
+		private TypeMethodMapper()
+		{
+		}
+
+		public static TypeMethodMapper Instance
+		{
+			get
+			{
+				return _instance.Value;
+			}
+		}
+
+		public void Add(Type type, MethodCallInfo mci, MethodInfo mi)
+		{
+			if (!_mappings.ContainsKey(type))
+			{
+				if (_mappings.TryAdd(type, new ConcurrentDictionary<MethodCallInfo, MethodInfo>()))
+				{
+					_mappings[type].TryAdd(mci, mi);
+				}
+			}
+			else if (!_mappings[type].ContainsKey(mci))
+			{
+				_mappings[type].TryAdd(mci, mi);
+			}
+		}
+
+		public MethodInfo Get(Type type, MethodCallInfo mci)
+		{
+			if (_mappings.ContainsKey(type))
+			{
+				MethodInfo mi = null;
+				_mappings[type].TryGetValue(mci, out mi);
+				return mi;
+			}
+			return null;
+		}
+	}
+}
