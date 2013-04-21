@@ -9,7 +9,7 @@ namespace ShareDeployed.Common.Proxy
 	public class DynamicProxy : DynamicObject
 	{
 		private readonly object _target;
-		private GenericWeakReference<DynamicAttributesMapper> _weakMapper;
+		private GenericWeakReference<TypeAttributesMapper> _weakMapper;
 		private SafeCollection<InterceptorInfo> _interceptors;
 		private Type _targerType;
 
@@ -18,7 +18,7 @@ namespace ShareDeployed.Common.Proxy
 			if (target == null)
 				throw new ArgumentNullException("Parameter target cannot be a null.");
 
-			_weakMapper = new GenericWeakReference<DynamicAttributesMapper>(DynamicAttributesMapper.Instance);
+			_weakMapper = new GenericWeakReference<TypeAttributesMapper>(TypeAttributesMapper.Instance);
 			_target = target;
 			_targerType = _target.GetType();
 

@@ -42,7 +42,7 @@
     <Compile Include="Common.cs" />
     <Compile Include="DynamicAssemblyBuilder.cs" />
     <Compile Include="DynamicProxy.cs" />
-    <Compile Include="DynamicAttributesMapper.cs" />
+    <Compile Include="TypeAttributesMapper.cs" />
     <Compile Include="ExceptionInterceptor.cs" />
     <Compile Include="GenericsHelper.cs" />
     <Compile Include="GenericWeakReference.cs" />

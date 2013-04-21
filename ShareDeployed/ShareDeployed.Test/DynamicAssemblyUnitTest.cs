@@ -59,13 +59,16 @@ namespace ShareDeployed.Test
 		}
 
 		[TestMethod]
+		[ExpectedException(typeof(System.Reflection.TargetInvocationException))]
 		public void DynamicProxyExceptionIntercepterTest()
 		{
 			dynamic dp = new DynamicProxy(new ErrorProneClass());
 			dp.data = "12";
 			dp.Id = 12;
 			Console.WriteLine(dp.Id);
-			dp.WriteDataValue();
+			dp.DoStuff();
+			dp.DoStuff();
+			dp.WriteDataParams(1, "1");
 		}
 
 		[Interceptor(InterceptorType = typeof(DynamicTestData), Mode = ExecutionInjectionMode.After)]
@@ -102,6 +105,12 @@ namespace ShareDeployed.Test
 			{
 				Console.WriteLine(data);
 				throw new InvalidOperationException("Some error message");
+			}
+
+			public void WriteDataParams(int id, string name)
+			{
+				Console.WriteLine("{0}-{1}", id, name);
+				throw new InvalidOperationException("Some error message in parametrized method.");
 			}
 		}
 
