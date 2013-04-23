@@ -42,6 +42,10 @@
     <Compile Include="Common.cs" />
     <Compile Include="DynamicAssemblyBuilder.cs" />
     <Compile Include="DynamicProxy.cs" />
+    <Compile Include="Pooling\ConcurrentPool.cs" />
+    <Compile Include="Pooling\IRecyclable.cs" />
+    <Compile Include="Pooling\IRecycler.cs" />
+    <Compile Include="Pooling\RecyclableObject.cs" />
     <Compile Include="TypeAttributesMapper.cs" />
     <Compile Include="ExceptionInterceptor.cs" />
     <Compile Include="GenericsHelper.cs" />
