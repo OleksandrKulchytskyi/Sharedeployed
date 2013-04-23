@@ -18,7 +18,6 @@ namespace ShareDeployed.Common.Proxy.Pooling
 		/// <returns>The instance of T.</returns>
 		public delegate T CreateInstanceDelegate(IRecycler recycler);
 
-
 		private int InstancesInUseCount;
 		private string Name = String.Empty;
 		private ConcurrentQueue<T> Instances = new ConcurrentQueue<T>();
@@ -224,7 +223,7 @@ namespace ShareDeployed.Common.Proxy.Pooling
 		/// <returns>The diagnostincs string.</returns>
 		public override string ToString()
 		{
-			return this.Name;
+			return string.Format("{0}{1}Count:{2},InUse:{3}", this.Name, Environment.NewLine, Count, InUseCount);
 		}
 		#endregion
 	}

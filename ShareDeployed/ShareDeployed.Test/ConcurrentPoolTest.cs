@@ -77,7 +77,6 @@ namespace ShareDeployed.Test
 
 			// How mRecycleny now?
 			DiagnoseTest("GC collected.", poolOfRecycles);
-
 		}
 
 		[TestMethod]
