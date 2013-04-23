@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
 
 namespace ShareDeployed.Common.Proxy
 {
@@ -12,7 +10,7 @@ namespace ShareDeployed.Common.Proxy
 
 	public sealed class ObjectCreatorHelper
 	{
-		private static Dictionary<Type, CreateInstanceDelegate> _createInstanceDelegateList;
+		private static IDictionary<Type, CreateInstanceDelegate> _createInstanceDelegateList;
 		private static object _syncRoot;
 
 		static ObjectCreatorHelper()
@@ -65,7 +63,7 @@ namespace ShareDeployed.Common.Proxy
 					return ObjectInstantiater(implType);
 				}
 				else
-					throw new InvalidOperationException(string.Format("Abstraction mapping in not registered in the system.{0}{1}", Environment.NewLine, objectType));
+					throw new InvalidOperationException(string.Format("Mapping for abstraction is not registered in the system.{0}{1}", Environment.NewLine, objectType));
 			}
 			return ObjectInstantiater(objectType);
 		}

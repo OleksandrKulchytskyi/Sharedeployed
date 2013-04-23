@@ -8,7 +8,7 @@ namespace ShareDeployed.Common.Proxy
 	public sealed class ServicesMapper
 	{
 		// A MAP BETWEEN CONTRACTS -> CONCRETE IMPLEMENTATION CLASSES
-		private static Dictionary<Type, Type> _servicesMap;
+		private static IDictionary<Type, Type> _servicesMap;
 		private static object _syncRoot;
 
 		static ServicesMapper()
