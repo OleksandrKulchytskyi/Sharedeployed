@@ -92,6 +92,8 @@
     <Compile Include="DynamicAssemblyUnitTest.cs" />
     <Compile Include="ProxyFactoryUnitTest.cs" />
     <Compile Include="ConcurrentPoolTest.cs" />
+    <Compile Include="DynamicProxyUnitTest.cs" />
+    <Compile Include="TypeExtensionTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ShareDeployed.Common\ShareDeployed.Common.csproj">

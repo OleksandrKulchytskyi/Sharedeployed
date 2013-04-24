@@ -31,7 +31,7 @@ namespace ShareDeployed.Common.Proxy
 		public bool EatException { get; private set; }
 	}
 
-	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = true, Inherited = false)]
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
 	public sealed class InterceptorAttribute : Attribute
 	{
 		public Type InterceptorType { get; set; }

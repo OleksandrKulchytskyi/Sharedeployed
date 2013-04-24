@@ -26,10 +26,6 @@ namespace ShareDeployed.Common.Proxy
 				if (cuurrentExc.InnerException.InnerException != null)
 					Debug.WriteLine(cuurrentExc.InnerException.InnerException.Message);
 			}
-
 		}
-
-
-
 	}
 }

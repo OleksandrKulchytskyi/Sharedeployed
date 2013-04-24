@@ -96,9 +96,10 @@ namespace ShareDeployed.Common.Proxy
 			return _target.GetType().GetMethod(_invokeMemberBinder.Name);
 		}
 
-		public void Proceed()
+		public virtual void Proceed()
 		{
-			throw new NotImplementedException();
+			if (MethodInvocationTarget != null)
+				MethodInvocationTarget.Invoke(_target, _args);
 		}
 
 		public Type[] GenericArguments

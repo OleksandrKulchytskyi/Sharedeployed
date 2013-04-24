@@ -85,24 +85,24 @@ namespace ShareDeployed.Common.Proxy
 	} 
 	#endregion
 
-	public sealed class TypeMethodMapper
+	public sealed class TypeMethodsMapper
 	{
 		private static ConcurrentDictionary<Type, ConcurrentDictionary<MethodCallInfo, MethodInfo>> _mappings;
-		private static Lazy<TypeMethodMapper> _instance;
+		private static Lazy<TypeMethodsMapper> _instance;
 
 		#region ctors
-		static TypeMethodMapper()
+		static TypeMethodsMapper()
 		{
-			_instance = new Lazy<TypeMethodMapper>(() => new TypeMethodMapper(), true);
+			_instance = new Lazy<TypeMethodsMapper>(() => new TypeMethodsMapper(), true);
 			_mappings = new ConcurrentDictionary<Type, ConcurrentDictionary<MethodCallInfo, MethodInfo>>();
 		}
 
-		private TypeMethodMapper()
+		private TypeMethodsMapper()
 		{
 		} 
 		#endregion
 
-		public static TypeMethodMapper Instance
+		public static TypeMethodsMapper Instance
 		{
 			get
 			{
