@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace ShareDeployed.Common.Proxy.FastReflection
 {
-	public class FastProperty
+	public sealed class FastProperty
 	{
 		public PropertyInfo Property { get; set; }
 

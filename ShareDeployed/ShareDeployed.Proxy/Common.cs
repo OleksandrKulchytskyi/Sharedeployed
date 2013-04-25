@@ -4,7 +4,7 @@ using System.Dynamic;
 
 namespace ShareDeployed.Common.Proxy
 {
-	public enum ExecutionInjectionMode
+	public enum InterceptorInjectionMode
 	{
 		None = 0,
 		Before,
@@ -14,12 +14,12 @@ namespace ShareDeployed.Common.Proxy
 
 	public class InterceptorInfo
 	{
-		public InterceptorInfo(Type interceptorType, ExecutionInjectionMode mode) :
+		public InterceptorInfo(Type interceptorType, InterceptorInjectionMode mode) :
 			this(interceptorType, mode, false)
 		{
 		}
 
-		public InterceptorInfo(Type interceptorType, ExecutionInjectionMode mode, bool eatException)
+		public InterceptorInfo(Type interceptorType, InterceptorInjectionMode mode, bool eatException)
 		{
 			Interceptor = interceptorType;
 			Mode = mode;
@@ -27,7 +27,7 @@ namespace ShareDeployed.Common.Proxy
 		}
 
 		public Type Interceptor { get; private set; }
-		public ExecutionInjectionMode Mode { get; private set; }
+		public InterceptorInjectionMode Mode { get; private set; }
 		public bool EatException { get; private set; }
 	}
 
@@ -35,7 +35,7 @@ namespace ShareDeployed.Common.Proxy
 	public sealed class InterceptorAttribute : Attribute
 	{
 		public Type InterceptorType { get; set; }
-		public ExecutionInjectionMode Mode { get; set; }
+		public InterceptorInjectionMode Mode { get; set; }
 		public bool EatException { get; set; }
 	}
 
@@ -115,45 +115,5 @@ namespace ShareDeployed.Common.Proxy
 		/// The actual struct wrapped by this instance.
 		/// </summary>
 		public ValueType Value { get; set; }
-	}
-
-	/// <summary>
-	/// Extension methods for working with types.
-	/// </summary>
-	public static class ValueTypeExtensions
-	{
-		///<summary>
-		/// Returns a wrapper <see cref="ValueTypeHolder"/> instance if <paramref name="obj"/> 
-		/// is a value type.  Otherwise, returns <paramref name="obj"/>.
-		///</summary>
-		///<param name="obj">An object to be examined.</param>
-		///<returns>A wrapper <seealso cref="ValueTypeHolder"/> instance if <paramref name="obj"/>
-		/// is a value type, or <paramref name="obj"/> itself if it's a reference type.</returns>
-		public static object WrapIfValueType(this object obj)
-		{
-			return obj.GetType().IsValueType ? new ValueTypeHolder(obj) : obj;
-		}
-
-		///<summary>
-		/// Returns a wrapped object if <paramref name="obj"/> is an instance of <see cref="ValueTypeHolder"/>.
-		///</summary>
-		///<param name="obj">An object to be "erased".</param>
-		///<returns>The object wrapped by <paramref name="obj"/> if the latter is of type <see cref="ValueTypeHolder"/>.  Otherwise,
-		/// return <paramref name="obj"/>.</returns>
-		public static object UnwrapIfWrapped(this object obj)
-		{
-			var holder = obj as ValueTypeHolder;
-			return holder == null ? obj : holder.Value;
-		}
-
-		/// <summary>
-		/// Determines whether <paramref name="obj"/> is a wrapped object (instance of <see cref="ValueTypeHolder"/>).
-		/// </summary>
-		/// <param name="obj">The object to check.</param>
-		/// <returns>Returns true if <paramref name="obj"/> is a wrapped object (instance of <see cref="ValueTypeHolder"/>).</returns>
-		public static bool IsWrapped(this object obj)
-		{
-			return obj as ValueTypeHolder != null;
-		}
 	}
 }

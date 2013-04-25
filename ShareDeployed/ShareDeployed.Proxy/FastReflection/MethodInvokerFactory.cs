@@ -1,22 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
 
 namespace ShareDeployed.Common.Proxy
 {
 	public delegate object MethodInvoker(object target);
 
-	public sealed class MethodInvokerHelper
+	public sealed class MethodInvokerFactory
 	{
-		private MethodInvokerHelper()
+		private MethodInvokerFactory()
 		{
 		}
 
 		/// <summary>
-		/// 
+		/// Create instance of MethodInvoker delegate
 		/// </summary>
 		/// <param name="targetType">Target type</param>
 		/// <param name="methodName">Calling method name</param>
@@ -31,9 +28,11 @@ namespace ShareDeployed.Common.Proxy
 														typeof(object), new Type[0], targetType, true);
 			ILGenerator ilGen = dynMethod.GetILGenerator();
 			MethodInfo mi = targetType.GetMethod(methodName, BindingFlags.Instance);
+
 			ilGen.Emit(OpCodes.Ldarg_0);
 			ilGen.Emit(OpCodes.Castclass, targetType);
 			ilGen.Emit(OpCodes.Callvirt, mi);
+			
 			if (mi.ReturnType == typeof(void))
 				ilGen.Emit(OpCodes.Ldnull);
 			else

@@ -82,12 +82,13 @@ namespace ShareDeployed.Common.Proxy
 		{
 			return string.Format("{0} - {1} - {3}", MethodName, ArgumentsCount, string.Join(",", ArgumentsName));
 		}
-	} 
+	}
 	#endregion
 
 	public sealed class TypeMethodsMapper
 	{
 		private static ConcurrentDictionary<Type, ConcurrentDictionary<MethodCallInfo, MethodInfo>> _mappings;
+		private static ConcurrentDictionary<MethodInfo, FastReflection.DynamicMethodDelegate> _dynamicDelMap;
 		private static Lazy<TypeMethodsMapper> _instance;
 
 		#region ctors
@@ -95,11 +96,12 @@ namespace ShareDeployed.Common.Proxy
 		{
 			_instance = new Lazy<TypeMethodsMapper>(() => new TypeMethodsMapper(), true);
 			_mappings = new ConcurrentDictionary<Type, ConcurrentDictionary<MethodCallInfo, MethodInfo>>();
+			_dynamicDelMap = new ConcurrentDictionary<MethodInfo, FastReflection.DynamicMethodDelegate>();
 		}
 
 		private TypeMethodsMapper()
 		{
-		} 
+		}
 		#endregion
 
 		public static TypeMethodsMapper Instance
@@ -117,12 +119,17 @@ namespace ShareDeployed.Common.Proxy
 			{
 				if (_mappings.TryAdd(type, new ConcurrentDictionary<MethodCallInfo, MethodInfo>()))
 				{
-					_mappings[type].TryAdd(mci, mi);
+					if (_mappings[type].TryAdd(mci, mi))
+						_dynamicDelMap.TryAdd(mi, FastReflection.DynamicMethodDelegateFactory.Create(mi));
 				}
 			}
 			else if (!_mappings[type].ContainsKey(mci))
 			{
-				_mappings[type].TryAdd(mci, mi);
+				if (_mappings[type].TryAdd(mci, mi))
+				{
+					FastReflection.DynamicMethodDelegate del = FastReflection.DynamicMethodDelegateFactory.Create(mi);
+					_dynamicDelMap.AddOrUpdate(mi, del, (key, oldVal) => oldVal = del);
+				}
 			}
 		}
 
@@ -135,7 +142,26 @@ namespace ShareDeployed.Common.Proxy
 				return mi;
 			}
 			return null;
-		} 
+		}
+
+		public bool Contains(Type type, MethodCallInfo mci)
+		{
+			return (_mappings.ContainsKey(type) && _mappings[type].ContainsKey(mci));
+		}
+
+		public FastReflection.DynamicMethodDelegate GetDynamicDelegate(Type type, MethodCallInfo mci)
+		{
+			if (_mappings.ContainsKey(type))
+			{
+				MethodInfo mi = null;
+				if (_mappings[type].TryGetValue(mci, out mi))
+				{
+					return _dynamicDelMap[mi];
+				}
+			}
+			return null;
+		}
+
 		#endregion
 	}
 }

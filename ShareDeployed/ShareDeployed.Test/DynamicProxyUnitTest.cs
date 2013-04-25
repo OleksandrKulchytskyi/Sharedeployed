@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ShareDeployed.Common.Proxy;
+using System.Diagnostics;
 
 namespace ShareDeployed.Test
 {
@@ -13,7 +14,7 @@ namespace ShareDeployed.Test
 		{
 			public int DefaultData { get; set; }
 
-			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = ExecutionInjectionMode.Before)]
+			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorInjectionMode.Before)]
 			public int DoWorkNonError(int add)
 			{
 				int i;
@@ -21,12 +22,11 @@ namespace ShareDeployed.Test
 					i = 5;
 				else
 					i = DefaultData;
-
 				i = i + add;
 				return i;
 			}
 
-			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = false, Mode = ExecutionInjectionMode.OnError)]
+			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = false, Mode = InterceptorInjectionMode.OnError)]
 			public int DoWorkReturnError(int add)
 			{
 				int i = 5;
@@ -35,7 +35,7 @@ namespace ShareDeployed.Test
 				return i;
 			}
 
-			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = false, Mode = ExecutionInjectionMode.OnError)]
+			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = false, Mode = InterceptorInjectionMode.OnError)]
 			public void DoWorkError(int add)
 			{
 				int i = 5;
@@ -44,7 +44,7 @@ namespace ShareDeployed.Test
 				throw new InvalidOperationException("Something is going wrong.");
 			}
 
-			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = ExecutionInjectionMode.OnError)]
+			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorInjectionMode.OnError)]
 			public int DoWorkErrorNoThrow(int add)
 			{
 				int i = 5;
@@ -97,9 +97,7 @@ namespace ShareDeployed.Test
 			{
 				var real = new ErrorProneAbstracted();
 				dynamic proxy = new DynamicProxy(real);
-
 				IDoWork interf = proxy;
-
 				if (interf != null)
 				{
 					interf.DoWrok();
@@ -118,9 +116,7 @@ namespace ShareDeployed.Test
 			{
 				var real = new ErrorProneAbstracted();
 				AdvancedDynamicProxy proxy = new AdvancedDynamicProxy(real);
-
 				IDoWork interf = proxy.GetAbstraction<IDoWork>();
-
 				if (interf != null)
 				{
 					interf.DoWrok();
@@ -129,6 +125,19 @@ namespace ShareDeployed.Test
 					interf.DoWorkErrored(12);
 				}
 			}
+		}
+
+		[TestMethod]
+		public void FastPropertyTest()
+		{
+			var real = new ErrorProneAbstracted();
+			dynamic proxy = new DynamicProxy(real);
+
+			Assert.IsTrue(proxy.Default == 0);
+			proxy.Default = 23;
+			Assert.IsTrue(proxy.Default == 23);
+
+			Assert.IsTrue(TypePropertyMapper.Instance.Get(real.GetType(), "Default") != null);
 		}
 
 		interface IDoWork
@@ -152,7 +161,7 @@ namespace ShareDeployed.Test
 				Console.WriteLine(i);
 			}
 
-			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = ExecutionInjectionMode.OnError)]
+			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorInjectionMode.OnError)]
 			public int DoWorkErrored(int data)
 			{
 				int i;
@@ -165,6 +174,74 @@ namespace ShareDeployed.Test
 				throw new InvalidOperationException("Simulating exception.");
 				return i;
 			}
+		}
+
+		class PropertyHolder
+		{
+			public int Id { get; set; }
+			public string Name { get; set; }
+			public bool Old { get; set; }
+		}
+
+		[TestMethod]
+		public void DynamicProxyPropertyPerformanceSingleTest()
+		{
+			var holder1 = new PropertyHolder();
+			var holder2 = new PropertyHolder();
+			dynamic proxy = new DynamicProxy(holder1);
+			dynamic proxy2 = new DynamicProxy(holder2, false);
+
+			Stopwatch sw = new Stopwatch();
+			sw.Start();
+			proxy.Id = 12;
+			proxy.Name = "Test";
+			proxy.Old = true;
+			sw.Stop();
+			long ticksFast = sw.ElapsedTicks;
+			sw.Reset();
+			sw.Start();
+			proxy2.Id = 12;
+			proxy2.Name = "Test";
+			proxy2.Old = true;
+			sw.Stop();
+			long ticksReflection = sw.ElapsedTicks;
+
+			Debug.WriteLine((ticksFast / ticksReflection));
+			Assert.IsTrue(ticksFast > ticksReflection);
+		}
+
+		[TestMethod]
+		public void DynamicProxyPropertyPerformanceMultipleTest()
+		{
+			var holder1 = new PropertyHolder();
+			var holder2 = new PropertyHolder();
+			dynamic proxy = new DynamicProxy(holder1);
+			dynamic proxy2 = new DynamicProxy(holder2, false);
+			int iterCount = 10000;
+
+			Stopwatch sw = new Stopwatch();
+			sw.Start();
+			for (int i = 1; i <= iterCount; i++)
+			{
+				proxy.Id = i;
+				proxy.Name = "Test";
+				proxy.Old = true;
+			}
+			sw.Stop();
+			long ticksFast = sw.ElapsedTicks;
+			sw.Reset();
+			sw.Start();
+			for (int i = 1; i <= iterCount; i++)
+			{
+				proxy2.Id = i;
+				proxy2.Name = "Test";
+				proxy2.Old = true;
+			}
+			sw.Stop();
+			long ticksReflection = sw.ElapsedTicks;
+
+			Debug.WriteLine((ticksFast / ticksReflection));
+			Assert.IsTrue(ticksFast < ticksReflection);
 		}
 	}
 }

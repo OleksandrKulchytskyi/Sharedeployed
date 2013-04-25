@@ -34,16 +34,16 @@ namespace ShareDeployed.Common.Proxy.Caching
 	[DebuggerStepThrough]
 	internal sealed class Cache<TKey, TValue>
 	{
-		private readonly IDictionary<TKey, object> entries;
+		private readonly IDictionary<TKey, object> _entries;
 
-		#region Constructors
+		#region Ctors
 		public Cache()
 		{
-			entries = new ConcurrentDictionary<TKey, object>();
+			_entries = new ConcurrentDictionary<TKey, object>();
 		}
 		public Cache(IEqualityComparer<TKey> equalityComparer)
 		{
-			entries = new ConcurrentDictionary<TKey, object>(equalityComparer);
+			_entries = new ConcurrentDictionary<TKey, object>(equalityComparer);
 		}
 		#endregion
 
@@ -58,7 +58,6 @@ namespace ShareDeployed.Common.Proxy.Caching
 		}
 		#endregion
 
-		#region Indexers
 		/// <summary>
 		/// Indexer for accessing or adding cache entries.
 		/// </summary>
@@ -75,9 +74,7 @@ namespace ShareDeployed.Common.Proxy.Caching
 		{
 			set { Insert(key, value, strategy); }
 		}
-		#endregion
 
-		#region Insert Methods
 		/// <summary>
 		/// Insert a collectible object into the cache.
 		/// </summary>
@@ -97,13 +94,10 @@ namespace ShareDeployed.Common.Proxy.Caching
 		/// that are collectible and Permanent for objects you wish to keep forever).</param>
 		public void Insert(TKey key, TValue value, CacheStrategy strategy)
 		{
-			entries[key] = strategy == CacheStrategy.Temporary
-				? new WeakReference(value)
-				: value as object;
+			_entries[key] = strategy == CacheStrategy.Temporary
+				? new WeakReference(value) : value as object;
 		}
-		#endregion
 
-		#region Get Methods
 		/// <summary>
 		/// Retrieves an entry from the cache using the given key.
 		/// </summary>
@@ -112,13 +106,16 @@ namespace ShareDeployed.Common.Proxy.Caching
 		public TValue Get(TKey key)
 		{
 			object entry;
-			entries.TryGetValue(key, out entry);
+			_entries.TryGetValue(key, out entry);
 			var wr = entry as WeakReference;
 			return (TValue)(wr != null ? wr.Target : entry);
 		}
-		#endregion
 
-		#region Remove Methods
+		public bool Contains(TKey key)
+		{
+			return _entries.ContainsKey(key);
+		}
+
 		/// <summary>
 		/// Removes the object associated with the given key from the cache.
 		/// </summary>
@@ -126,17 +123,15 @@ namespace ShareDeployed.Common.Proxy.Caching
 		/// <returns>True if an item removed from the cache and false otherwise.</returns>
 		public bool Remove(TKey key)
 		{
-			return entries.Remove(key);
+			return _entries.Remove(key);
 		}
-		#endregion
 
-		#region Clear Methods
 		/// <summary>
 		/// Removes all entries from the cache.
 		/// </summary>
 		public void Clear()
 		{
-			entries.Clear();
+			_entries.Clear();
 		}
 
 		/// <summary>
@@ -145,13 +140,11 @@ namespace ShareDeployed.Common.Proxy.Caching
 		/// <returns>The number of live cache entries still in the cache.</returns>
 		private int ClearCollected()
 		{
-			IList<TKey> keys = entries.Where(kvp => kvp.Value is WeakReference && !(kvp.Value as WeakReference).IsAlive).Select(kvp => kvp.Key).ToList();
-			keys.ForEach(k => entries.Remove(k));
-			return entries.Count;
+			IList<TKey> keys = _entries.Where(kvp => kvp.Value is WeakReference && !(kvp.Value as WeakReference).IsAlive).Select(kvp => kvp.Key).ToList();
+			keys.ForEach(k => _entries.Remove(k));
+			return _entries.Count;
 		}
-		#endregion
 
-		#region ToString
 		/// <summary>
 		/// This method returns a string with information on the cache contents (number of contained objects).
 		/// </summary>
@@ -160,7 +153,6 @@ namespace ShareDeployed.Common.Proxy.Caching
 			int count = ClearCollected();
 			return count > 0 ? String.Format("Cache contains {0} live objects.", count) : "Cache is empty.";
 		}
-		#endregion
 	}
 #elif DOT_NET_35
     using System;
@@ -325,15 +317,4 @@ namespace ShareDeployed.Common.Proxy.Caching
 #else
 #error At least one of the compilation symbols DOT_NET_4 or DOT_NET_35 must be defined.
 #endif
-
-	internal static class Utils
-	{
-		public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
-		{
-			foreach (T element in source)
-			{
-				action(element);
-			}
-		}
-	}
 }

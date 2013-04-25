@@ -10,17 +10,45 @@ namespace ShareDeployed.Common.Proxy
 	public class DynamicProxy : DynamicObject, IDisposable
 	{
 		protected int disposed = -1;
+		private bool _useFastProp;
+		private bool _useDynamicDel;
 		protected readonly object _target;
 		private GenericWeakReference<TypeAttributesMapper> _weakMapper;
 		protected SafeCollection<InterceptorInfo> _interceptors;
 		private Lazy<ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>> _methodInterceptors;
 		protected Type _targerType;
 
+		/// <summary>
+		/// ctor. Initiatiates new instance and uses FastProperty wrappers
+		/// </summary>
+		/// <param name="target">Proxy target</param>
 		public DynamicProxy(object target)
+			: this(target, true)
+		{
+		}
+
+		/// <summary>
+		/// ctor. Initiatiates new instance and uses FastProperty wrappers
+		/// </summary>
+		/// <param name="target">Proxy target</param>
+		/// <param name="useFastProp">Use FastProperty wrapper for managing property calls</param>
+		public DynamicProxy(object target, bool useFastProp)
+			: this(target, useFastProp, false)
+		{
+		}
+
+		/// <summary>
+		/// ctor.
+		/// </summary>
+		/// <param name="target">Proxy target</param>
+		/// <param name="useFastProperty">IUse FastProperty</param>
+		/// <param name="useDynamicDelegates">Use DynamicMethodDelegate for fast methods calls</param>
+		public DynamicProxy(object target, bool useFastProperty, bool useDynamicDelegates)
 		{
 			if (target == null)
 				throw new ArgumentNullException("Parameter target cannot be a null.");
 
+			_useFastProp = useFastProperty;
 			_methodInterceptors = new Lazy<ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>>(
 										() => new ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>(), true);
 			_weakMapper = new GenericWeakReference<TypeAttributesMapper>(TypeAttributesMapper.Instance);
@@ -80,7 +108,7 @@ namespace ShareDeployed.Common.Proxy
 		{
 			result = null;
 			bool isFail = false;
-			var beforeInterceptors = _interceptors.Where(x => x.Mode == ExecutionInjectionMode.Before);
+			var beforeInterceptors = _interceptors.Where(x => x.Mode == InterceptorInjectionMode.Before);
 			Console.WriteLine("before invoking " + binder.Name);
 			MethodInfo mi = null;
 
@@ -89,14 +117,22 @@ namespace ShareDeployed.Common.Proxy
 				MethodCallInfo mci = new MethodCallInfo(binder.Name, binder.CallInfo.ArgumentCount, binder.CallInfo.ArgumentNames);
 
 				if ((mi = TypeMethodsMapper.Instance.Get(_targerType, mci)) != null)
-					result = mi.Invoke(_target, args);
+				{
+					if (!_useDynamicDel)
+						result = mi.Invoke(_target, args);
+					else
+						result = TypeMethodsMapper.Instance.GetDynamicDelegate(_targerType, mci)(_targerType, args);
+				}
 				else
 				{
-					mi = _targerType.GetMethod(binder.Name, (BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Instance));
+					mi = _targerType.GetMethod(binder.Name, ReflectionUtils.PublicInstanceInvoke);
 					if (mi != null)
 					{
 						TypeMethodsMapper.Instance.Add(_targerType, mci, mi);
-						result = mi.Invoke(_target, args);
+						if (!_useDynamicDel)
+							result = mi.Invoke(_target, args);
+						else
+							result = TypeMethodsMapper.Instance.GetDynamicDelegate(_targerType, mci)(_targerType, args);
 					}
 				}
 			}
@@ -104,15 +140,13 @@ namespace ShareDeployed.Common.Proxy
 			{
 				isFail = true;
 				bool rethrow = true;
-				var errorInterceptors = _interceptors.Where(x => x.Mode == ExecutionInjectionMode.OnError);
+				var errorInterceptors = _interceptors.Where(x => x.Mode == InterceptorInjectionMode.OnError);
 				if (errorInterceptors != null && errorInterceptors.Count() > 0)
 				{
 					rethrow = errorInterceptors.FirstOrDefault(x => x.EatException == true) == null ? true : false;
 					foreach (InterceptorInfo interceptor in errorInterceptors)
 					{
-						//old way
 						//IInterceptor real = Activator.CreateInstance(interceptor.Interceptor) as IInterceptor;
-						//new way
 						var instDel = ObjectCreatorHelper.ObjectInstantiater(interceptor.Interceptor, false);
 						IInterceptor real = instDel() as IInterceptor;
 						if (real != null)
@@ -140,7 +174,7 @@ namespace ShareDeployed.Common.Proxy
 				result = mi.ReturnType.GetDefaultValue();
 			}
 
-			var afterInterceptors = _interceptors.Where(x => x.Mode == ExecutionInjectionMode.After);
+			var afterInterceptors = _interceptors.Where(x => x.Mode == InterceptorInjectionMode.After);
 			Console.WriteLine("after invoking " + binder.Name);
 			return true;
 		}
@@ -168,7 +202,6 @@ namespace ShareDeployed.Common.Proxy
 				else
 					_methodInterceptors.Value.TryGetValue(mi, out interceptors);
 			}
-
 			return interceptors;
 		}
 
@@ -179,7 +212,6 @@ namespace ShareDeployed.Common.Proxy
 				result = this;
 				return true;
 			}
-
 			if (_target != null && binder.Type.IsAssignableFrom(_targerType))
 			{
 				result = _target;
@@ -199,7 +231,28 @@ namespace ShareDeployed.Common.Proxy
 					result = ((FieldInfo)member).GetValue(_target);
 					break;
 				case MemberTypes.Property:
-					result = ((PropertyInfo)member).GetValue(_target, null);
+					if (_useFastProp)
+					{
+						FastReflection.FastProperty fProp = null;
+						if ((fProp = TypePropertyMapper.Instance.Get(_targerType, binder.Name)) == null)
+						{
+							PropertyInfo pInfo = _targerType.GetProperty(binder.Name);
+							if (pInfo != null)
+							{
+								TypePropertyMapper.Instance.Add(_targerType, pInfo, out fProp);
+								result = fProp.Get(_target);
+							}
+						}
+						else
+							result = fProp.Get(_target);
+					}
+					else
+					{
+						PropertyInfo pInfo = _targerType.GetProperty(binder.Name);
+						if (pInfo != null)
+							result = pInfo.GetValue(_target, null);
+					}
+
 					break;
 				default:
 					throw new ArgumentException("MemberInfo must be if type FieldInfo or PropertyInfo", binder.Name);
@@ -218,11 +271,33 @@ namespace ShareDeployed.Common.Proxy
 			}
 			else
 			{
-				PropertyInfo pInfo = _targerType.GetProperty(binder.Name);
-				if (pInfo != null && pInfo.CanWrite)
+				if (_useFastProp)
 				{
-					pInfo.SetValue(_target, value, null);
-					return true;
+					FastReflection.FastProperty fProp = null;
+					if ((fProp = TypePropertyMapper.Instance.Get(_targerType, binder.Name)) == null)
+					{
+						PropertyInfo pInfo = _targerType.GetProperty(binder.Name);
+						if (pInfo != null)
+						{
+							TypePropertyMapper.Instance.Add(_targerType, pInfo, out fProp);
+							fProp.Set(_target, value);
+							return true;
+						}
+					}
+					else
+					{
+						fProp.Set(_target, value);
+						return true;
+					}
+				}
+				else
+				{
+					PropertyInfo pInfo = _targerType.GetProperty(binder.Name);
+					if (pInfo != null)
+					{
+						pInfo.SetValue(_target, value, null);
+						return true;
+					}
 				}
 			}
 			return false;
@@ -267,6 +342,12 @@ namespace ShareDeployed.Common.Proxy
 	{
 		public AdvancedDynamicProxy(object target)
 			: base(target)
+		{
+
+		}
+
+		public AdvancedDynamicProxy(object target, bool userFastProp)
+			: base(target, userFastProp)
 		{
 
 		}
