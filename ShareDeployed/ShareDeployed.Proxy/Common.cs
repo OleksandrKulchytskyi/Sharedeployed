@@ -39,6 +39,13 @@ namespace ShareDeployed.Common.Proxy
 		public bool EatException { get; set; }
 	}
 
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
+	public class GetInstanceAttribute : Attribute
+	{
+		public string Alias { get; set; }
+		public Type TypeOf { get; set; }
+	}
+
 	internal sealed class DynamicBuilder : DynamicObject
 	{
 		private readonly Dictionary<string, object> members = new Dictionary<string, object>();

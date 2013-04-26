@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -42,8 +45,10 @@
     <Compile Include="Common.cs" />
     <Compile Include="DynamicAssemblyBuilder.cs" />
     <Compile Include="DynamicProxy.cs" />
+    <Compile Include="DynamicProxyFactory.cs" />
     <Compile Include="Extensions\DynamicProxyGenerator.cs" />
     <Compile Include="Extensions\IEnumerableUtils.cs" />
+    <Compile Include="Extensions\ValidationHelper.cs" />
     <Compile Include="FastReflection\MethodInvokerFactory.cs" />
     <Compile Include="Extensions\ReflectionUtils.cs" />
     <Compile Include="Extensions\StringUtils.cs" />
@@ -52,12 +57,18 @@
     <Compile Include="FastReflection\DynamicMethodDelegateFactory.cs" />
     <Compile Include="FastReflection\FastProperty.cs" />
     <Compile Include="FastReflection\FastPropertyT.cs" />
+    <Compile Include="Interceptors\BeforeMethodExecutesInterceptor.cs" />
+    <Compile Include="Interceptors\MethodInterceptor.cs" />
+    <Compile Include="Invocations\MethodInvocation.cs" />
+    <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\Log4netProvider.cs" />
+    <Compile Include="Logging\LogAggregator.cs" />
     <Compile Include="Pooling\ConcurrentPool.cs" />
     <Compile Include="Pooling\IRecyclable.cs" />
     <Compile Include="Pooling\IRecycler.cs" />
     <Compile Include="Pooling\RecyclableObject.cs" />
     <Compile Include="TypeAttributesMapper.cs" />
-    <Compile Include="ExceptionInterceptor.cs" />
+    <Compile Include="Interceptors\ExceptionInterceptor.cs" />
     <Compile Include="GenericsHelper.cs" />
     <Compile Include="Extensions\GenericWeakReference.cs" />
     <Compile Include="IInterceptor.cs" />
@@ -73,7 +84,9 @@
     <Compile Include="ServicesMapper.cs" />
     <Compile Include="TypePropertyMapper.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

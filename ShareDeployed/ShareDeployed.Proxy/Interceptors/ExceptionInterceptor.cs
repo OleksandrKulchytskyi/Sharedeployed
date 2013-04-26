@@ -1,24 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace ShareDeployed.Common.Proxy
 {
-	public sealed class ExceptionInterceptor : IInterceptor
+	public class ExceptionInterceptor : IInterceptor
 	{
-		private IInvocation _invocation;
+		private Logging.ILoggerProvider _logger;
 
-		public void Intercept(IInvocation invocation)
+		public virtual void Intercept(IInvocation invocation)
 		{
-			_invocation = invocation;
-			ProceedSteps();
+			invocation.ThrowIfNull("invocation", "Parameter cannot be null.");
+			ProceesException(invocation);
 		}
 
-		private void ProceedSteps()
+		protected void ProceesException(IInvocation invocation)
 		{
-			Exception cuurrentExc = _invocation.Exception;
+			Exception cuurrentExc = invocation.Exception;
 			Debug.WriteLine(cuurrentExc.Message);
 			if (cuurrentExc.InnerException != null)
 			{

@@ -9,7 +9,7 @@ namespace ShareDeployed.Test
 	public class TypeExtensionTest
 	{
 		[TestMethod]
-		public void PerformanceTest()
+		public void GetDefaultValuePerformanceTest()
 		{
 			object value = null;
 			Stopwatch sw = new Stopwatch();

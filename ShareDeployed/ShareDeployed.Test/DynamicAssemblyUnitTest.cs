@@ -41,7 +41,7 @@ namespace ShareDeployed.Test
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(RuntimeBinderException))]
+		[ExpectedException(typeof(System.Reflection.TargetInvocationException))]
 		public void DynamicProxyErrorTest()
 		{
 			dynamic dp = new DynamicProxy(new DynamicTestData());

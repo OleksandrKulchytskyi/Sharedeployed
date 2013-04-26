@@ -86,7 +86,9 @@ namespace ShareDeployed.Test
 
 			data = -1;
 			data = proxy.DoWorkErrorNoThrow(15);
-			Assert.IsTrue(data == -1);
+			//Since method above in case on error will eat exception 
+			//it must return default value as a result
+			Assert.IsTrue(data == 0);
 		}
 
 		[TestMethod]
@@ -100,7 +102,7 @@ namespace ShareDeployed.Test
 				IDoWork interf = proxy;
 				if (interf != null)
 				{
-					interf.DoWrok();
+					interf.DoWork();
 					Assert.IsTrue(interf.Default == 0);
 					interf.Default = 65;
 					interf.DoWorkErrored(12);
@@ -119,7 +121,7 @@ namespace ShareDeployed.Test
 				IDoWork interf = proxy.GetAbstraction<IDoWork>();
 				if (interf != null)
 				{
-					interf.DoWrok();
+					interf.DoWork();
 					Assert.IsTrue(interf.Default == 0);
 					interf.Default = 65;
 					interf.DoWorkErrored(12);
@@ -143,14 +145,18 @@ namespace ShareDeployed.Test
 		interface IDoWork
 		{
 			int Default { get; set; }
-			void DoWrok();
+			void DoWork();
+			int DoWork2(int data);
+			int DoWork3(int data, int data2);
 			int DoWorkErrored(int data);
 		}
+
 		class ErrorProneAbstracted : IDoWork
 		{
 			public int Default { get; set; }
 
-			public void DoWrok()
+			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorInjectionMode.OnError)]
+			public void DoWork()
 			{
 				int i;
 				if (Default == 0)
@@ -159,6 +165,24 @@ namespace ShareDeployed.Test
 					i = Default;
 				i = i + 12;
 				Console.WriteLine(i);
+			}
+
+			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorInjectionMode.OnError)]
+			public int DoWork2(int data)
+			{
+				int i;
+				if (Default == 0)
+					i = 5;
+				else
+					i = Default;
+				i = i + data;
+				return i;
+			}
+
+			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorInjectionMode.OnError)]
+			public int DoWork3(int data, int data2)
+			{
+				return data + data2;
 			}
 
 			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorInjectionMode.OnError)]
@@ -240,8 +264,62 @@ namespace ShareDeployed.Test
 			sw.Stop();
 			long ticksReflection = sw.ElapsedTicks;
 
-			Debug.WriteLine((ticksFast / ticksReflection));
+			Debug.WriteLine((ticksReflection / ticksFast));
 			Assert.IsTrue(ticksFast < ticksReflection);
+		}
+
+
+		[TestMethod]
+		public void MethodCallingPerformance()
+		{
+			int iter = 5000;
+			var obj1 = new ErrorProneAbstracted();
+			var obj2 = new ErrorProneAbstracted();
+			dynamic proxy1 = new DynamicProxy(obj1, true);
+			dynamic proxy2 = new DynamicProxy(obj2, true, true);
+			int result = 1;
+			Stopwatch sw = new Stopwatch();
+			sw.Start();
+			for (int i = 0; i < iter; i++)
+			{
+				proxy1.DoWork();
+				result = proxy1.DoWork2(12);
+				result = proxy1.DoWork3(12, 123);
+			}
+			sw.Stop();
+			long tick1 = sw.ElapsedMilliseconds;
+			sw.Reset();
+
+			sw.Start();
+			for (int i = 0; i < iter; i++)
+			{
+				proxy2.DoWork();
+				result = proxy2.DoWork2(12);
+				result = proxy2.DoWork3(12, 123);
+			}
+			sw.Stop();
+			long tick2 = sw.ElapsedMilliseconds;
+
+			Debug.WriteLine("{0} - {1} Diff: {2}", tick1, tick2, tick1 - tick2);
+			Assert.IsTrue(tick1 > tick2);
+		}
+
+		[TestMethod]
+		public void DynamicConversionTest()
+		{
+			var obj1 = new ErrorProneAbstracted();
+			dynamic proxy1 = new DynamicProxy(obj1, true);
+
+			ErrorProneAbstracted abst = proxy1;
+			Assert.IsNotNull(abst);
+		}
+
+		[TestMethod]
+		public void DynamicProxyFactoryTest()
+		{
+			var obj1 = new ErrorProneAbstracted();
+			dynamic proxy=DynamicProxyFactory.CreateDynamicProxy(obj1);
+			Assert.IsTrue(proxy.Default == 0);
 		}
 	}
 }

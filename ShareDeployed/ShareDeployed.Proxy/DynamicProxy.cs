@@ -9,14 +9,27 @@ namespace ShareDeployed.Common.Proxy
 {
 	public class DynamicProxy : DynamicObject, IDisposable
 	{
+		private readonly string _targetParamName = "target";
+		private readonly string _paramCannotBeNullMsg = "Parameter target cannot be a null.";
+
 		protected int disposed = -1;
 		private bool _useFastProp;
 		private bool _useDynamicDel;
-		protected readonly object _target;
+		protected object _target;
+		protected GenericWeakReference<object> _weakTarget;
+		protected Type _targerType;
+
 		private GenericWeakReference<TypeAttributesMapper> _weakMapper;
 		protected SafeCollection<InterceptorInfo> _interceptors;
 		private Lazy<ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>> _methodInterceptors;
-		protected Type _targerType;
+
+		#region ctors
+		/// <summary>
+		/// Empty ctor
+		/// </summary>
+		public DynamicProxy()
+		{
+		}
 
 		/// <summary>
 		/// ctor. Initiatiates new instance and uses FastProperty wrappers
@@ -45,8 +58,7 @@ namespace ShareDeployed.Common.Proxy
 		/// <param name="useDynamicDelegates">Use DynamicMethodDelegate for fast methods calls</param>
 		public DynamicProxy(object target, bool useFastProperty, bool useDynamicDelegates)
 		{
-			if (target == null)
-				throw new ArgumentNullException("Parameter target cannot be a null.");
+			target.ThrowIfNull(_targetParamName, _paramCannotBeNullMsg);
 
 			_useFastProp = useFastProperty;
 			_methodInterceptors = new Lazy<ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>>(
@@ -56,6 +68,43 @@ namespace ShareDeployed.Common.Proxy
 			_targerType = _target.GetType();
 
 			InitMappings();
+		}
+		#endregion
+
+		#region properties
+		/// <summary>
+		/// Flag that indicates whether proxy wrapper will be using DynamicMethodDelegate for method calls
+		/// </summary>
+		public virtual bool UseFastProperties
+		{
+			get { return _useFastProp; }
+			set { if (value != _useFastProp) _useFastProp = value; }
+		}
+
+		/// <summary>
+		/// Flag that indicates whether proxy wrapper will be using FastPropery wrappers for property manipulations
+		/// </summary>
+		public virtual bool UseDynamicDelegates
+		{
+			get { return _useDynamicDel; }
+			set { if (value != _useDynamicDel) _useDynamicDel = value; }
+		}
+		#endregion
+
+		public virtual void SetTargetObject(object target, bool isWeak = false)
+		{
+			target.ThrowIfNull(_targetParamName, _paramCannotBeNullMsg);
+
+			if (isWeak)
+				_weakTarget = new GenericWeakReference<object>(target);
+			else
+				_target = target;
+			_targerType = target.GetType();
+		}
+
+		protected bool CheckIfWeakIsAlive()
+		{
+			return (_weakTarget != null && _weakTarget.IsAlive);
 		}
 
 		#region protected methods
@@ -89,16 +138,12 @@ namespace ShareDeployed.Common.Proxy
 				_interceptors = _weakMapper.Target.GetInterceptions(_targerType);
 		}
 
-		protected IInvocation CastToInvocation(InvokeMemberBinder binder, object _target, object[] args)
+		protected IInvocation CreateMethodInvocation(InvokeMemberBinder binder, object _target, object[] args, Exception exc = null)
 		{
-			return new DefaultIInvocation(_target, binder, args);
-		}
-
-		protected IInvocation CastToExceptionalInvocation(InvokeMemberBinder binder, object _target, object[] args, Exception ex)
-		{
-			IInvocation invocator = new DefaultIInvocation(_target, binder, args);
-			invocator.SetException(ex);
-			return invocator;
+			IInvocation invocation = new MethodInvocation(_target, binder, args);
+			if (exc != null)
+				invocation.SetException(exc);
+			return invocation;
 		}
 		#endregion
 
@@ -108,10 +153,13 @@ namespace ShareDeployed.Common.Proxy
 		{
 			result = null;
 			bool isFail = false;
-			var beforeInterceptors = _interceptors.Where(x => x.Mode == InterceptorInjectionMode.Before);
-			Console.WriteLine("before invoking " + binder.Name);
-			MethodInfo mi = null;
+			//TODO: redesign logic here to get cached MethodInfo object
+			IInvocation methodInvocation = CreateMethodInvocation(binder, _weakTarget == null ? _target : _weakTarget.Target, args);
 
+			var beforeInterceptors = _interceptors.Where(x => x.Mode == InterceptorInjectionMode.Before);
+
+			MethodInfo mi = null;
+			bool processed = false;
 			try
 			{
 				MethodCallInfo mci = new MethodCallInfo(binder.Name, binder.CallInfo.ArgumentCount, binder.CallInfo.ArgumentNames);
@@ -119,9 +167,10 @@ namespace ShareDeployed.Common.Proxy
 				if ((mi = TypeMethodsMapper.Instance.Get(_targerType, mci)) != null)
 				{
 					if (!_useDynamicDel)
-						result = mi.Invoke(_target, args);
+						result = mi.Invoke(_weakTarget == null ? _target : _weakTarget.Target, args);
 					else
 						result = TypeMethodsMapper.Instance.GetDynamicDelegate(_targerType, mci)(_targerType, args);
+					processed = true;
 				}
 				else
 				{
@@ -130,14 +179,22 @@ namespace ShareDeployed.Common.Proxy
 					{
 						TypeMethodsMapper.Instance.Add(_targerType, mci, mi);
 						if (!_useDynamicDel)
-							result = mi.Invoke(_target, args);
+							result = mi.Invoke(_weakTarget == null ? _target : _weakTarget.Target, args);
 						else
 							result = TypeMethodsMapper.Instance.GetDynamicDelegate(_targerType, mci)(_targerType, args);
+						processed = true;
 					}
+				}
+
+				if (!processed)
+				{
+					throw new TargetInvocationException("Method wasn't found.",
+							new InvalidOperationException(string.Format("Fail to find method {0}, in type {1}", binder.Name, _targerType)));
 				}
 			}
 			catch (Exception ex)
 			{
+				methodInvocation.SetException(ex);
 				isFail = true;
 				bool rethrow = true;
 				var errorInterceptors = _interceptors.Where(x => x.Mode == InterceptorInjectionMode.OnError);
@@ -146,11 +203,7 @@ namespace ShareDeployed.Common.Proxy
 					rethrow = errorInterceptors.FirstOrDefault(x => x.EatException == true) == null ? true : false;
 					foreach (InterceptorInfo interceptor in errorInterceptors)
 					{
-						//IInterceptor real = Activator.CreateInstance(interceptor.Interceptor) as IInterceptor;
-						var instDel = ObjectCreatorHelper.ObjectInstantiater(interceptor.Interceptor, false);
-						IInterceptor real = instDel() as IInterceptor;
-						if (real != null)
-							real.Intercept(CastToExceptionalInvocation(binder, _target, args, ex));
+						InterceptInternal(methodInvocation, interceptor);
 					}
 				}
 				else if (mi != null)
@@ -159,24 +212,28 @@ namespace ShareDeployed.Common.Proxy
 					rethrow = methodInterceptors.FirstOrDefault(x => x.EatException == true) == null ? true : false;
 					foreach (InterceptorInfo interceptor in methodInterceptors)
 					{
-						var instDel = ObjectCreatorHelper.ObjectInstantiater(interceptor.Interceptor, false);
-						IInterceptor real = instDel() as IInterceptor;
-						if (real != null)
-							real.Intercept(CastToExceptionalInvocation(binder, _target, args, ex));
+						InterceptInternal(methodInvocation, interceptor);
 					}
 				}
-				if (rethrow)
-					throw;
+				if (rethrow) throw;
 			}
 
 			if (isFail && mi.ReturnType != typeof(void))
-			{
 				result = mi.ReturnType.GetDefaultValue();
-			}
 
 			var afterInterceptors = _interceptors.Where(x => x.Mode == InterceptorInjectionMode.After);
-			Console.WriteLine("after invoking " + binder.Name);
+
 			return true;
+		}
+
+		private static void InterceptInternal(IInvocation methodInvocation, InterceptorInfo interceptor)
+		{
+			CreateInstanceDelegate instDel = ObjectCreatorHelper.ObjectInstantiater(interceptor.Interceptor, false);
+			if (instDel == null)
+				return;
+			IInterceptor real = instDel() as IInterceptor;
+			if (real != null)
+				real.Intercept(methodInvocation);
 		}
 
 		private IEnumerable<InterceptorInfo> CallMethodLevelAttributes(MethodInfo mi)
@@ -212,9 +269,10 @@ namespace ShareDeployed.Common.Proxy
 				result = this;
 				return true;
 			}
-			if (_target != null && binder.Type.IsAssignableFrom(_targerType))
+			object tgt = _weakTarget == null ? _target : _weakTarget.Target;
+			if (tgt != null && binder.Type.IsAssignableFrom(_targerType))
 			{
-				result = _target;
+				result = tgt;
 				return true;
 			}
 			else
@@ -228,7 +286,7 @@ namespace ShareDeployed.Common.Proxy
 			switch (member.MemberType)
 			{
 				case MemberTypes.Field:
-					result = ((FieldInfo)member).GetValue(_target);
+					result = ((FieldInfo)member).GetValue(_weakTarget == null ? _target : _weakTarget.Target);
 					break;
 				case MemberTypes.Property:
 					if (_useFastProp)
@@ -240,17 +298,17 @@ namespace ShareDeployed.Common.Proxy
 							if (pInfo != null)
 							{
 								TypePropertyMapper.Instance.Add(_targerType, pInfo, out fProp);
-								result = fProp.Get(_target);
+								result = fProp.Get(_weakTarget == null ? _target : _weakTarget.Target);
 							}
 						}
 						else
-							result = fProp.Get(_target);
+							result = fProp.Get(_weakTarget == null ? _target : _weakTarget.Target);
 					}
 					else
 					{
 						PropertyInfo pInfo = _targerType.GetProperty(binder.Name);
 						if (pInfo != null)
-							result = pInfo.GetValue(_target, null);
+							result = pInfo.GetValue(_weakTarget == null ? _target : _weakTarget.Target, null);
 					}
 
 					break;
@@ -266,7 +324,7 @@ namespace ShareDeployed.Common.Proxy
 			FieldInfo fieldInfo = _targerType.GetField(binder.Name);
 			if (fieldInfo != null)
 			{
-				fieldInfo.SetValue(_target, value);
+				fieldInfo.SetValue(_weakTarget == null ? _target : _weakTarget.Target, value);
 				return true;
 			}
 			else
@@ -280,13 +338,13 @@ namespace ShareDeployed.Common.Proxy
 						if (pInfo != null)
 						{
 							TypePropertyMapper.Instance.Add(_targerType, pInfo, out fProp);
-							fProp.Set(_target, value);
+							fProp.Set(_weakTarget == null ? _target : _weakTarget.Target, value);
 							return true;
 						}
 					}
 					else
 					{
-						fProp.Set(_target, value);
+						fProp.Set(_weakTarget == null ? _target : _weakTarget.Target, value);
 						return true;
 					}
 				}
@@ -295,7 +353,7 @@ namespace ShareDeployed.Common.Proxy
 					PropertyInfo pInfo = _targerType.GetProperty(binder.Name);
 					if (pInfo != null)
 					{
-						pInfo.SetValue(_target, value, null);
+						pInfo.SetValue(_weakTarget == null ? _target : _weakTarget.Target, value, null);
 						return true;
 					}
 				}
@@ -331,8 +389,9 @@ namespace ShareDeployed.Common.Proxy
 		{
 			if (disposing && System.Threading.Interlocked.CompareExchange(ref this.disposed, 1, -1) == -1)
 			{
-				if ((_target as IDisposable) != null)
-					(_target as IDisposable).Dispose();
+				object target = _weakTarget == null ? _target : _weakTarget.Target;
+				if ((target as IDisposable) != null)
+					(target as IDisposable).Dispose();
 			}
 		}
 		#endregion

@@ -134,6 +134,14 @@ namespace ShareDeployed.Common.Proxy.Caching
 			_entries.Clear();
 		}
 
+		public ICollection<object> Values
+		{
+			get
+			{
+				return _entries.Values;
+			}
+		}
+
 		/// <summary>
 		/// Process all entries in the cache and remove entries that refer to collected entries.
 		/// </summary>
