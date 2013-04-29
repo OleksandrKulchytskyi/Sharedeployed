@@ -153,44 +153,36 @@ namespace ShareDeployed.Common.Proxy
 		{
 			result = null;
 			bool isFail = false;
-			//TODO: redesign logic here to get cached MethodInfo object
+			bool processed = false;
+			MethodInfo mi = null;
+			
+			MethodCallInfo mci = new MethodCallInfo(binder.Name, binder.CallInfo.ArgumentCount, binder.CallInfo.ArgumentNames);
 			IInvocation methodInvocation = CreateMethodInvocation(binder, _weakTarget == null ? _target : _weakTarget.Target, args);
+			if ((mi = TypeMethodsMapper.Instance.Get(_targerType, mci)) == null)
+			{
+				mi = _targerType.GetMethod(binder.Name, ReflectionUtils.PublicInstanceInvoke);
+				if (mi != null)
+					TypeMethodsMapper.Instance.Add(_targerType, mci, mi);
+			}
 
 			var beforeInterceptors = _interceptors.Where(x => x.Mode == InterceptorInjectionMode.Before);
 
-			MethodInfo mi = null;
-			bool processed = false;
 			try
 			{
-				MethodCallInfo mci = new MethodCallInfo(binder.Name, binder.CallInfo.ArgumentCount, binder.CallInfo.ArgumentNames);
-
-				if ((mi = TypeMethodsMapper.Instance.Get(_targerType, mci)) != null)
+				if (!_useDynamicDel)
 				{
-					if (!_useDynamicDel)
-						result = mi.Invoke(_weakTarget == null ? _target : _weakTarget.Target, args);
-					else
-						result = TypeMethodsMapper.Instance.GetDynamicDelegate(_targerType, mci)(_targerType, args);
+					result = mi.Invoke(_weakTarget == null ? _target : _weakTarget.Target, args);
 					processed = true;
 				}
 				else
 				{
-					mi = _targerType.GetMethod(binder.Name, ReflectionUtils.PublicInstanceInvoke);
-					if (mi != null)
-					{
-						TypeMethodsMapper.Instance.Add(_targerType, mci, mi);
-						if (!_useDynamicDel)
-							result = mi.Invoke(_weakTarget == null ? _target : _weakTarget.Target, args);
-						else
-							result = TypeMethodsMapper.Instance.GetDynamicDelegate(_targerType, mci)(_targerType, args);
-						processed = true;
-					}
+					result = TypeMethodsMapper.Instance.GetDynamicDelegate(_targerType, mci)(_targerType, args);
+					processed = true;
 				}
 
 				if (!processed)
-				{
 					throw new TargetInvocationException("Method wasn't found.",
 							new InvalidOperationException(string.Format("Fail to find method {0}, in type {1}", binder.Name, _targerType)));
-				}
 			}
 			catch (Exception ex)
 			{

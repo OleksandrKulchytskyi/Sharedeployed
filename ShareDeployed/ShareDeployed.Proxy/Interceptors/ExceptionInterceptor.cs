@@ -3,9 +3,11 @@ using System.Diagnostics;
 
 namespace ShareDeployed.Common.Proxy
 {
+	[GetInstance(TypeOf = typeof(Logging.ILoggerAggregator), Alias = "single")]
 	public class ExceptionInterceptor : IInterceptor
 	{
-		private Logging.ILoggerProvider _logger;
+		[Instantiate]
+		private Logging.ILoggerAggregator _logger;
 
 		public virtual void Intercept(IInvocation invocation)
 		{
@@ -23,6 +25,9 @@ namespace ShareDeployed.Common.Proxy
 				if (cuurrentExc.InnerException.InnerException != null)
 					Debug.WriteLine(cuurrentExc.InnerException.InnerException.Message);
 			}
+
+			if (_logger != null)
+				_logger.DoLog(Logging.LogSeverity.Error, "ProceesException", cuurrentExc);
 		}
 	}
 }

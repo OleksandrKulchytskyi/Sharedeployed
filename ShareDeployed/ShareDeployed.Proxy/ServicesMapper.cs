@@ -31,9 +31,7 @@ namespace ShareDeployed.Common.Proxy
 				lock (_syncRoot)
 				{
 					if (!_servicesMap.TryGetValue(abstraction, out existingImpl))
-					{
 						_servicesMap.Add(abstraction, impl);
-					}
 					else
 						throw new InvalidOperationException(string.Format("Map already exists between {0} and {1}", abstraction, impl));
 				}
@@ -52,7 +50,6 @@ namespace ShareDeployed.Common.Proxy
 					_servicesMap.TryGetValue(abstraction, out existingImpl);
 				}
 			}
-
 			return existingImpl;
 		}
 	}

@@ -12,6 +12,12 @@ namespace ShareDeployed.Common.Proxy
 		OnError
 	}
 
+	public interface IEngine
+	{
+		void Initialize();
+		Logging.ILoggerAggregator LoggerAggregator { get; }
+	}
+
 	public class InterceptorInfo
 	{
 		public InterceptorInfo(Type interceptorType, InterceptorInjectionMode mode) :
@@ -39,11 +45,22 @@ namespace ShareDeployed.Common.Proxy
 		public bool EatException { get; set; }
 	}
 
-	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
-	public class GetInstanceAttribute : Attribute
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+	public sealed class GetInstanceAttribute : Attribute
 	{
 		public string Alias { get; set; }
 		public Type TypeOf { get; set; }
+	}
+
+	/// <summary>
+	/// Markable attribute
+	/// </summary>
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = true)]
+	public sealed class InstantiateAttribute : Attribute
+	{
+		public InstantiateAttribute()
+		{
+		}
 	}
 
 	internal sealed class DynamicBuilder : DynamicObject

@@ -200,7 +200,7 @@ namespace ShareDeployed.Test
 			}
 		}
 
-		class PropertyHolder
+		public class PropertyHolder
 		{
 			public int Id { get; set; }
 			public string Name { get; set; }
@@ -318,8 +318,63 @@ namespace ShareDeployed.Test
 		public void DynamicProxyFactoryTest()
 		{
 			var obj1 = new ErrorProneAbstracted();
-			dynamic proxy=DynamicProxyFactory.CreateDynamicProxy(obj1);
+			dynamic proxy = DynamicProxyFactory.CreateDynamicProxy(obj1);
 			Assert.IsTrue(proxy.Default == 0);
+		}
+
+		[TestMethod]
+		public void PropertyAccessorPerformanceTest()
+		{
+			int loopCount = 5000;
+			PropertyHolder ph = new PropertyHolder();
+			ShareDeployed.Common.Proxy.FastReflection.PropertyAccessor pa = new Common.Proxy.FastReflection.PropertyAccessor(typeof(PropertyHolder), "Id");
+			System.Reflection.PropertyInfo pi = typeof(PropertyHolder).GetProperty("Id");
+			ShareDeployed.Common.Proxy.FastReflection.FastProperty fp = new Common.Proxy.FastReflection.FastProperty(pi);
+
+
+			Stopwatch sw = new Stopwatch();
+			sw.Start();
+			int id = 0;
+			for (int i = 1; i <= loopCount; i++)
+			{
+				ph.Id = i;
+				id = ph.Id;
+			}
+			sw.Stop();
+			long directTime = sw.ElapsedMilliseconds;
+
+			sw.Reset();
+			sw.Start();
+			for (int i = 1; i <= loopCount; i++)
+			{
+				pi.SetValue(ph, i, null);
+				id = (int)pi.GetValue(ph, null);
+			}
+			sw.Stop();
+			long reflTime = sw.ElapsedMilliseconds;
+
+			sw.Reset();
+			sw.Start();
+			for (int i = 1; i <= loopCount; i++)
+			{
+				pa.Set(ph, i);
+				id = (int)pa.Get(ph);
+			}
+			sw.Stop();
+			long paTime = sw.ElapsedMilliseconds;
+
+			sw.Reset();
+			sw.Start();
+			for (int i = 1; i <= loopCount; i++)
+			{
+				fp.Set(ph, i);
+				id = (int)fp.Get(ph);
+			}
+			sw.Stop();
+			long fpTime = sw.ElapsedMilliseconds;
+
+			Debug.WriteLine(string.Format("Difference is:{0},{1},{2},{3}", directTime, reflTime, paTime, fpTime));
+			Assert.IsTrue(directTime < paTime && paTime > fpTime && fpTime < reflTime);
 		}
 	}
 }

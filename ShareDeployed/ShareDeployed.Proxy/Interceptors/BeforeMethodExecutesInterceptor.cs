@@ -3,10 +3,10 @@ using System.Text;
 
 namespace ShareDeployed.Common.Proxy
 {
+	[GetInstance(TypeOf = typeof(Logging.ILoggerAggregator), Alias = "single")]
 	public class BeforeMethodExecutesInterceptor : IInterceptor
 	{
-		//TODO: inject ILoggerAggregator value, while instance is creating
-		[GetInstance(TypeOf = typeof(Logging.ILoggerAggregator), Alias = "single")]
+		[Instantiate()]
 		private Logging.ILoggerAggregator _aggregator;
 
 		public virtual void Intercept(IInvocation invocation)

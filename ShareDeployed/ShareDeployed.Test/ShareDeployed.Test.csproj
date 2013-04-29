@@ -71,6 +71,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="DynamicProxy\DynamicProxyEngineTest.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitTest2.cs" />
@@ -89,10 +90,10 @@
     <Compile Include="StreamAsyncTest.cs" />
     <Compile Include="HashHelperTest.cs" />
     <Compile Include="CryptoHelperTest.cs" />
-    <Compile Include="DynamicAssemblyUnitTest.cs" />
-    <Compile Include="ProxyFactoryUnitTest.cs" />
-    <Compile Include="ConcurrentPoolTest.cs" />
-    <Compile Include="DynamicProxyUnitTest.cs" />
+    <Compile Include="DynamicProxy\DynamicAssemblyUnitTest.cs" />
+    <Compile Include="DynamicProxy\ProxyFactoryUnitTest.cs" />
+    <Compile Include="DynamicProxy\ConcurrentPoolTest.cs" />
+    <Compile Include="DynamicProxy\DynamicProxyUnitTest.cs" />
     <Compile Include="TypeExtensionTest.cs" />
   </ItemGroup>
   <ItemGroup>
