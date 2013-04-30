@@ -223,6 +223,7 @@ namespace ShareDeployed.Common.Proxy
 
 		private static void InterceptInternal(IInvocation methodInvocation, InterceptorInfo interceptor)
 		{
+			//TODO: PROXY related,  insert pipeline resolving here
 			CreateInstanceDelegate instDel = ObjectCreatorHelper.ObjectInstantiater(interceptor.Interceptor, false);
 			if (instDel == null)
 				return;

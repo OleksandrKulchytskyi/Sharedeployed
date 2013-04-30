@@ -44,7 +44,6 @@ namespace ShareDeployed.Common.Proxy.Logging
 
 		public void RemoveLogger(string alias)
 		{
-
 			if (_cache.Contains(alias))
 			{
 				_cache.Remove(alias);
@@ -101,7 +100,8 @@ namespace ShareDeployed.Common.Proxy.Logging
 
 		private ILogProvider GetCasted(object provider)
 		{
-			return (provider is ILogProvider) ? (ILogProvider)provider : ((ILogProvider)((provider as WeakReference).Target));
+			return (provider is ILogProvider) ? 
+				(ILogProvider)provider : ((ILogProvider)((provider as WeakReference).Target));
 		}
 	}
 }

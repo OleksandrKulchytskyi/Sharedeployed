@@ -12,6 +12,7 @@ namespace ShareDeployed.Common.Proxy
 		private static Lazy<DynamicProxyPipeline> _initializer;
 		private ConcurrentDictionary<Type, SafeCollection<Type>> _container;
 
+		#region ctors
 		static DynamicProxyPipeline()
 		{
 			_initializer = new Lazy<DynamicProxyPipeline>(() => new DynamicProxyPipeline(), true);
@@ -29,7 +30,8 @@ namespace ShareDeployed.Common.Proxy
 			LoggerAggregator.AddLogger(new Logging.Log4netProvider());
 
 			_container = new ConcurrentDictionary<Type, SafeCollection<Type>>();
-		}
+		} 
+		#endregion
 
 		public static DynamicProxyPipeline Instance
 		{
@@ -73,6 +75,17 @@ namespace ShareDeployed.Common.Proxy
 			}
 		}
 
+		public void ReplaceService(Type contract, object service)
+		{
+			contract.ThrowIfNull("contract", "Parameter cannot be null.");
+			service.ThrowIfNull("service", "Parameter cannot be null.");
+			if (_internalServices.ContainsKey(contract))
+				_internalServices.TryUpdate(contract, service, GetInternalService(contract));
+			else
+				throw new ArgumentException(string.Format("Service {0} doesn't registered in system pipeline.", contract));
+		}
+
+		#region private methods
 		private List<Type> GetInjectioneers(Assembly assembly)
 		{
 			var types = (from type in assembly.GetTypes()
@@ -113,18 +126,10 @@ namespace ShareDeployed.Common.Proxy
 		private T GetInternalService<T>()
 		{
 			return (T)GetInternalService(typeof(T));
-		}
+		} 
+		#endregion
 
-		public void ReplaceService(Type contract, object service)
-		{
-			contract.ThrowIfNull("contract", "Parameter cannot be null.");
-			service.ThrowIfNull("service", "Parameter cannot be null.");
-			if (_internalServices.ContainsKey(contract))
-				_internalServices.TryUpdate(contract, service, GetInternalService(contract));
-			else
-				throw new ArgumentException(string.Format("Service {0} doesn't registered in system pipeline.", contract));
-		}
-
+		#region Pipeline services
 		public Logging.ILogAggregator LoggerAggregator
 		{
 			get { return GetInternalService<Logging.ILogAggregator>(); }
@@ -136,6 +141,7 @@ namespace ShareDeployed.Common.Proxy
 			{
 				return GetInternalService<IContractResolver>();
 			}
-		}
+		} 
+		#endregion
 	}
 }
