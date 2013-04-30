@@ -3,17 +3,21 @@ using System.Text;
 
 namespace ShareDeployed.Common.Proxy
 {
-	[GetInstance(TypeOf = typeof(Logging.ILoggerAggregator), Alias = "single")]
+	[GetInstance(TypeOf = typeof(Logging.ILogAggregator), Alias = "single")]
 	public class BeforeMethodExecutesInterceptor : IInterceptor
 	{
 		[Instantiate()]
-		private Logging.ILoggerAggregator _aggregator;
+		public Logging.ILogAggregator LogAggregator
+		{
+			get;
+			set;
+		}
 
 		public virtual void Intercept(IInvocation invocation)
 		{
 			invocation.ThrowIfNull("invocation", "Parameter cannot be null.");
 
-			if (_aggregator == null)
+			if (LogAggregator == null)
 				return;
 
 			StringBuilder sb = new StringBuilder();
@@ -34,7 +38,7 @@ namespace ShareDeployed.Common.Proxy
 			if (invocation.ReturnValueType != typeof(void))
 				sb.AppendLine(string.Format("Return type is {0}", invocation.ReturnValue));
 
-			_aggregator.DoLog(Logging.LogSeverity.Info, sb.ToString(), null);
+			LogAggregator.DoLog(Logging.LogSeverity.Info, sb.ToString(), null);
 			sb.Clear();
 		}
 	}

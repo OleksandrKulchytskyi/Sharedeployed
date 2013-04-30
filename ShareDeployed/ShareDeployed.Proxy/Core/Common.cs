@@ -12,10 +12,20 @@ namespace ShareDeployed.Common.Proxy
 		OnError
 	}
 
-	public interface IEngine
+	public interface IPipeline
 	{
 		void Initialize();
-		Logging.ILoggerAggregator LoggerAggregator { get; }
+
+		Logging.ILogAggregator LoggerAggregator { get; }
+
+		IContractResolver ContracResolver { get; }
+	}
+
+	public interface IContractResolver
+	{
+		object Resolve(Type contract);
+		T Resolve<T>();
+		IEnumerable<object> ResolveAll(params Type[] types);
 	}
 
 	public class InterceptorInfo

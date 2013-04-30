@@ -3,11 +3,15 @@ using System.Diagnostics;
 
 namespace ShareDeployed.Common.Proxy
 {
-	[GetInstance(TypeOf = typeof(Logging.ILoggerAggregator), Alias = "single")]
+	[GetInstance(TypeOf = typeof(Logging.ILogAggregator), Alias = "single")]
 	public class ExceptionInterceptor : IInterceptor
 	{
-		[Instantiate]
-		private Logging.ILoggerAggregator _logger;
+		[Instantiate()]
+		public Logging.ILogAggregator LogAggregator
+		{
+			get;
+			set;
+		}
 
 		public virtual void Intercept(IInvocation invocation)
 		{
@@ -26,8 +30,8 @@ namespace ShareDeployed.Common.Proxy
 					Debug.WriteLine(cuurrentExc.InnerException.InnerException.Message);
 			}
 
-			if (_logger != null)
-				_logger.DoLog(Logging.LogSeverity.Error, "ProceesException", cuurrentExc);
+			if (LogAggregator != null)
+				LogAggregator.DoLog(Logging.LogSeverity.Error, "ProceesException", cuurrentExc);
 		}
 	}
 }

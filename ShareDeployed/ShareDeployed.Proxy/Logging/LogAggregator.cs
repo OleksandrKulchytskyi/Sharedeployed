@@ -4,16 +4,16 @@ using System.Threading;
 
 namespace ShareDeployed.Common.Proxy.Logging
 {
-	public class LogAggregator : ILoggerAggregator
+	public class LogAggregator : ILogAggregator
 	{
-		private Cache<string, ILoggerProvider> _cache;
+		private Cache<string, ILogProvider> _cache;
 
 		public LogAggregator()
 		{
-			_cache = new Cache<string, ILoggerProvider>();
+			_cache = new Cache<string, ILogProvider>();
 		}
 
-		public void AddLogger(ILoggerProvider provider, bool isWeak = false)
+		public void AddLogger(ILogProvider provider, bool isWeak = false)
 		{
 			string name = provider.GetType().FullName;
 			if (!_cache.Contains(name))
@@ -23,7 +23,7 @@ namespace ShareDeployed.Common.Proxy.Logging
 			}
 		}
 
-		public void AddLogger(string alias, ILoggerProvider provider, bool isWeak = false)
+		public void AddLogger(string alias, ILogProvider provider, bool isWeak = false)
 		{
 			if (!_cache.Contains(alias))
 			{
@@ -32,7 +32,7 @@ namespace ShareDeployed.Common.Proxy.Logging
 			}
 		}
 
-		public void RemoveLogger(ILoggerProvider provider)
+		public void RemoveLogger(ILogProvider provider)
 		{
 			string name = provider.GetType().FullName;
 			if (_cache.Contains(name))
@@ -71,37 +71,37 @@ namespace ShareDeployed.Common.Proxy.Logging
 				case LogSeverity.Info:
 					foreach (var logger in _cache.Values)
 					{
-						ILoggerProvider provider = GetCasted(logger);
+						ILogProvider provider = GetCasted(logger);
 						provider.Info(msg);
 					}
 					break;
 				case LogSeverity.Warn:
 					foreach (var logger in _cache.Values)
 					{
-						ILoggerProvider provider = GetCasted(logger);
+						ILogProvider provider = GetCasted(logger);
 						provider.Warn(msg, exc);
 					}
 					break;
 				case LogSeverity.Error:
 					foreach (var logger in _cache.Values)
 					{
-						ILoggerProvider provider = GetCasted(logger);
+						ILogProvider provider = GetCasted(logger);
 						provider.Error(msg, exc);
 					}
 					break;
 				case LogSeverity.Fatal:
 					foreach (var logger in _cache.Values)
 					{
-						ILoggerProvider provider = GetCasted(logger);
+						ILogProvider provider = GetCasted(logger);
 						provider.Fatal(msg, exc);
 					}
 					break;
 			}
 		}
 
-		private ILoggerProvider GetCasted(object provider)
+		private ILogProvider GetCasted(object provider)
 		{
-			return (provider is ILoggerProvider) ? (ILoggerProvider)provider : ((ILoggerProvider)((provider as WeakReference).Target));
+			return (provider is ILogProvider) ? (ILogProvider)provider : ((ILogProvider)((provider as WeakReference).Target));
 		}
 	}
 }

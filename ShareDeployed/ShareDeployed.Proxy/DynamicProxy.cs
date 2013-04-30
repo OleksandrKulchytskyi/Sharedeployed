@@ -23,12 +23,15 @@ namespace ShareDeployed.Common.Proxy
 		protected SafeCollection<InterceptorInfo> _interceptors;
 		private Lazy<ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>> _methodInterceptors;
 
+		private GenericWeakReference<IContractResolver> _resolver;
+
 		#region ctors
 		/// <summary>
 		/// Empty ctor
 		/// </summary>
 		public DynamicProxy()
 		{
+			_resolver = new GenericWeakReference<IContractResolver>(DynamicProxyPipeline.Instance.ContracResolver);
 		}
 
 		/// <summary>

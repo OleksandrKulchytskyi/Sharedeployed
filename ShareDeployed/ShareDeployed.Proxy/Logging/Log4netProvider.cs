@@ -6,7 +6,7 @@ using System.Text;
 
 namespace ShareDeployed.Common.Proxy.Logging
 {
-	public class Log4netProvider : ILoggerProvider
+	public class Log4netProvider : ILogProvider
 	{
 		private ILog _logger = null;
 

@@ -10,7 +10,7 @@ namespace ShareDeployed.Common.Proxy.Logging
 		Fatal
 	}
 
-	public interface ILoggerProvider
+	public interface ILogProvider
 	{
 		void Info(string message);
 		void Warn(string message, Exception Exception);
@@ -18,11 +18,11 @@ namespace ShareDeployed.Common.Proxy.Logging
 		void Fatal(string message, Exception Exception);
 	}
 
-	public interface ILoggerAggregator
+	public interface ILogAggregator
 	{
 		int Count { get; }
-		void AddLogger(ILoggerProvider provider, bool isWeak = false);
-		void RemoveLogger(ILoggerProvider provider);
+		void AddLogger(ILogProvider provider, bool isWeak = false);
+		void RemoveLogger(ILogProvider provider);
 		void Clear();
 
 		void DoLog(LogSeverity severity, string msg, Exception exc);

@@ -5,9 +5,13 @@ using System.Text;
 
 namespace ShareDeployed.Common.Proxy
 {
+	[GetInstance(TypeOf=typeof(Logging.ILogAggregator),Alias="single")]
 	public sealed class MethodInterceptor : IInterceptor
 	{
 		private readonly Delegate _impl;
+		
+		[Instantiate]
+		public Logging.LogAggregator LogAggregator { get; set; }
 
 		public MethodInterceptor(Delegate @delegate)
 		{

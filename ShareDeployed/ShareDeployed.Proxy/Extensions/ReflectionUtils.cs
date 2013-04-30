@@ -9,8 +9,9 @@ namespace ShareDeployed.Common.Proxy
 {
 	internal static class ReflectionUtils
 	{
+		public static readonly BindingFlags PublicInstanceStaticMembers = (BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
 		public static readonly BindingFlags PublicInstanceMembers = (BindingFlags.Public | BindingFlags.Instance);
-		public static readonly BindingFlags PublicInstanceInvoke =(BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Instance);
+		public static readonly BindingFlags PublicInstanceInvoke = (BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Instance);
 
 
 		public static Type GetMemberType(this MemberInfo member)

@@ -45,7 +45,7 @@
     <Compile Include="Core\Common.cs" />
     <Compile Include="DynamicAssemblyBuilder.cs" />
     <Compile Include="DynamicProxy.cs" />
-    <Compile Include="DynamicProxyEngine.cs" />
+    <Compile Include="DynamicProxyPipeline.cs" />
     <Compile Include="DynamicProxyFactory.cs" />
     <Compile Include="Extensions\DynamicProxyGenerator.cs" />
     <Compile Include="Extensions\IEnumerableUtils.cs" />
@@ -89,6 +89,7 @@
     <Compile Include="TypePropertyMapper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

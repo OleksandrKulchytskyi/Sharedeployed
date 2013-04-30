@@ -10,7 +10,7 @@ using System.Text;
 namespace ShareDeployed.Test
 {
 	[TestClass]
-	public class UnitTest1
+	public class DefJsnoBase64Test
 	{
 		[TestMethod]
 		public void ToJsonString()
