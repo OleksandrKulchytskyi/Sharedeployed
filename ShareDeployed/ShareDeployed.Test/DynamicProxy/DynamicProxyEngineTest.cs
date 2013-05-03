@@ -22,6 +22,10 @@ namespace ShareDeployed.Test
 			engine.Initialize();
 
 			ExceptionInterceptor interceptor = engine.ContracResolver.Resolve<ExceptionInterceptor>();
+
+			Assert.IsTrue(TypeWithInjections.Instance.Contains(typeof(ExceptionInterceptor)));
+
+			ExceptionInterceptor interceptor2 = engine.ContracResolver.Resolve<ExceptionInterceptor>();
 			//cause to invoke ArgumentNullException by reason of second parameter value is equals to null
 			interceptor.Intercept(new MethodInvocation(this, null, null));
 		}

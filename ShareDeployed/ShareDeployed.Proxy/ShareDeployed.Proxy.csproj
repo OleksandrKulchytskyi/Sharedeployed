@@ -64,6 +64,8 @@
     <Compile Include="Interceptors\BeforeMethodExecutesInterceptor.cs" />
     <Compile Include="Interceptors\MethodInterceptor.cs" />
     <Compile Include="Invocations\MethodInvocation.cs" />
+    <Compile Include="IoC\MemberMetadata.cs" />
+    <Compile Include="IoC\TypeWithInjections.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\Log4netProvider.cs" />
     <Compile Include="Logging\LogAggregator.cs" />
@@ -85,7 +87,7 @@
     <Compile Include="Caching\Cache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extensions\SafeCollection.cs" />
-    <Compile Include="ServicesMapper.cs" />
+    <Compile Include="IoC\ServicesMapper.cs" />
     <Compile Include="TypePropertyMapper.cs" />
   </ItemGroup>
   <ItemGroup>

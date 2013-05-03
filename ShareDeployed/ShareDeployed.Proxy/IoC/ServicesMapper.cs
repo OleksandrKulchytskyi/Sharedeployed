@@ -116,8 +116,7 @@ namespace ShareDeployed.Common.Proxy
 			return GetFullMappingInfo(contract).Key;
 		}
 
-		
-		
+
 		public object Resolve(Type contract)
 		{
 			KeyValuePair<Type, ServiceLifetime> mapInfo = default(KeyValuePair<Type, ServiceLifetime>);
@@ -156,21 +155,41 @@ namespace ShareDeployed.Common.Proxy
 
 		private void InitializeMembers(Type contract, object instance)
 		{
+			if (TypeWithInjections.Instance.Contains(contract))
+			{
+				foreach (MemberMetadata metadata in TypeWithInjections.Instance.GetMetadataFor(contract))
+				{
+					switch (metadata.MemberType)
+					{
+						case MemberType.Field:
+							(metadata.Member as FieldInfo).SetValue(instance, Resolve(metadata.Type));
+							break;
+						case MemberType.Property:
+							metadata.FastProperty.Set(instance, Resolve(metadata.Type));
+							break;
+						default:
+							break;
+					}
+				}
+				return;
+			}
+
 			IList<MemberInfo> members = contract.GetMembers(ReflectionUtils.PublicInstanceStaticMembers)
 						.Where(prop => Attribute.IsDefined(prop, typeof(InstantiateAttribute))).ToList();
 			if (members.Count > 0)
 			{
-				foreach (System.Reflection.MemberInfo item in members)
+				foreach (System.Reflection.MemberInfo mInfo in members)
 				{
-					switch (item.MemberType)
+					TypeWithInjections.Instance.Add(contract, new MemberMetadata(mInfo));
+					switch (mInfo.MemberType)
 					{
 						case System.Reflection.MemberTypes.Field:
-							(item as FieldInfo).SetValue(instance, Resolve((item as FieldInfo).FieldType));
+							(mInfo as FieldInfo).SetValue(instance, Resolve((mInfo as FieldInfo).FieldType));
 							break;
 
 						case System.Reflection.MemberTypes.Property:
-							if ((item as PropertyInfo).CanWrite)
-								(item as PropertyInfo).SetValue(instance, Resolve((item as PropertyInfo).PropertyType), null);
+							if ((mInfo as PropertyInfo).CanWrite)
+								(mInfo as PropertyInfo).SetValue(instance, Resolve((mInfo as PropertyInfo).PropertyType), null);
 							break;
 
 						case System.Reflection.MemberTypes.Custom:
