@@ -14,7 +14,7 @@ namespace ShareDeployed.Common.Proxy
 
 	public interface IPipeline
 	{
-		void Initialize();
+		void Initialize(bool withinDomain=false);
 
 		Logging.ILogAggregator LoggerAggregator { get; }
 

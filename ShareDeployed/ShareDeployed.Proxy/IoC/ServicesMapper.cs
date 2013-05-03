@@ -30,7 +30,9 @@ namespace ShareDeployed.Common.Proxy
 
 		//singletons container
 		private ConcurrentDictionary<Type, object> _singletons;
-		//default ctor
+		/// <summary>
+		/// default ctor
+		/// </summary>
 		public ServicesMapper()
 		{
 			_singletons = new ConcurrentDictionary<Type, object>();
@@ -171,6 +173,7 @@ namespace ShareDeployed.Common.Proxy
 							break;
 					}
 				}
+				//omit code below
 				return;
 			}
 
@@ -191,12 +194,7 @@ namespace ShareDeployed.Common.Proxy
 							if ((mInfo as PropertyInfo).CanWrite)
 								(mInfo as PropertyInfo).SetValue(instance, Resolve((mInfo as PropertyInfo).PropertyType), null);
 							break;
-
-						case System.Reflection.MemberTypes.Custom:
-						case System.Reflection.MemberTypes.Event:
-						case System.Reflection.MemberTypes.Method:
-						case System.Reflection.MemberTypes.TypeInfo:
-						case System.Reflection.MemberTypes.NestedType:
+						
 						default:
 							break;
 					}

@@ -158,7 +158,7 @@ namespace ShareDeployed.Common.Proxy
 			bool isFail = false;
 			bool processed = false;
 			MethodInfo mi = null;
-			
+
 			MethodCallInfo mci = new MethodCallInfo(binder.Name, binder.CallInfo.ArgumentCount, binder.CallInfo.ArgumentNames);
 			IInvocation methodInvocation = CreateMethodInvocation(binder, _weakTarget == null ? _target : _weakTarget.Target, args);
 			if ((mi = TypeMethodsMapper.Instance.Get(_targerType, mci)) == null)
@@ -223,13 +223,15 @@ namespace ShareDeployed.Common.Proxy
 
 		private static void InterceptInternal(IInvocation methodInvocation, InterceptorInfo interceptor)
 		{
-			//TODO: PROXY related,  insert pipeline resolving here
-			CreateInstanceDelegate instDel = ObjectCreatorHelper.ObjectInstantiater(interceptor.Interceptor, false);
-			if (instDel == null)
-				return;
-			IInterceptor real = instDel() as IInterceptor;
-			if (real != null)
-				real.Intercept(methodInvocation);
+			methodInvocation.ThrowIfNull("methodInvocation", "Parameter cannot be a null.");
+			interceptor.ThrowIfNull("interceptor", "Parameter cannot be a null.");
+
+			IContractResolver resolver = DynamicProxyPipeline.Instance.ContracResolver;
+			object resolved = resolver.Resolve(interceptor.Interceptor);
+
+			IInterceptor casted = resolved as IInterceptor;
+			if (casted != null)
+				casted.Intercept(methodInvocation);
 		}
 
 		private IEnumerable<InterceptorInfo> CallMethodLevelAttributes(MethodInfo mi)

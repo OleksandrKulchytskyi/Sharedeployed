@@ -10,6 +10,14 @@ namespace ShareDeployed.Test
 	{
 		private int disposed = -1;
 
+		[TestInitializeAttribute()]
+		public void OnInit()
+		{
+			IPipeline pipeline = DynamicProxyPipeline.Instance;
+			if (pipeline != null)
+				pipeline.Initialize(true);
+		}
+
 		private class ErrorProneForProxy
 		{
 			public int DefaultData { get; set; }

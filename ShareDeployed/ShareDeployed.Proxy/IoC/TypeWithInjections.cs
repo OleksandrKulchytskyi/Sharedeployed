@@ -7,22 +7,25 @@ using System.Text;
 namespace ShareDeployed.Common.Proxy
 {
 	/// <summary>
-	/// Container that holds typese with Instantiate attributes
+	/// Container that holds types with its appropriate members marked with Instantiate attributes
 	/// </summary>
 	public sealed class TypeWithInjections
 	{
-		static Lazy<TypeWithInjections> _lazy;
+		static Lazy<TypeWithInjections> _lazy = null;
 		static TypeWithInjections()
 		{
 			_lazy = new Lazy<TypeWithInjections>(() => new TypeWithInjections(), true);
 		}
 
-		private ConcurrentDictionary<Type, SafeCollection<MemberMetadata>> _container;
+		private ConcurrentDictionary<Type, SafeCollection<MemberMetadata>> _container = null;
 		private TypeWithInjections()
 		{
 			_container = new ConcurrentDictionary<Type, SafeCollection<MemberMetadata>>();
 		}
 
+		/// <summary>
+		/// Get singleton instance
+		/// </summary>
 		public static TypeWithInjections Instance
 		{
 			get { return _lazy.Value; ;}
@@ -31,7 +34,7 @@ namespace ShareDeployed.Common.Proxy
 		public void Add(Type type, MemberMetadata metadata)
 		{
 			type.ThrowIfNull("type", "Parameter cannot be null.");
-			if(_container.ContainsKey(type))
+			if (_container.ContainsKey(type))
 			{
 				_container[type].Add(metadata);
 			}

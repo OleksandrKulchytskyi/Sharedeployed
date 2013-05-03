@@ -30,7 +30,7 @@ namespace ShareDeployed.Common.Proxy
 			LoggerAggregator.AddLogger(new Logging.Log4netProvider());
 
 			_container = new ConcurrentDictionary<Type, SafeCollection<Type>>();
-		} 
+		}
 		#endregion
 
 		public static DynamicProxyPipeline Instance
@@ -41,11 +41,17 @@ namespace ShareDeployed.Common.Proxy
 			}
 		}
 
-		public void Initialize()
+		public void Initialize(bool withinDomain = false)
 		{
 			Assembly assembly = typeof(IPipeline).Assembly;
 			//var types = GetInjectioneers(assembly);
-			var types = GetTypesWithHelpAttribute<GetInstanceAttribute>(assembly);
+			IEnumerable<Type> types = null;
+
+			if (!withinDomain)
+				types = GetTypesWithHelpAttribute<GetInstanceAttribute>(assembly);
+			else
+				types = DomainTypesWithAttribute<GetInstanceAttribute>();
+
 			if (types != null)
 			{
 				foreach (Type curType in types)
@@ -96,9 +102,9 @@ namespace ShareDeployed.Common.Proxy
 			return types;
 		}
 
-		private IEnumerable<KeyValuePair<Type, IEnumerable<T>>> GetCustomAttr<T>() where T : Attribute
+		private IEnumerable<KeyValuePair<Type, IEnumerable<T>>> GetCustomAttributes<T>() where T : Attribute
 		{
-			var typesWithMyAttribute = from a in AppDomain.CurrentDomain.GetAssemblies()
+			var typesWithMyAttribute = from a in AppDomain.CurrentDomain.GetAssemblies().AsParallel()
 									   from t in a.GetTypes()
 									   let attributes = t.GetCustomAttributes(typeof(T), true)
 									   where attributes != null && attributes.Length > 0
@@ -117,6 +123,16 @@ namespace ShareDeployed.Common.Proxy
 			}
 		}
 
+		private IEnumerable<Type> DomainTypesWithAttribute<T>() where T : Attribute
+		{
+			return from a in AppDomain.CurrentDomain.GetAssemblies().AsParallel()
+				   from t in a.GetTypes()
+				   let attributes = t.GetCustomAttributes(typeof(T), true)
+				   where attributes != null && attributes.Length > 0
+				   select t;
+
+		}
+
 		private object GetInternalService(Type contract)
 		{
 			contract.ThrowIfNull("contract", "Parameter cannot be null.");
@@ -126,7 +142,7 @@ namespace ShareDeployed.Common.Proxy
 		private T GetInternalService<T>()
 		{
 			return (T)GetInternalService(typeof(T));
-		} 
+		}
 		#endregion
 
 		#region Pipeline services
@@ -141,7 +157,7 @@ namespace ShareDeployed.Common.Proxy
 			{
 				return GetInternalService<IContractResolver>();
 			}
-		} 
+		}
 		#endregion
 	}
 }
