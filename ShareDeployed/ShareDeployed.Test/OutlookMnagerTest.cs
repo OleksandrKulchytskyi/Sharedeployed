@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace ShareDeployed.Test
 {
 	[TestClass]
-	public class UnitTest3
+	public class OutlookMnagerTest
 	{
 		[TestMethod]
 		public void TestOutlookModule()

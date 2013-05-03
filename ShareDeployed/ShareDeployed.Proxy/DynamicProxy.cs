@@ -144,7 +144,7 @@ namespace ShareDeployed.Common.Proxy
 		protected IInvocation CreateMethodInvocation(InvokeMemberBinder binder, object _target, object[] args, Exception exc = null)
 		{
 			IInvocation invocation = new MethodInvocation(_target, binder, args);
-			if (exc != null)
+			if (exc != null) 
 				invocation.SetException(exc);
 			return invocation;
 		}

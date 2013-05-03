@@ -161,6 +161,7 @@ namespace ShareDeployed.Test
 
 		class ErrorProneAbstracted : IDoWork
 		{
+			
 			public int Default { get; set; }
 
 			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorInjectionMode.OnError)]
@@ -383,6 +384,39 @@ namespace ShareDeployed.Test
 
 			Debug.WriteLine(string.Format("Difference is:{0},{1},{2},{3}", directTime, reflTime, paTime, fpTime));
 			Assert.IsTrue(directTime < paTime && paTime > fpTime && fpTime < reflTime);
+		}
+
+		[TestMethod]
+		public void GetPropertiesPerformanceTest()
+		{
+			ManyPropClass cls = new ManyPropClass();
+			Type clsType = cls.GetType();
+
+			Stopwatch sw = new Stopwatch();
+			sw.Start();
+			var prop = System.ComponentModel.TypeDescriptor.GetProperties(cls);
+			sw.Stop();
+			long pdTime = sw.ElapsedTicks;
+
+
+			sw.Reset();
+			sw.Start();
+			System.Reflection.PropertyInfo[] pis = clsType.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+			sw.Stop();
+			long reflTime = sw.ElapsedTicks;
+
+			Assert.IsTrue(pdTime > reflTime);
+
+		}
+
+		private class ManyPropClass
+		{
+			public int Id { get; set; }
+			public string Name { get; set; }
+
+			public long Some { get; set; }
+
+			public char Sex { get; set; }
 		}
 	}
 }

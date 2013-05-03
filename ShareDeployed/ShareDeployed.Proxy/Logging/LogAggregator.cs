@@ -4,6 +4,9 @@ using System.Threading;
 
 namespace ShareDeployed.Common.Proxy.Logging
 {
+	/// <summary>
+	/// Log aggregator
+	/// </summary>
 	public class LogAggregator : ILogAggregator
 	{
 		private Cache<string, ILogProvider> _cache;
@@ -13,6 +16,11 @@ namespace ShareDeployed.Common.Proxy.Logging
 			_cache = new Cache<string, ILogProvider>();
 		}
 
+		/// <summary>
+		/// Adds logger to the system
+		/// </summary>
+		/// <param name="provider"></param>
+		/// <param name="isWeak">Indicates wether object needs to be wrapper in WeakReference</param>
 		public void AddLogger(ILogProvider provider, bool isWeak = false)
 		{
 			string name = provider.GetType().FullName;
@@ -23,6 +31,12 @@ namespace ShareDeployed.Common.Proxy.Logging
 			}
 		}
 
+		/// <summary>
+		/// Adds loger with alias to the system
+		/// </summary>
+		/// <param name="alias">Logger alias</param>
+		/// <param name="provider">Log provider</param>
+		/// <param name="isWeak">Needs to be wrapped in GenericWeakRef</param>
 		public void AddLogger(string alias, ILogProvider provider, bool isWeak = false)
 		{
 			if (!_cache.Contains(alias))
@@ -32,6 +46,10 @@ namespace ShareDeployed.Common.Proxy.Logging
 			}
 		}
 
+		/// <summary>
+		/// Removes logger from system
+		/// </summary>
+		/// <param name="provider"></param>
 		public void RemoveLogger(ILogProvider provider)
 		{
 			string name = provider.GetType().FullName;
@@ -42,6 +60,10 @@ namespace ShareDeployed.Common.Proxy.Logging
 			}
 		}
 
+		/// <summary>
+		/// Removes logger from system by it alias name
+		/// </summary>
+		/// <param name="alias"></param>
 		public void RemoveLogger(string alias)
 		{
 			if (_cache.Contains(alias))
@@ -58,11 +80,20 @@ namespace ShareDeployed.Common.Proxy.Logging
 		}
 
 		int _count;
+		/// <summary>
+		/// Loggers count
+		/// </summary>
 		public int Count
 		{
 			get { return _count; }
 		}
 
+		/// <summary>
+		/// Performs log operation in all registered loggers
+		/// </summary>
+		/// <param name="severity"></param>
+		/// <param name="msg"></param>
+		/// <param name="exc"></param>
 		public void DoLog(LogSeverity severity, string msg, Exception exc)
 		{
 			switch (severity)

@@ -6,23 +6,21 @@ namespace ShareDeployed.Common.Proxy
 {
 	public enum InterceptorInjectionMode
 	{
-		None = 0,
-		Before,
-		After,
-		OnError
+		None = 0, Before, After, OnError
 	}
 
 	public interface IPipeline
 	{
-		void Initialize(bool withinDomain=false);
+		void Initialize(bool withinDomain = false);
 
 		Logging.ILogAggregator LoggerAggregator { get; }
-
 		IContractResolver ContracResolver { get; }
 	}
 
 	public interface IContractResolver
 	{
+		bool OmitNotRegistred { get; set; } 
+
 		object Resolve(Type contract);
 		T Resolve<T>();
 		IEnumerable<object> ResolveAll(params Type[] types);
@@ -63,7 +61,7 @@ namespace ShareDeployed.Common.Proxy
 	}
 
 	/// <summary>
-	/// Markable attribute
+	/// Markable attribute, just for gettin values from IContractResolver in DynamicProxyPipeline
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = true)]
 	public sealed class InstantiateAttribute : Attribute

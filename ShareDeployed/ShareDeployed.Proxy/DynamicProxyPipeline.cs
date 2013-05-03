@@ -11,6 +11,7 @@ namespace ShareDeployed.Common.Proxy
 		private ConcurrentDictionary<Type, object> _internalServices;
 		private static Lazy<DynamicProxyPipeline> _initializer;
 		private ConcurrentDictionary<Type, SafeCollection<Type>> _container;
+		private int _initialized = -1;
 
 		#region ctors
 		static DynamicProxyPipeline()
@@ -35,14 +36,14 @@ namespace ShareDeployed.Common.Proxy
 
 		public static DynamicProxyPipeline Instance
 		{
-			get
-			{
-				return _initializer.Value;
-			}
+			get { return _initializer.Value; }
 		}
 
 		public void Initialize(bool withinDomain = false)
 		{
+			if (System.Threading.Interlocked.Exchange(ref _initialized, 1) == 1)
+				return;
+
 			Assembly assembly = typeof(IPipeline).Assembly;
 			//var types = GetInjectioneers(assembly);
 			IEnumerable<Type> types = null;
@@ -62,7 +63,7 @@ namespace ShareDeployed.Common.Proxy
 						if (_container.ContainsKey(curType))
 						{
 							_container[curType].Add(attr.TypeOf);
-							if (!ServicesMapper.IsRegistered(attr.TypeOf))
+							if (!ServicesMapper.CanBeResolved(attr.TypeOf))
 								attr.TypeOf.BindToSelf();
 						}
 						else
@@ -70,11 +71,11 @@ namespace ShareDeployed.Common.Proxy
 							SafeCollection<Type> holder = new SafeCollection<Type>();
 							holder.Add(attr.TypeOf);
 							_container.TryAdd(curType, holder);
-							if (!ServicesMapper.IsRegistered(attr.TypeOf))
+							if (!ServicesMapper.CanBeResolved(attr.TypeOf))
 								attr.TypeOf.BindToSelf();
 						}
 					}
-					if (!ServicesMapper.IsRegistered(curType))
+					if (!ServicesMapper.CanBeResolved(curType))
 						curType.BindToSelf();
 				}
 			}
@@ -84,7 +85,7 @@ namespace ShareDeployed.Common.Proxy
 		{
 			contract.ThrowIfNull("contract", "Parameter cannot be null.");
 			service.ThrowIfNull("service", "Parameter cannot be null.");
-			
+
 			if (_internalServices.ContainsKey(contract))
 				_internalServices.TryUpdate(contract, service, GetInternalService(contract));
 			else

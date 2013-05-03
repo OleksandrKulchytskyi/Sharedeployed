@@ -37,6 +37,7 @@ namespace ShareDeployed.Common.Proxy
 					_type = MemberType.Property;
 					_memberType = (memberInfo as PropertyInfo).PropertyType;
 					_fp = new FastReflection.FastProperty((memberInfo as PropertyInfo), true);
+					_mi = memberInfo;
 					break;
 				default:
 					break;
@@ -79,6 +80,11 @@ namespace ShareDeployed.Common.Proxy
 		public FastReflection.FastProperty FastProperty
 		{
 			get { return _fp; }
+		}
+
+		public override int GetHashCode()
+		{
+			return Type.GetHashCode() ^ Member.GetHashCode();
 		}
 	}
 }

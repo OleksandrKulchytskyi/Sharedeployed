@@ -2,6 +2,9 @@
 
 namespace ShareDeployed.Common.Proxy.Logging
 {
+	/// <summary>
+	/// Log severity enumeration
+	/// </summary>
 	public enum LogSeverity
 	{
 		Info = 0,
