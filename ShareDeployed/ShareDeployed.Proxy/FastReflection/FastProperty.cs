@@ -8,15 +8,23 @@ namespace ShareDeployed.Common.Proxy.FastReflection
 	{
 		public PropertyInfo Property { get; set; }
 
-		public Func<object, object> GetDelegate;
-		public Action<object, object> SetDelegate;
+		private Func<object, object> GetDelegate;
+		private Action<object, object> SetDelegate;
 
+		#region ctors
 		public FastProperty(PropertyInfo property)
+			: this(property, false)
+		{
+		}
+
+		public FastProperty(PropertyInfo property, bool omitGetInitializer)
 		{
 			this.Property = property;
-			InitializeGet();
+			if (!omitGetInitializer)
+				InitializeGet();
 			InitializeSet();
-		}
+		} 
+		#endregion
 
 		private void InitializeSet()
 		{
@@ -24,9 +32,9 @@ namespace ShareDeployed.Common.Proxy.FastReflection
 			var value = Expression.Parameter(typeof(object), "value");
 
 			// value as T is slightly faster than (T)value, so if it's not a value type, use that
-			UnaryExpression instanceCast = (!this.Property.DeclaringType.IsValueType) ? 
+			UnaryExpression instanceCast = (!this.Property.DeclaringType.IsValueType) ?
 				Expression.TypeAs(instance, this.Property.DeclaringType) : Expression.Convert(instance, this.Property.DeclaringType);
-			UnaryExpression valueCast = (!this.Property.PropertyType.IsValueType) ? 
+			UnaryExpression valueCast = (!this.Property.PropertyType.IsValueType) ?
 				Expression.TypeAs(value, this.Property.PropertyType) : Expression.Convert(value, this.Property.PropertyType);
 			this.SetDelegate = Expression.Lambda<Action<object, object>>(Expression.Call(instanceCast, this.Property.GetSetMethod(), valueCast), new ParameterExpression[] { instance, value }).Compile();
 		}
@@ -34,7 +42,7 @@ namespace ShareDeployed.Common.Proxy.FastReflection
 		private void InitializeGet()
 		{
 			var instance = Expression.Parameter(typeof(object), "instance");
-			UnaryExpression instanceCast = (!this.Property.DeclaringType.IsValueType) ? 
+			UnaryExpression instanceCast = (!this.Property.DeclaringType.IsValueType) ?
 				Expression.TypeAs(instance, this.Property.DeclaringType) : Expression.Convert(instance, this.Property.DeclaringType);
 			this.GetDelegate = Expression.Lambda<Func<object, object>>(Expression.TypeAs(Expression.Call(instanceCast, this.Property.GetGetMethod()), typeof(object)), instance).Compile();
 		}

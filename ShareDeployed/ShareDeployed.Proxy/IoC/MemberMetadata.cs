@@ -6,6 +6,9 @@ using System.Text;
 
 namespace ShareDeployed.Common.Proxy
 {
+	/// <summary>
+	/// Member type enumeration
+	/// </summary>
 	public enum MemberType
 	{
 		None = 0,
@@ -33,7 +36,7 @@ namespace ShareDeployed.Common.Proxy
 				case MemberTypes.Property:
 					_type = MemberType.Property;
 					_memberType = (memberInfo as PropertyInfo).PropertyType;
-					_fp = new FastReflection.FastProperty(memberInfo as PropertyInfo);
+					_fp = new FastReflection.FastProperty((memberInfo as PropertyInfo), true);
 					break;
 				default:
 					break;
@@ -41,6 +44,9 @@ namespace ShareDeployed.Common.Proxy
 		}
 
 		private MemberInfo _mi;
+		/// <summary>
+		/// Member info data
+		/// </summary>
 		public MemberInfo Member
 		{
 			get { return _mi; }
@@ -48,6 +54,9 @@ namespace ShareDeployed.Common.Proxy
 		}
 
 		private MemberType _type;
+		/// <summary>
+		/// Indicates whether member is field or property
+		/// </summary>
 		public MemberType MemberType
 		{
 			get { return _type; }
@@ -55,11 +64,18 @@ namespace ShareDeployed.Common.Proxy
 		}
 
 		private Type _memberType;
-		public Type Type{
+		/// <summary>
+		/// Type of Member
+		/// </summary>
+		public Type Type
+		{
 			get { return _memberType; }
 		}
 
 		FastReflection.FastProperty _fp;
+		/// <summary>
+		/// Fast property wrapper
+		/// </summary>
 		public FastReflection.FastProperty FastProperty
 		{
 			get { return _fp; }

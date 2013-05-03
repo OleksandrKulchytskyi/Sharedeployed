@@ -72,7 +72,6 @@ namespace ShareDeployed.Common.Proxy
 							_container.TryAdd(curType, holder);
 							if (!ServicesMapper.IsRegistered(attr.TypeOf))
 								attr.TypeOf.BindToSelf();
-
 						}
 					}
 					if (!ServicesMapper.IsRegistered(curType))
@@ -85,6 +84,7 @@ namespace ShareDeployed.Common.Proxy
 		{
 			contract.ThrowIfNull("contract", "Parameter cannot be null.");
 			service.ThrowIfNull("service", "Parameter cannot be null.");
+			
 			if (_internalServices.ContainsKey(contract))
 				_internalServices.TryUpdate(contract, service, GetInternalService(contract));
 			else
@@ -145,7 +145,7 @@ namespace ShareDeployed.Common.Proxy
 		}
 		#endregion
 
-		#region Pipeline services
+		#region Internal pipeline services
 		public Logging.ILogAggregator LoggerAggregator
 		{
 			get { return GetInternalService<Logging.ILogAggregator>(); }
