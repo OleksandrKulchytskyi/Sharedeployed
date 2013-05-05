@@ -5,7 +5,10 @@ using System.Reflection.Emit;
 
 namespace ShareDeployed.Common.Proxy
 {
-	// Delegate for holding object instantiator method
+	/// <summary>
+	/// Delegate for storing object instantiator method
+	/// </summary>
+	/// <returns></returns>
 	public delegate object CreateInstanceDelegate();
 
 	public sealed class ObjectCreatorHelper
@@ -13,6 +16,7 @@ namespace ShareDeployed.Common.Proxy
 		private static IDictionary<Type, CreateInstanceDelegate> _createInstanceDelegateList;
 		private static object _syncRoot;
 
+		#region ctors
 		static ObjectCreatorHelper()
 		{
 			_createInstanceDelegateList = new Dictionary<Type, CreateInstanceDelegate>();
@@ -21,7 +25,8 @@ namespace ShareDeployed.Common.Proxy
 
 		private ObjectCreatorHelper()
 		{
-		}
+		} 
+		#endregion
 
 		// Function that creates the method dynamically for creating the instance of a given class type
 		public static CreateInstanceDelegate ObjectInstantiater(Type objectType)
@@ -66,6 +71,15 @@ namespace ShareDeployed.Common.Proxy
 					throw new InvalidOperationException(string.Format("Mapping for abstraction is not registered in the system.{0}{1}", Environment.NewLine, objectType));
 			}
 			return ObjectInstantiater(objectType);
+		}
+
+		public static void ClearCache()
+		{
+			lock (_syncRoot)
+			{
+				if (_createInstanceDelegateList.Count > 0)
+					_createInstanceDelegateList.Clear();
+			}
 		}
 	}
 }
