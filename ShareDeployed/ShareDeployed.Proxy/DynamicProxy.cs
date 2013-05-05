@@ -399,6 +399,9 @@ namespace ShareDeployed.Common.Proxy
 				object target = _weakTarget == null ? _target : _weakTarget.Target;
 				if ((target as IDisposable) != null)
 					(target as IDisposable).Dispose();
+				
+				if (_target != null)
+					_target = null;//make rootless, for better GC
 			}
 		}
 		#endregion
