@@ -5,20 +5,21 @@ using System;
 namespace ShareDeployed.Test
 {
 	[TestClass]
-	public class DynamicProxyEngineTest
+	public class DynamicProxyPipelineTest
 	{
-		public IPipeline  Pipeline { get; set; }
+		public IPipeline Pipeline { get; set; }
 
 		[TestInitialize]
 		public void OnInit()
 		{
 			Pipeline = DynamicProxyPipeline.Instance;
 		}
-		
+
 		[TestMethod]
 		public void InitializeEngineTest()
 		{
 			Pipeline.Initialize(true);
+			(Pipeline as IConfigurable).Configure();
 		}
 
 		[TestMethod]

@@ -72,7 +72,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="DynamicProxy\DynamicProxyEngineTest.cs" />
+    <Compile Include="DynamicProxy\DynamicProxyPipelineTest.cs" />
     <Compile Include="DefJsnoBase64Test.cs" />
     <Compile Include="Ioc\ProxyIocTest.cs" />
     <Compile Include="Ioc\IoCConfigTest.cs" />

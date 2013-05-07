@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace ShareDeployed.Proxy
 {
-	public sealed class DynamicProxyPipeline : IPipeline
+	public sealed class DynamicProxyPipeline : IPipeline, IConfigurable
 	{
 		private ConcurrentDictionary<Type, object> _internalServices;
 		private static Lazy<DynamicProxyPipeline> _initializer;
@@ -21,16 +21,16 @@ namespace ShareDeployed.Proxy
 
 		private DynamicProxyPipeline()
 		{
+			_container = new ConcurrentDictionary<Type, SafeCollection<Type>>();
+
 			_internalServices = new ConcurrentDictionary<Type, object>();
 			_internalServices.TryAdd(typeof(IContractResolver), new ServicesMapper());
 
 			Type logAggrType = typeof(Logging.ILogAggregator);
-			ServicesMapper.RegisterTypes(logAggrType, typeof(Logging.LogAggregator)).InSingletonScope();
+			ServicesMapper.RegisterTypeWithAlias("logAggregator", logAggrType, typeof(Logging.LogAggregator)).InSingletonScope();
 
 			_internalServices.TryAdd(logAggrType, ContracResolver.Resolve<Logging.ILogAggregator>());
 			LoggerAggregator.AddLogger(new Logging.Log4netProvider());
-
-			_container = new ConcurrentDictionary<Type, SafeCollection<Type>>();
 		}
 		#endregion
 
@@ -150,6 +150,11 @@ namespace ShareDeployed.Proxy
 		public Logging.ILogAggregator LoggerAggregator
 		{
 			get { return GetInternalService<Logging.ILogAggregator>(); }
+			set
+			{
+				if (value is Logging.ILogAggregator)
+					ReplaceService(typeof(Logging.ILogAggregator), value);
+			}
 		}
 
 		public IContractResolver ContracResolver
@@ -158,7 +163,26 @@ namespace ShareDeployed.Proxy
 			{
 				return GetInternalService<IContractResolver>();
 			}
+			set
+			{
+				if (value is IContractResolver)
+					ReplaceService(typeof(IContractResolver), value);
+			}
 		}
 		#endregion
+
+		/// <summary>
+		/// Invoke Configure method against all internal services.(Services only inherits from IConfigurable)
+		/// </summary>
+		public void Configure()
+		{
+			foreach (var item in _internalServices.Values)
+			{
+				if ((item as IConfigurable) != null)
+				{
+					(item as IConfigurable).Configure();
+				}
+			}
+		}
 	}
 }

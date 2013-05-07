@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShareDeployed.Proxy.IoC.Config;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,29 +12,42 @@ namespace ShareDeployed.Proxy
 	/// </summary>
 	public enum ServiceLifetime
 	{
-		Singleton = 0,
-		PerRequest,
-		PerThread
+		PerRequest = 0,
+		Singleton,
+		PerThread = 2
 	}
 
-	public sealed class ServicesMapper : IContractResolver
+	/// <summary>
+	/// Service mapper
+	/// </summary>
+	public sealed class ServicesMapper : IContractResolver, IConfigurable
 	{
+		#region static fields
 		// map between contracts -> concrete implementation classes
 		private static bool _omitNotRegistered;
 		private static IDictionary<Type, KeyValuePair<Type, ServiceLifetime>> _servicesMap;
+		//type aliases
+		private static ConcurrentDictionary<string, Type> _aliases;
 		//locker object
 		private static object _syncRoot;
+		#endregion
 
-		static ServicesMapper()
-		{
-			_servicesMap = new Dictionary<Type, KeyValuePair<Type, ServiceLifetime>>();
-			_syncRoot = new object();
-		}
 
+		#region instance fields
 		//singletons container
 		private ConcurrentDictionary<Type, object> _singletonObjects;
 		//per thread container
 		private ConcurrentDictionary<ThreadTypeInfo, object> _perThreadObjects;
+
+		private ConcurrentDictionary<Type, SafeCollection<IoC.Config.ServicePropertyElement>> _configProperties;
+		private ConcurrentDictionary<Type, SafeCollection<IoC.Config.ServiceCtorArgumentElement>> _configCtorArgs;
+		#endregion
+
+		static ServicesMapper()
+		{
+			_syncRoot = new object();
+			_servicesMap = new Dictionary<Type, KeyValuePair<Type, ServiceLifetime>>();
+		}
 
 		/// <summary>
 		/// default ctor
@@ -42,6 +56,10 @@ namespace ShareDeployed.Proxy
 		{
 			_singletonObjects = new ConcurrentDictionary<Type, object>();
 			_perThreadObjects = new ConcurrentDictionary<ThreadTypeInfo, object>(new ThreadTypeInfoEqualityComparer());
+			_aliases = new ConcurrentDictionary<string, Type>();
+
+			_configCtorArgs = new ConcurrentDictionary<Type, SafeCollection<ServiceCtorArgumentElement>>();
+			_configProperties = new ConcurrentDictionary<Type, SafeCollection<ServicePropertyElement>>();
 		}
 
 		//static methods 
@@ -54,6 +72,16 @@ namespace ShareDeployed.Proxy
 		public static bool CanBeResolved(Type type)
 		{
 			return _servicesMap.ContainsKey(type);
+		}
+
+		/// <summary>
+		/// Check whether given alias type is registered in system.
+		/// </summary>
+		/// <param name="alias"></param>
+		/// <returns></returns>
+		public static bool CanBeResolved(string alias)
+		{
+			return _aliases.ContainsKey(alias);
 		}
 
 		public static Type RegisterTypes(Type contract, Type impl, ServiceLifetime lifetime = ServiceLifetime.PerRequest, bool throwOnDuplicate = true)
@@ -75,10 +103,28 @@ namespace ShareDeployed.Proxy
 			return contract;
 		}
 
+		public static Type RegisterTypeWithAlias(string alias, Type contract, Type impl, ServiceLifetime lifetime = ServiceLifetime.PerRequest, bool throwOnDuplicate = true)
+		{
+			alias.ThrowIfNull("alias", "Parameter cannot be null.");
+			Type resolved = RegisterTypes(contract, impl, lifetime, throwOnDuplicate);
+			if (!_aliases.ContainsKey(alias))
+				_aliases.TryAdd(alias, resolved);
+			else
+				throw new InvalidOperationException("Alias has been already registered.");
+			return resolved;
+		}
+
 		public static Type Register<T>(ServiceLifetime lifetime = ServiceLifetime.PerRequest, bool throwOnDuplicate = true)
 		{
 			Type type = typeof(T);
 			return RegisterTypes(type, type, lifetime, throwOnDuplicate);
+		}
+
+		public static Type Register<T>(string alias, ServiceLifetime lifetime = ServiceLifetime.PerRequest, bool throwOnDuplicate = true)
+		{
+			alias.ThrowIfNull("alias", "Parameter cannot be null.");
+			Type type = typeof(T);
+			return RegisterTypeWithAlias(alias, type, type, lifetime, throwOnDuplicate);
 		}
 
 		public static Type ChangeLifetime(Type contract, ServiceLifetime lifetime)
@@ -131,8 +177,19 @@ namespace ShareDeployed.Proxy
 			return GetFullMappingInfo(contract).Key;
 		}
 
-		//instance methods
+		public static Type GetImplementationForAlias(string alias)
+		{
+			alias.ThrowIfNull("alias", "Parameter cannot be null.");
+			Type existed;
+			if (_aliases.TryGetValue(alias, out existed))
+			{
+				return GetImplementation(existed);
+			}
+			return default(Type);
+		}
 
+		//instance methods
+		#region IContractResolver members
 		public object Resolve(Type contract)
 		{
 			KeyValuePair<Type, ServiceLifetime> mapInfo = default(KeyValuePair<Type, ServiceLifetime>);
@@ -183,6 +240,17 @@ namespace ShareDeployed.Proxy
 				InitializeMembers(contract, instance);
 				return instance;
 			}
+		}
+
+		public object Resolve(string alias)
+		{
+			alias.ThrowIfNull("alias", "Parameter cannot be null.");
+			Type contract;
+			if (_aliases.TryGetValue(alias, out contract))
+			{
+				return Resolve(contract);
+			}
+			else return null;
 		}
 
 		private void InitializeMembers(Type contract, object instance)
@@ -253,8 +321,102 @@ namespace ShareDeployed.Proxy
 					_omitNotRegistered = value;
 			}
 		}
+		#endregion
+
+		#region IConfigurable members
+		public void Configure()
+		{
+			ProxyServicesHandler handler = ProxyServicesHandler.GetConfig();
+			if (handler != null)
+			{
+				foreach (ProxyServiceElement service in handler.Services)
+				{
+					if (!string.IsNullOrEmpty(service.Alias))
+					{
+						if (handler.OmitExisting && ServicesMapper.CanBeResolved(service.Alias))
+							continue;
+						else if (!handler.OmitExisting && ServicesMapper.CanBeResolved(service.Alias))
+							throw new InvalidOperationException(string.Format("Alias for service: {0} has already been added.System unable to register alias: {1}",
+								service.Type, service.Alias));
+					}
+
+					if (string.IsNullOrEmpty(service.Contract))
+					{
+						Type contract = Type.GetType(service.Type, false);
+						if (contract != null)
+						{
+							contract.BindToSelfWithAliasInScope(service.Alias, (ServiceLifetime)service.Scope);
+							InitializeInternals(contract, contract, service);
+						}
+						else
+							throw new ServiceMapperConfigurationException(string.Format("Unable to resolve type {0}", service.Type));
+					}
+					else
+					{
+						Type contract = Type.GetType(service.Contract, false);
+						Type expected = Type.GetType(service.Type, false);
+						if (contract != null && expected != null)
+						{
+							ServicesMapper.RegisterTypeWithAlias(service.Alias, contract, expected, (ServiceLifetime)service.Scope);
+							InitializeInternals(contract, expected, service);
+						}
+						else
+							throw new ServiceMapperConfigurationException(string.Format("Unable to resolve types: {0} , {1}", service.Contract, service.Type));
+					}
+				}
+			}
+		}
+
+		private void InitializeInternals(Type contract, Type expected, ProxyServiceElement service)
+		{
+			service.ThrowIfNull("service", "Parameter cannot be null.");
+			
+			if (service.Properties.Count > 0)
+				InitializePropertyMappings(service.Properties, contract);
+			
+			if (service.CtorArgs.Count > 0)
+				InitializeCtorArgsMappings(service.CtorArgs, contract);
+		}
+
+		private void InitializePropertyMappings(ServicePropertyCollection propertyCollection, Type contract)
+		{
+			if(_configProperties.ContainsKey(contract))
+			{
+				foreach(ServicePropertyElement item in propertyCollection)
+				{
+					_configProperties[contract].Add(item);
+				}
+			}
+			else
+			{
+				SafeCollection<ServicePropertyElement> container = new SafeCollection<ServicePropertyElement>();
+				container.AddRange(propertyCollection.Cast<ServicePropertyElement>().AsEnumerable());
+				_configProperties.TryAdd(contract, container);
+			}
+		}
+
+		private void InitializeCtorArgsMappings(ServiceCtorArgCollection ctorArgsCollection, Type contract)
+		{
+			if (_configCtorArgs. ContainsKey(contract))
+			{
+				foreach (ServiceCtorArgumentElement item in ctorArgsCollection)
+				{
+					_configCtorArgs[contract].Add(item);
+				}
+			}
+			else
+			{
+				SafeCollection<ServiceCtorArgumentElement> container=new SafeCollection<ServiceCtorArgumentElement>();
+				container.AddRange(ctorArgsCollection.Cast<ServiceCtorArgumentElement>().AsEnumerable());
+				_configCtorArgs.TryAdd(contract, container);
+			}
+		}
+		#endregion
 	}
 
+	/// <summary>
+	/// Helper class for ServicesMapper
+	/// </summary>
 	public static class ContractResolverExtension
 	{
 		/// <summary>
@@ -296,6 +458,26 @@ namespace ShareDeployed.Proxy
 		public static Type BindToSelf(this Type contract, bool excludeException)
 		{
 			ServicesMapper.RegisterTypes(contract, contract, throwOnDuplicate: false);
+			return contract;
+		}
+
+		/// <summary>
+		/// Bind type resolving to self with given alias in default lifetime scope
+		/// </summary>
+		/// <param name="contract"></param>
+		public static Type BindToSelfWithAlias(this Type contract, string alias)
+		{
+			ServicesMapper.RegisterTypeWithAlias(alias, contract, contract);
+			return contract;
+		}
+
+		/// <summary>
+		/// Bind type resolving to self with given alias and given lifetime scope
+		/// </summary>
+		/// <param name="contract"></param>
+		public static Type BindToSelfWithAliasInScope(this Type contract, string alias, ServiceLifetime scope)
+		{
+			ServicesMapper.RegisterTypeWithAlias(alias, contract, contract, scope);
 			return contract;
 		}
 	}

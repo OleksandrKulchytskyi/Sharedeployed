@@ -65,10 +65,12 @@
     <Compile Include="Interceptors\BeforeMethodExecutesInterceptor.cs" />
     <Compile Include="Interceptors\MethodInterceptor.cs" />
     <Compile Include="Invocations\MethodInvocation.cs" />
-    <Compile Include="IoC\Config\ProxyService.cs" />
-    <Compile Include="IoC\Config\ProxyServiceCollection.cs" />
-    <Compile Include="IoC\Config\ProxyServicesSection.cs" />
+    <Compile Include="IoC\Config\ProxyServiceElement.cs" />
+    <Compile Include="IoC\Config\ProxyServicesHandler.cs" />
+    <Compile Include="IoC\Config\ServiceCtorArgumentElement.cs" />
+    <Compile Include="IoC\Config\ServicePropertyElement.cs" />
     <Compile Include="IoC\MemberMetadata.cs" />
+    <Compile Include="IoC\ServiceMapperConfigurationException.cs" />
     <Compile Include="IoC\ThreadTypeInfo.cs" />
     <Compile Include="IoC\TypeWithInjections.cs" />
     <Compile Include="Logging\ILogger.cs" />

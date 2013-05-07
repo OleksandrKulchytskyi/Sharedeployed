@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
+﻿using System.Configuration;
 
 namespace ShareDeployed.Proxy.IoC.Config
 {
@@ -19,6 +15,12 @@ namespace ShareDeployed.Proxy.IoC.Config
 			return new ProxyServicesHandler();
 		}
 
+		public ProxyServicesHandler()
+		{
+			_omitExisting = new ConfigurationProperty("omitExisting", typeof(bool), false);
+			Properties.Add(_omitExisting);
+		}
+
 		[ConfigurationProperty("services", IsDefaultCollection = false)]
 		[ConfigurationCollection(typeof(ProxyServiceCollection), AddItemName = "service", ClearItemsName = "clear")]
 		public ProxyServiceCollection Services
@@ -30,5 +32,12 @@ namespace ShareDeployed.Proxy.IoC.Config
 			}
 		}
 
+		private readonly ConfigurationProperty _omitExisting;
+		[ConfigurationProperty("omitExisting")]
+		public bool OmitExisting
+		{
+			get { return (bool)base[_omitExisting]; }
+			set { base[_omitExisting] = value; }
+		}
 	}
 }

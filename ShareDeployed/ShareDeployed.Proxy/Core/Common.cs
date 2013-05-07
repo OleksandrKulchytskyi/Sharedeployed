@@ -17,11 +17,17 @@ namespace ShareDeployed.Proxy
 		IContractResolver ContracResolver { get; }
 	}
 
+	public interface IConfigurable
+	{
+		void Configure();
+	}
+
 	public interface IContractResolver
 	{
-		bool OmitNotRegistred { get; set; } 
+		bool OmitNotRegistred { get; set; }
 
 		object Resolve(Type contract);
+		object Resolve(string alias);
 		T Resolve<T>();
 		IEnumerable<object> ResolveAll(params Type[] types);
 	}

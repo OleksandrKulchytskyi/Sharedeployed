@@ -53,4 +53,19 @@ namespace ShareDeployed.Test.Ioc
 				Assert.Fail();
 		}
 	}
+
+	public class ClassWithParameters
+	{
+		private int _maxSpeed;
+		private ShareDeployed.Proxy.Logging.ILogAggregator _agg;
+
+		public ClassWithParameters(ShareDeployed.Proxy.Logging.ILogAggregator log, int maxSpeed)
+		{
+			_agg = log;
+			_maxSpeed = maxSpeed;
+		}
+
+		public ShareDeployed.Proxy.Logging.ILogAggregator LogAggregator { get; set; }
+
+	}
 }
