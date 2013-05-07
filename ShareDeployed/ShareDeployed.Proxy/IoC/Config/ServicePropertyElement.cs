@@ -5,7 +5,7 @@ namespace ShareDeployed.Proxy.IoC.Config
 {
 	public class ServicePropertyElement : ConfigurationElement
 	{
-		[ConfigurationProperty("name", IsRequired = false, IsKey = false)]
+		[ConfigurationProperty("name", IsRequired = true, IsKey = true)]
 		public string Name { get { return this["name"] as string; } }
 
 		[ConfigurationProperty("alias", IsRequired = false)]

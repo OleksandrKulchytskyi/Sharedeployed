@@ -48,6 +48,7 @@ namespace ShareDeployed.Test.Ioc
 				Assert.IsTrue(sect.Services.Count > 0);
 				Assert.IsTrue(sect.Services[1].ServiceProps.Count == 1);
 				Assert.IsTrue(sect.Services[1].ServiceProps[0].DefaultIfMissed);
+				StringAssert.Contains(sect.Services[2].CtorArgs[0].Name, "maxSpeed");
 			}
 			else
 				Assert.Fail();
