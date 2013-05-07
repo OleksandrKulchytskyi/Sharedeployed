@@ -1,8 +1,8 @@
-﻿using ShareDeployed.Common.Proxy.Caching;
+﻿using ShareDeployed.Proxy.Caching;
 using System;
 using System.Threading;
 
-namespace ShareDeployed.Common.Proxy.Logging
+namespace ShareDeployed.Proxy.Logging
 {
 	/// <summary>
 	/// Log aggregator

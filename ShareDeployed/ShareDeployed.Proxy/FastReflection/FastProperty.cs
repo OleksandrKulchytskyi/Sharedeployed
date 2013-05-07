@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace ShareDeployed.Common.Proxy.FastReflection
+namespace ShareDeployed.Proxy.FastReflection
 {
 	public sealed class FastProperty
 	{

@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Reflection;
 
-namespace ShareDeployed.Common.Proxy
+namespace ShareDeployed.Proxy
 {
 	public delegate object InvocationHandler(IInvocation invocation);
 	public delegate object InterceptorHandler(object proxy, MethodInfo targetMethod,

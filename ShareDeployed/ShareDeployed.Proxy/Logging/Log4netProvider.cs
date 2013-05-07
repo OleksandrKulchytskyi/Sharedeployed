@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ShareDeployed.Common.Proxy.Logging
+namespace ShareDeployed.Proxy.Logging
 {
 	/// <summary>
 	/// Log provider for log4net component

@@ -6,7 +6,7 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading;
 
-namespace ShareDeployed.Common.Proxy
+namespace ShareDeployed.Proxy
 {
 
 	/// <summary>

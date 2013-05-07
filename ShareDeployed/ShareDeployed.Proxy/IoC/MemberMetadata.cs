@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace ShareDeployed.Common.Proxy
+namespace ShareDeployed.Proxy
 {
 	/// <summary>
 	/// Member type enumeration

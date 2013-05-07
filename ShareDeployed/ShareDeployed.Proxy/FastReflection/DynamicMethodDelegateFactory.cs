@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 
-namespace ShareDeployed.Common.Proxy.FastReflection
+namespace ShareDeployed.Proxy.FastReflection
 {
 	public delegate object DynamicMethodDelegate(object target, object[] args);
 

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace ShareDeployed.Common.Proxy
+namespace ShareDeployed.Proxy
 {
 	public sealed class DynamicProxyPipeline : IPipeline
 	{

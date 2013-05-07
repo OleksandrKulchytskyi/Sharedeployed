@@ -1,5 +1,5 @@
 
-namespace ShareDeployed.Common.Proxy.Caching
+namespace ShareDeployed.Proxy.Caching
 {
 #if DOT_NET_4
 	using System;

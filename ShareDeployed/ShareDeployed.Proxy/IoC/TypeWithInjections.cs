@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ShareDeployed.Common.Proxy
+namespace ShareDeployed.Proxy
 {
 	/// <summary>
 	/// Container that holds types with its appropriate members marked with Instantiate attributes

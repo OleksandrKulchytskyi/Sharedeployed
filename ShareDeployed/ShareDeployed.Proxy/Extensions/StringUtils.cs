@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace ShareDeployed.Common.Proxy
+namespace ShareDeployed.Proxy
 {
 	internal static class StringUtils
 	{

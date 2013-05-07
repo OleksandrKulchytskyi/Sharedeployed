@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ShareDeployed.Common.Proxy.Pooling
+namespace ShareDeployed.Proxy.Pooling
 {
 	public delegate void ReleaseInstanceDelegate(IRecyclable @object);
 

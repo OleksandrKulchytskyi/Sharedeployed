@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ShareDeployed.Common.Proxy
+namespace ShareDeployed.Proxy
 {
 	[GetInstance(TypeOf=typeof(Logging.ILogAggregator),Alias="single")]
 	public sealed class MethodInterceptor : IInterceptor

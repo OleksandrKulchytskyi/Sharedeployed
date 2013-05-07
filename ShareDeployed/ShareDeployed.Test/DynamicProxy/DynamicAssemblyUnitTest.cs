@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Dynamic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ShareDeployed.Common.Proxy;
+using ShareDeployed.Proxy;
 using Microsoft.CSharp.RuntimeBinder;
 
 namespace ShareDeployed.Test

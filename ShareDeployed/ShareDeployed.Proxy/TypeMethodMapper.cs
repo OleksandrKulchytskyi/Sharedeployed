@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace ShareDeployed.Common.Proxy
+namespace ShareDeployed.Proxy
 {
 	#region MethodCallInfo struct
 	public struct MethodCallInfo : IEquatable<MethodCallInfo>

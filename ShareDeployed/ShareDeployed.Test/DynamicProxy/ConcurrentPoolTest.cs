@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ShareDeployed.Common.Proxy.Pooling;
+using ShareDeployed.Proxy.Pooling;
 using System.Threading;
 
 namespace ShareDeployed.Test

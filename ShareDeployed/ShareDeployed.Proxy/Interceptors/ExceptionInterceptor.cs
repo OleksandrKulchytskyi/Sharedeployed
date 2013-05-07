@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace ShareDeployed.Common.Proxy
+namespace ShareDeployed.Proxy
 {
 	[GetInstance(TypeOf = typeof(Logging.ILogAggregator), Alias = "single")]
 	public class ExceptionInterceptor : IInterceptor

@@ -1,5 +1,5 @@
 ﻿
-namespace ShareDeployed.Common.Proxy
+namespace ShareDeployed.Proxy
 {
 	/// <summary>
 	/// Extension methods for working with types.

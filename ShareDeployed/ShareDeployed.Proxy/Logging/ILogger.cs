@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ShareDeployed.Common.Proxy.Logging
+namespace ShareDeployed.Proxy.Logging
 {
 	/// <summary>
 	/// Log severity enumeration

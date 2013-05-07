@@ -5,7 +5,7 @@ using System.Reflection.Emit;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace ShareDeployed.Common.Proxy
+namespace ShareDeployed.Proxy
 {
 	public static class DynamicAssemblyBuilder
 	{

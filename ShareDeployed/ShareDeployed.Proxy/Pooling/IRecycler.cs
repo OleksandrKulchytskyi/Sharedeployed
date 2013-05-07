@@ -1,4 +1,4 @@
-﻿namespace ShareDeployed.Common.Proxy.Pooling
+﻿namespace ShareDeployed.Proxy.Pooling
 {
 	/// <summary>
 	/// Defines a contract for an object pool.

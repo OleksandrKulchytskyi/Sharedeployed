@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Reflection;
 
-namespace ShareDeployed.Common.Proxy
+namespace ShareDeployed.Proxy
 {
 	public class MetaDataFactory
 	{

@@ -7,7 +7,7 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading;
 
-namespace ShareDeployed.Common.Proxy.FastReflection
+namespace ShareDeployed.Proxy.FastReflection
 {
 	public class PropertyAccessor : IPropertyAccessor
 	{

@@ -1,11 +1,11 @@
-﻿using ShareDeployed.Common.Proxy.Caching;
-using ShareDeployed.Common.Proxy.FastReflection;
+﻿using ShareDeployed.Proxy.Caching;
+using ShareDeployed.Proxy.FastReflection;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace ShareDeployed.Common.Proxy
+namespace ShareDeployed.Proxy
 {
 	public sealed class TypePropertyMapper
 	{

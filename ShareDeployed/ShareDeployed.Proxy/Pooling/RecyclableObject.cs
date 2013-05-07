@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ShareDeployed.Common.Proxy.Pooling
+namespace ShareDeployed.Proxy.Pooling
 {
 	/// <summary>
 	/// Represents an object that implements IRecyclable contract, allowing the object instance to be reused.

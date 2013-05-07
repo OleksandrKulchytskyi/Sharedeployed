@@ -1,4 +1,4 @@
-﻿namespace ShareDeployed.Common.Proxy
+﻿namespace ShareDeployed.Proxy
 {
 	public interface IProxy
 	{

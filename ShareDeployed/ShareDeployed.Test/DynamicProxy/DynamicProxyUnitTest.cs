@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ShareDeployed.Common.Proxy;
+using ShareDeployed.Proxy;
 using System.Diagnostics;
 
 namespace ShareDeployed.Test
@@ -336,9 +336,9 @@ namespace ShareDeployed.Test
 		{
 			int loopCount = 5000;
 			PropertyHolder ph = new PropertyHolder();
-			ShareDeployed.Common.Proxy.FastReflection.PropertyAccessor pa = new Common.Proxy.FastReflection.PropertyAccessor(typeof(PropertyHolder), "Id");
+			ShareDeployed.Proxy.FastReflection.PropertyAccessor pa = new ShareDeployed.Proxy.FastReflection.PropertyAccessor(typeof(PropertyHolder), "Id");
 			System.Reflection.PropertyInfo pi = typeof(PropertyHolder).GetProperty("Id");
-			ShareDeployed.Common.Proxy.FastReflection.FastProperty fp = new Common.Proxy.FastReflection.FastProperty(pi);
+			ShareDeployed.Proxy.FastReflection.FastProperty fp = new ShareDeployed.Proxy.FastReflection.FastProperty(pi);
 
 
 			Stopwatch sw = new Stopwatch();

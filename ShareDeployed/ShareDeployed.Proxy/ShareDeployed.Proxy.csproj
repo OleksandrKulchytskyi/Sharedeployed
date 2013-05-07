@@ -7,7 +7,7 @@
     <ProjectGuid>{389AE307-214F-400E-B8D4-C46DD9AB35A3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ShareDeployed.Common.Proxy</RootNamespace>
+    <RootNamespace>ShareDeployed.Proxy</RootNamespace>
     <AssemblyName>ShareDeployed.Proxy</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -34,6 +34,7 @@
       <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -64,6 +65,9 @@
     <Compile Include="Interceptors\BeforeMethodExecutesInterceptor.cs" />
     <Compile Include="Interceptors\MethodInterceptor.cs" />
     <Compile Include="Invocations\MethodInvocation.cs" />
+    <Compile Include="IoC\Config\ProxyService.cs" />
+    <Compile Include="IoC\Config\ProxyServiceCollection.cs" />
+    <Compile Include="IoC\Config\ProxyServicesSection.cs" />
     <Compile Include="IoC\MemberMetadata.cs" />
     <Compile Include="IoC\ThreadTypeInfo.cs" />
     <Compile Include="IoC\TypeWithInjections.cs" />
@@ -94,8 +98,9 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-	<None Include="TODO.txt" />
+    <None Include="TODO.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

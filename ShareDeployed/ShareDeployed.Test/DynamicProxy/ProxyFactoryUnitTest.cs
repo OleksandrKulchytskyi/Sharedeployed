@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ShareDeployed.Common.Proxy;
+using ShareDeployed.Proxy;
 
 
 namespace ShareDeployed.Test.ProxyFactoryTest

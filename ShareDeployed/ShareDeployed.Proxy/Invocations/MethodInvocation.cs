@@ -4,7 +4,7 @@ using System.Dynamic;
 using System.Reflection;
 using System.Text;
 
-namespace ShareDeployed.Common.Proxy
+namespace ShareDeployed.Proxy
 {
 	public class MethodInvocation : IInvocation
 	{

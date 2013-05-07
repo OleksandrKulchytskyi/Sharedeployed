@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Threading;
 
-namespace ShareDeployed.Common.Proxy.Pooling
+namespace ShareDeployed.Proxy.Pooling
 {
 	/// <summary>
 	/// This class represents a strongly-typed generic, concurrrent object pool.

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics;
-using ShareDeployed.Common.Proxy;
+using ShareDeployed.Proxy;
 
 namespace ShareDeployed.Test
 {
