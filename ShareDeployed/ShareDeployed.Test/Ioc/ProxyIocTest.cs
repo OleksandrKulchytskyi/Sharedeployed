@@ -48,6 +48,12 @@ namespace ShareDeployed.Test.Ioc
 			public IWorker Worker { get; set; }
 		}
 
+		public class ChildClass2 : TypeForResolving
+		{
+			[Instantiate]
+			public Object Worker { get; set; }
+		}
+
 		[TestMethod]
 		[ExpectedException(typeof(InvalidOperationException))]
 		public void TestPerThreadMethodFail()
@@ -124,8 +130,9 @@ namespace ShareDeployed.Test.Ioc
 			childType.BindToSelf();
 			DynamicProxyPipeline.Instance.ContracResolver.OmitNotRegistred = true;
 			ChildClass obj= DynamicProxyPipeline.Instance.ContracResolver.Resolve<ChildClass>();
-			if (obj == null)
+			if (obj == null )
 				Assert.Fail();
+			Assert.IsNull(obj.Worker);
 		}
 
 	}
