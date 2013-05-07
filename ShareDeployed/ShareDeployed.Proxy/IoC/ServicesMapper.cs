@@ -370,19 +370,19 @@ namespace ShareDeployed.Proxy
 		private void InitializeInternals(Type contract, Type expected, ProxyServiceElement service)
 		{
 			service.ThrowIfNull("service", "Parameter cannot be null.");
-			
-			if (service.Properties.Count > 0)
-				InitializePropertyMappings(service.Properties, contract);
-			
-			if (service.CtorArgs.Count > 0)
+
+			if (service.ServiceProps != null && service.ServiceProps.Count > 0)
+				InitializePropertyMappings(service.ServiceProps, contract);
+
+			if (service.CtorArgs != null && service.CtorArgs.Count > 0)
 				InitializeCtorArgsMappings(service.CtorArgs, contract);
 		}
 
 		private void InitializePropertyMappings(ServicePropertyCollection propertyCollection, Type contract)
 		{
-			if(_configProperties.ContainsKey(contract))
+			if (_configProperties.ContainsKey(contract))
 			{
-				foreach(ServicePropertyElement item in propertyCollection)
+				foreach (ServicePropertyElement item in propertyCollection)
 				{
 					_configProperties[contract].Add(item);
 				}
@@ -397,7 +397,7 @@ namespace ShareDeployed.Proxy
 
 		private void InitializeCtorArgsMappings(ServiceCtorArgCollection ctorArgsCollection, Type contract)
 		{
-			if (_configCtorArgs. ContainsKey(contract))
+			if (_configCtorArgs.ContainsKey(contract))
 			{
 				foreach (ServiceCtorArgumentElement item in ctorArgsCollection)
 				{
@@ -406,7 +406,7 @@ namespace ShareDeployed.Proxy
 			}
 			else
 			{
-				SafeCollection<ServiceCtorArgumentElement> container=new SafeCollection<ServiceCtorArgumentElement>();
+				SafeCollection<ServiceCtorArgumentElement> container = new SafeCollection<ServiceCtorArgumentElement>();
 				container.AddRange(ctorArgsCollection.Cast<ServiceCtorArgumentElement>().AsEnumerable());
 				_configCtorArgs.TryAdd(contract, container);
 			}

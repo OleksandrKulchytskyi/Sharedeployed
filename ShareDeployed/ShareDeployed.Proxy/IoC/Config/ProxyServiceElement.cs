@@ -36,23 +36,24 @@ namespace ShareDeployed.Proxy.IoC.Config
 			}
 		}
 
-		[ConfigurationProperty(_cEmpty, IsDefaultCollection = true, IsKey = false, IsRequired = false, DefaultValue = null)]
-		public ServicePropertyCollection Properties
+		private const string _propSection = "properties";
+		[ConfigurationProperty(_propSection, IsDefaultCollection = true, IsKey = false, IsRequired = false, DefaultValue = null)]
+		public ServicePropertyCollection ServiceProps
 		{
-			get { return base[_cEmpty] as ServicePropertyCollection; }
+			get { return base[_propSection] as ServicePropertyCollection; }
 
-			set { base[_cEmpty] = value; }
+			set { base[_propSection] = value; }
 		}
 
-		[ConfigurationProperty(_cEmpty, IsDefaultCollection = true, IsKey = false, IsRequired = false, DefaultValue = null)]
+		private const string _ctorSection = "ctors";
+		[ConfigurationProperty(_ctorSection, IsDefaultCollection = true, IsKey = false, IsRequired = false, DefaultValue = null)]
 		public ServiceCtorArgCollection CtorArgs
 		{
-			get { return base[_cEmpty] as ServiceCtorArgCollection; }
+			get { return base[_ctorSection] as ServiceCtorArgCollection; }
 
-			set { base[_cEmpty] = value; }
+			set { base[_ctorSection] = value; }
 		}
 
-		//TODO: handle issue here!!!!!!!!!!!!!
 		public T GetInternal<T>() where T : ConfigurationElementCollection
 		{
 			return base[_cEmpty] as T;

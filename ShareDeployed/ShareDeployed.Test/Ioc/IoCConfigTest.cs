@@ -45,9 +45,9 @@ namespace ShareDeployed.Test.Ioc
 
 			if (sect != null)
 			{
-				Assert.IsTrue(sect.Services.Count == 2);
-				Assert.IsTrue(sect.Services[1].Properties.Count == 1);
-				Assert.IsTrue(sect.Services[1].Properties[0].DefaultIfMissed);
+				Assert.IsTrue(sect.Services.Count > 0);
+				Assert.IsTrue(sect.Services[1].ServiceProps.Count == 1);
+				Assert.IsTrue(sect.Services[1].ServiceProps[0].DefaultIfMissed);
 			}
 			else
 				Assert.Fail();
