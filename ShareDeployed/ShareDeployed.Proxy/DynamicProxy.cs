@@ -94,6 +94,11 @@ namespace ShareDeployed.Common.Proxy
 		}
 		#endregion
 
+		/// <summary>
+		/// Set target object for proxy instance
+		/// </summary>
+		/// <param name="target"></param>
+		/// <param name="isWeak">if true, wrap object to weak reference</param>
 		public virtual void SetTargetObject(object target, bool isWeak = false)
 		{
 			target.ThrowIfNull(_targetParamName, _paramCannotBeNullMsg);
@@ -105,6 +110,10 @@ namespace ShareDeployed.Common.Proxy
 			_targerType = target.GetType();
 		}
 
+		/// <summary>
+		/// check whether object reference (_weakTarget) is alive
+		/// </summary>
+		/// <returns></returns>
 		protected bool CheckIfWeakIsAlive()
 		{
 			return (_weakTarget != null && _weakTarget.IsAlive);
@@ -390,6 +399,9 @@ namespace ShareDeployed.Common.Proxy
 				object target = _weakTarget == null ? _target : _weakTarget.Target;
 				if ((target as IDisposable) != null)
 					(target as IDisposable).Dispose();
+				
+				if (_target != null)
+					_target = null;//make rootless, for better GC
 			}
 		}
 		#endregion
@@ -400,13 +412,11 @@ namespace ShareDeployed.Common.Proxy
 		public AdvancedDynamicProxy(object target)
 			: base(target)
 		{
-
 		}
 
 		public AdvancedDynamicProxy(object target, bool userFastProp)
 			: base(target, userFastProp)
 		{
-
 		}
 
 		public T GetAbstraction<T>()
