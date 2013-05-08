@@ -32,7 +32,6 @@ namespace ShareDeployed.Proxy
 		private static object _syncRoot;
 		#endregion
 
-
 		#region instance fields
 		//singletons container
 		private ConcurrentDictionary<Type, object> _singletonObjects;
@@ -62,7 +61,7 @@ namespace ShareDeployed.Proxy
 			_configProperties = new ConcurrentDictionary<Type, SafeCollection<ServicePropertyElement>>();
 		}
 
-		//static methods 
+		#region Static methods
 
 		/// <summary>
 		/// check whether type is registered in services pipeline
@@ -187,8 +186,8 @@ namespace ShareDeployed.Proxy
 			}
 			return default(Type);
 		}
+		#endregion
 
-		//instance methods
 		#region IContractResolver members
 		public object Resolve(Type contract)
 		{
@@ -206,54 +205,128 @@ namespace ShareDeployed.Proxy
 				switch (mapInfo.Value)
 				{
 					case ServiceLifetime.Singleton:
-						if (_singletonObjects.ContainsKey(mapInfo.Key))
-							instance = _singletonObjects[mapInfo.Key];
-						else
-						{
-							instanceDelegate = ObjectCreatorHelper.ObjectInstantiater(mapInfo.Key);
-							instance = instanceDelegate();
-							if (_singletonObjects.TryAdd(mapInfo.Key, instance))
-								break;
-							else
-								throw new InvalidOperationException("Fail to initialize object in singleton scope.");
-						}
+						HandleSingleton(mapInfo, out instanceDelegate, out instance);
 						break;
 					case ServiceLifetime.PerRequest:
-						instanceDelegate = ObjectCreatorHelper.ObjectInstantiater(mapInfo.Key);
-						instance = instanceDelegate();
+						HandlePerRequest(mapInfo, out instanceDelegate, out instance);
 						break;
 					case ServiceLifetime.PerThread:
-						int threadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
-						ThreadTypeInfo threadTypeInf = new ThreadTypeInfo(threadId, contract);
-						if (!_perThreadObjects.ContainsKey(threadTypeInf))
-						{
-							instanceDelegate = ObjectCreatorHelper.ObjectInstantiater(mapInfo.Key);
-							instance = instanceDelegate();
-							_perThreadObjects.TryAdd(threadTypeInf, instance);
-						}
-						else
-							_perThreadObjects.TryGetValue(threadTypeInf, out instance);
+						HandlePerThread(contract, mapInfo, out instanceDelegate, out instance);
 						break;
 					default:
 						return null;
 				}
-				InitializeMembers(contract, instance);
+				InitializeInternalMembers(contract, instance);
+				InitializeInternalsFromConfiguration(contract, instance);
 				return instance;
 			}
 		}
 
-		public object Resolve(string alias)
+		private void HandlePerThread(Type contract, KeyValuePair<Type, ServiceLifetime> mapInfo, out CreateInstanceDelegate instanceDel, out object instance)
 		{
-			alias.ThrowIfNull("alias", "Parameter cannot be null.");
-			Type contract;
-			if (_aliases.TryGetValue(alias, out contract))
+			instance = null;
+			instanceDel = null;
+
+			int threadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
+			ThreadTypeInfo threadTypeInf = new ThreadTypeInfo(threadId, contract);
+			if (!_perThreadObjects.ContainsKey(threadTypeInf))
 			{
-				return Resolve(contract);
+				HandlePerRequest(mapInfo, out instanceDel, out instance);
+				if (instance != null)
+					_perThreadObjects.TryAdd(threadTypeInf, instance);
 			}
-			else return null;
+			else
+				_perThreadObjects.TryGetValue(threadTypeInf, out instance);
 		}
 
-		private void InitializeMembers(Type contract, object instance)
+		private void HandleSingleton(KeyValuePair<Type, ServiceLifetime> mapInfo, out CreateInstanceDelegate instanceDel, out object instance)
+		{
+			instanceDel = null;
+			instance = null;
+			if (_singletonObjects.ContainsKey(mapInfo.Key))
+				instance = _singletonObjects[mapInfo.Key];
+			else
+			{
+				HandlePerRequest(mapInfo, out instanceDel, out instance);
+				if (instance != null)
+					_singletonObjects.TryAdd(mapInfo.Key, instance);
+			}
+		}
+
+		private void HandlePerRequest(KeyValuePair<Type, ServiceLifetime> mapInfo, out CreateInstanceDelegate instanceDel, out object instance)
+		{
+			instance = null;
+			instanceDel = null;
+			if (!mapInfo.Key.HasDefaultCtor())
+			{
+				if (_configCtorArgs.ContainsKey(mapInfo.Key))
+				{
+					FastReflection.IDynamicConstructor dynCtor = null;
+					int argCount = _configCtorArgs[mapInfo.Key].Count;
+					if (TypeCtorsMapper.Instance.Contains(mapInfo.Key))
+					{
+						dynCtor = TypeCtorsMapper.Instance.Get(mapInfo.Key).FirstOrDefault(x => x.ParametersCount == argCount);
+						if (dynCtor != null)
+						{
+							object[] parameters = InitCtorParameters(mapInfo.Key, argCount);
+							instance = dynCtor.Invoke(parameters);
+							return;
+						}
+					}
+					else
+					{
+						ConstructorInfo ci = mapInfo.Key.GetConstructors(ReflectionUtils.PublicInstanceMembers).
+														FirstOrDefault(ctor => ctor.GetParameters().Length == argCount);
+						if (ci != null)
+						{
+							dynCtor = FastReflection.DynamicConstructor.Create(ci);
+							TypeCtorsMapper.Instance.Add(mapInfo.Key, dynCtor);
+							object[] parameters = InitCtorParameters(mapInfo.Key, argCount);
+							instance = dynCtor.Invoke(parameters);
+							return;
+						}
+						else
+							throw new ConstructorMissingException(mapInfo.Key, argCount);
+					}
+				}
+			}
+			else
+			{
+				instanceDel = ObjectCreatorHelper.ObjectInstantiater(mapInfo.Key);
+				instance = instanceDel();
+			}
+		}
+
+		private object[] InitCtorParameters(Type type, int argCount)
+		{
+			object[] data;
+			SafeCollection<ServiceCtorArgumentElement> args;
+			if (!_configCtorArgs.TryGetValue(type, out args))
+				throw new InvalidOperationException(string.Format("Fail to retrieve ctor arguments info for type {0}", type));
+			else
+			{
+				ServiceCtorArgumentElement[] ctorsArray = new ServiceCtorArgumentElement[args.Count];
+				data = new object[argCount];
+				args.CopyTo(ctorsArray, 0);
+				Array.Reverse(ctorsArray);
+				for (int i = 0; i < argCount; i++)
+				{
+					if (!string.IsNullOrEmpty(ctorsArray[i].Alias))
+					{
+						object argValue = Resolve(ctorsArray[i].Alias);
+						data[i] = argValue;
+					}
+					else
+					{
+						object argValue = ConvertHelper.CreateType(ctorsArray[i].ValueType, ctorsArray[i].Value);
+						data[i] = argValue;
+					}
+				}
+				return data;
+			}
+		}
+
+		private void InitializeInternalMembers(Type contract, object instance)
 		{
 			if (TypeWithInjections.Instance.Contains(contract))
 			{
@@ -298,6 +371,46 @@ namespace ShareDeployed.Proxy
 					}
 				}
 			}
+		}
+
+		private void InitializeInternalsFromConfiguration(Type contract, object instance)
+		{
+			contract.ThrowIfNull("contract", "Parameter cannot be null.");
+			instance.ThrowIfNull("instance", "Parameter cannot be null.");
+
+			if (_configProperties.ContainsKey(contract))
+			{
+				foreach (ServicePropertyElement item in _configProperties[contract])
+				{
+					if (TypeWithInjections.Instance.Contains(contract))
+					{
+						MemberMetadata metadata = TypeWithInjections.Instance.GetMetadataFor(contract).FirstOrDefault(x => x.FastProperty.Property.Name.Equals(item.Name));
+						if (metadata.FastProperty != null)
+						{
+							object value = string.IsNullOrEmpty(item.Alias) ? ConvertHelper.CreateType(item.ValueType, item.Value) : Resolve(item.Alias);
+							metadata.FastProperty.Set(instance, value);
+						}
+					}
+					else
+					{
+						PropertyInfo pi = instance.GetType().GetProperty(item.Name);
+						MemberMetadata newMetadata = new MemberMetadata(pi);
+						TypeWithInjections.Instance.Add(contract, newMetadata);
+						object value = string.IsNullOrEmpty(item.Alias) ? ConvertHelper.CreateType(item.ValueType, item.Value) : Resolve(item.Alias);
+						newMetadata.FastProperty.Set(instance, value);
+					}
+				}
+			}
+		}
+
+		public object Resolve(string alias)
+		{
+			alias.ThrowIfNull("alias", "Parameter cannot be null.");
+			Type contract;
+			if (_aliases.TryGetValue(alias, out contract))
+				return Resolve(contract);
+			else
+				return null;
 		}
 
 		public T Resolve<T>()
@@ -345,7 +458,7 @@ namespace ShareDeployed.Proxy
 						Type contract = Type.GetType(service.Type, false);
 						if (contract != null)
 						{
-							contract.BindToSelfWithAliasInScope(service.Alias, (ServiceLifetime)service.Scope);
+							contract.BindToSelfWithAliasInScope(string.IsNullOrEmpty(service.Alias) ? contract.FullName : service.Alias, (ServiceLifetime)service.Scope);
 							InitializeInternals(contract, contract, service);
 						}
 						else
@@ -357,7 +470,8 @@ namespace ShareDeployed.Proxy
 						Type expected = Type.GetType(service.Type, false);
 						if (contract != null && expected != null)
 						{
-							ServicesMapper.RegisterTypeWithAlias(service.Alias, contract, expected, (ServiceLifetime)service.Scope);
+							ServicesMapper.RegisterTypeWithAlias(string.IsNullOrEmpty(service.Alias) ? contract.FullName : service.Alias,
+																	contract, expected, (ServiceLifetime)service.Scope);
 							InitializeInternals(contract, expected, service);
 						}
 						else

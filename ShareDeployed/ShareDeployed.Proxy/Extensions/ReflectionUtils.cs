@@ -13,7 +13,6 @@ namespace ShareDeployed.Proxy
 		public static readonly BindingFlags PublicInstanceMembers = (BindingFlags.Public | BindingFlags.Instance);
 		public static readonly BindingFlags PublicInstanceInvoke = (BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Instance);
 
-
 		public static Type GetMemberType(this MemberInfo member)
 		{
 			if (member is PropertyInfo)
@@ -22,6 +21,12 @@ namespace ShareDeployed.Proxy
 				return (member as FieldInfo).FieldType;
 
 			throw new NotImplementedException();
+		}
+
+		public static bool HasDefaultCtor(this Type contract)
+		{
+			contract.ThrowIfNull("contract", "Parameter cannot be null");
+			return contract.IsValueType || contract.GetConstructor(Type.EmptyTypes) != null;
 		}
 
 		public static bool IsVirtual(this PropertyInfo propertyInfo)
@@ -84,7 +89,6 @@ namespace ShareDeployed.Proxy
 
 		public static bool IsNullable(Type t)
 		{
-
 			if (t.IsValueType())
 				return IsNullableType(t);
 
@@ -221,6 +225,5 @@ namespace ShareDeployed.Proxy
 
 			return isMethodOverriden;
 		}
-
 	}
 }

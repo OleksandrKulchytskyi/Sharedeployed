@@ -66,7 +66,11 @@ namespace ShareDeployed.Test.Ioc
 			_maxSpeed = maxSpeed;
 		}
 
-		public ShareDeployed.Proxy.Logging.ILogAggregator LogAggregator { get; set; }
+		public bool IsLogAggNull()
+		{
+			return _agg==null;
+		}
 
+		public ShareDeployed.Proxy.Logging.ILogAggregator LogAggregator { get { return _agg; } }
 	}
 }

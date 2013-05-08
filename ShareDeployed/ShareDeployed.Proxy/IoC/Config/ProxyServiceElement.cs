@@ -54,7 +54,7 @@ namespace ShareDeployed.Proxy.IoC.Config
 			set { base[_ctorSection] = value; }
 		}
 
-		public T GetInternal<T>() where T : ConfigurationElementCollection
+		public T GetCollectionOfType<T>() where T : ConfigurationElementCollection
 		{
 			return base[_cEmpty] as T;
 		}
@@ -90,8 +90,7 @@ namespace ShareDeployed.Proxy.IoC.Config
 			get { return base.BaseGet(index) as ProxyServiceElement; }
 			set
 			{
-				if (base.BaseGet(index) != null)
-					base.BaseRemoveAt(index);
+				if (base.BaseGet(index) != null) base.BaseRemoveAt(index);
 				base.BaseAdd(index, value);
 			}
 		}

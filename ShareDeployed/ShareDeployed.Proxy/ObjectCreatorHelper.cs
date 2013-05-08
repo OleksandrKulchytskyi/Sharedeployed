@@ -25,13 +25,15 @@ namespace ShareDeployed.Proxy
 
 		private ObjectCreatorHelper()
 		{
-		} 
+		}
 		#endregion
 
 		// Function that creates the method dynamically for creating the instance of a given class type
 		public static CreateInstanceDelegate ObjectInstantiater(Type objectType)
 		{
 			CreateInstanceDelegate createInstanceDelegate;
+			if (!objectType.HasDefaultCtor())
+				throw new ConstructorMissingException(objectType);
 
 			if (!_createInstanceDelegateList.TryGetValue(objectType, out createInstanceDelegate))
 			{
@@ -68,7 +70,7 @@ namespace ShareDeployed.Proxy
 					return ObjectInstantiater(implType);
 				}
 				else
-					throw new InvalidOperationException(string.Format("Mapping for abstraction is not registered in the system.{0}{1}", Environment.NewLine, objectType));
+					throw new InvalidOperationException(string.Format("Mapping for abstraction {0} is not registered in the system.", objectType));
 			}
 			return ObjectInstantiater(objectType);
 		}

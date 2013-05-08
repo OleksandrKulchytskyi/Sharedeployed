@@ -48,9 +48,14 @@
     <Compile Include="DynamicProxy.cs" />
     <Compile Include="DynamicProxyPipeline.cs" />
     <Compile Include="DynamicProxyFactory.cs" />
+    <Compile Include="Exceptions\ConstructorMissingException.cs" />
+    <Compile Include="Exceptions\TypeIsNotInterface.cs" />
+    <Compile Include="Extensions\ConvertHelper.cs" />
     <Compile Include="Extensions\DynamicProxyGenerator.cs" />
     <Compile Include="Extensions\IEnumerableUtils.cs" />
     <Compile Include="Extensions\ValidationHelper.cs" />
+    <Compile Include="FastReflection\DynamicCtor.cs" />
+    <Compile Include="FastReflection\ILManager.cs" />
     <Compile Include="FastReflection\IPropertyAccessor.cs" />
     <Compile Include="FastReflection\MethodInvokerFactory.cs" />
     <Compile Include="Extensions\ReflectionUtils.cs" />
@@ -70,7 +75,7 @@
     <Compile Include="IoC\Config\ServiceCtorArgumentElement.cs" />
     <Compile Include="IoC\Config\ServicePropertyElement.cs" />
     <Compile Include="IoC\MemberMetadata.cs" />
-    <Compile Include="IoC\ServiceMapperConfigurationException.cs" />
+    <Compile Include="Exceptions\ServiceMapperConfigurationException.cs" />
     <Compile Include="IoC\ThreadTypeInfo.cs" />
     <Compile Include="IoC\TypeWithInjections.cs" />
     <Compile Include="Logging\ILogger.cs" />
@@ -80,7 +85,7 @@
     <Compile Include="Pooling\IRecyclable.cs" />
     <Compile Include="Pooling\IRecycler.cs" />
     <Compile Include="Pooling\RecyclableObject.cs" />
-    <Compile Include="TypeAttributesMapper.cs" />
+    <Compile Include="Mappers\TypeAttributesMapper.cs" />
     <Compile Include="Interceptors\ExceptionInterceptor.cs" />
     <Compile Include="Extensions\GenericsHelper.cs" />
     <Compile Include="Extensions\GenericWeakReference.cs" />
@@ -89,16 +94,19 @@
     <Compile Include="Core\IProxy.cs" />
     <Compile Include="IProxyInvocationHandler.cs" />
     <Compile Include="MetadataFactory.cs" />
-    <Compile Include="TypeMethodMapper.cs" />
+    <Compile Include="Mappers\TypeCtorsMapper.cs" />
+    <Compile Include="Mappers\TypeMethodMapper.cs" />
     <Compile Include="ObjectCreatorHelper.cs" />
     <Compile Include="Caching\Cache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extensions\SafeCollection.cs" />
     <Compile Include="IoC\ServicesMapper.cs" />
-    <Compile Include="TypePropertyMapper.cs" />
+    <Compile Include="Mappers\TypePropertyMapper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="TODO.txt" />
   </ItemGroup>

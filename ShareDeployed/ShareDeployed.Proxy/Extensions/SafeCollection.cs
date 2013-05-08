@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
+using System.Linq;
 
 namespace ShareDeployed.Proxy
 {
@@ -58,6 +59,17 @@ namespace ShareDeployed.Proxy
 			get
 			{
 				return Interlocked.CompareExchange(ref counter, 0, 0);
+			}
+		}
+
+		public T this[int index]
+		{
+			get
+			{
+				if (index < 0 && index > _inner.Count)
+					throw new System.IndexOutOfRangeException();
+				else
+					return _inner.Keys.ElementAt(index);
 			}
 		}
 

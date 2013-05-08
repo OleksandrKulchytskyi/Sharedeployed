@@ -23,13 +23,43 @@ namespace ShareDeployed.Test
 		}
 
 		[TestMethod]
+		public void InitializeEngineWithConfigWithResolveTest()
+		{
+			Pipeline.Initialize(true);
+			(Pipeline as IConfigurable).Configure();
+			object data = Pipeline.ContracResolver.Resolve("parameters");
+			Assert.IsNotNull(data);
+			Assert.IsInstanceOfType(data, typeof(Ioc.ClassWithParameters));
+
+			var data2 = Pipeline.ContracResolver.Resolve<ShareDeployed.Test.Ioc.ClassWithParameters>();
+			Assert.IsNotNull(data2);
+			Assert.IsFalse(data2.IsLogAggNull());
+			Assert.IsFalse(object.ReferenceEquals(data, data2));
+		}
+
+		[TestMethod]
+		public void NullWhitoutConfigResolveByAliasTest()
+		{
+			Pipeline.Initialize(true);
+			object data = Pipeline.ContracResolver.Resolve("parameters");
+			Assert.IsNull(data);
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(InvalidOperationException))]
+		public void NullWhitoutConfigResolveByTypeTest()
+		{
+			Pipeline.Initialize(true);
+			Pipeline.ContracResolver.Resolve<ShareDeployed.Test.Ioc.ClassWithParameters>();
+		}
+
+		[TestMethod]
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void ComplexInitializeEngineTest()
 		{
 			Pipeline.Initialize();
 
 			ExceptionInterceptor interceptor = Pipeline.ContracResolver.Resolve<ExceptionInterceptor>();
-
 			Assert.IsTrue(TypeWithInjections.Instance.Contains(typeof(ExceptionInterceptor)));
 
 			ExceptionInterceptor interceptor2 = Pipeline.ContracResolver.Resolve<ExceptionInterceptor>();
