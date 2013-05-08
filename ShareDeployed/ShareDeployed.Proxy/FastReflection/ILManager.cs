@@ -104,6 +104,44 @@ namespace ShareDeployed.Proxy.FastReflection
 			return ctor;
 		}
 
+
+		/// <summary>
+		/// Create a new Get method delegate for the specified field using <see cref="System.Reflection.Emit.DynamicMethod"/>
+		/// </summary>
+		/// <param name="fieldInfo">the field to create the delegate for</param>
+		/// <returns>a delegate that can be used to read the field</returns>
+		public static FieldGetterDelegate CreateFieldGetter(FieldInfo fieldInfo)
+		{
+			fieldInfo.ThrowIfNull("fieldInfo", "You cannot create a delegate for a null value.");
+
+			bool skipVisibility = true; //!IsPublic(fieldInfo);
+			Type[] argumentTypes = new Type[] { typeof(object) };
+			System.Reflection.Emit.DynamicMethod dmGetter = CreateDynamicMethod("get_" + fieldInfo.Name, typeof(object), argumentTypes, fieldInfo, skipVisibility);
+			ILGenerator il = dmGetter.GetILGenerator();
+			EmitFieldGetter(il, fieldInfo, false);
+			return (FieldGetterDelegate)dmGetter.CreateDelegate(typeof(FieldGetterDelegate));
+		}
+
+		/// <summary>
+		/// Create a new Set method delegate for the specified field using <see cref="System.Reflection.Emit.DynamicMethod"/>
+		/// </summary>
+		/// <param name="fieldInfo">the field to create the delegate for</param>
+		/// <returns>a delegate that can be used to read the field.</returns>
+		/// <remarks>
+		/// If the field's <see cref="FieldInfo.IsLiteral"/> returns true, the returned method 
+		/// will throw an <see cref="InvalidOperationException"/> when called.
+		/// </remarks>
+		public static FieldSetterDelegate CreateFieldSetter(FieldInfo fieldInfo)
+		{
+			fieldInfo.ThrowIfNull("fieldInfo", "You cannot create a delegate for a null value.");
+
+			bool skipVisibility = true; // !IsPublic(fieldInfo);
+			System.Reflection.Emit.DynamicMethod dmSetter = CreateDynamicMethod("set_" + fieldInfo.Name, null, new Type[] { typeof(object), typeof(object) }, fieldInfo, skipVisibility);
+			ILGenerator il = dmSetter.GetILGenerator();
+			EmitFieldSetter(il, fieldInfo, false);
+			return (FieldSetterDelegate)dmSetter.CreateDelegate(typeof(FieldSetterDelegate));
+		}
+
 		/// <summary>
 		/// Creates a <see cref="System.Reflection.Emit.DynamicMethod"/> instance with the highest possible code access security.
 		/// </summary>
@@ -159,6 +197,68 @@ namespace ShareDeployed.Proxy.FastReflection
 			}
 
 			EmitMethodReturn(il, constructor.DeclaringType);
+		}
+
+		private static void EmitFieldGetter(ILGenerator il, FieldInfo fieldInfo, bool isInstanceMethod)
+		{
+			if (fieldInfo.IsLiteral)
+			{
+				object value = fieldInfo.GetValue(null);
+				EmitConstant(il, value);
+			}
+			else if (fieldInfo.IsStatic)
+			{
+				//                object v = fieldInfo.GetValue(null); // ensure type is initialized...
+				il.Emit(OpCodes.Ldsfld, fieldInfo);
+			}
+			else
+			{
+				EmitTarget(il, fieldInfo.DeclaringType, isInstanceMethod);
+				il.Emit(OpCodes.Ldfld, fieldInfo);
+			}
+
+			if (fieldInfo.FieldType.IsValueType)
+			{
+				il.Emit(OpCodes.Box, fieldInfo.FieldType);
+			}
+			il.Emit(OpCodes.Ret);
+		}
+
+		internal static void EmitFieldSetter(ILGenerator il, FieldInfo fieldInfo, bool isInstanceMethod)
+		{
+			if (!fieldInfo.IsLiteral
+				&& !fieldInfo.IsInitOnly
+				&& !(fieldInfo.DeclaringType.IsValueType && !fieldInfo.IsStatic))
+			{
+				if (!fieldInfo.IsStatic)
+				{
+					EmitTarget(il, fieldInfo.DeclaringType, isInstanceMethod);
+				}
+
+				il.Emit(OpCodes.Ldarg_1);
+				if (fieldInfo.FieldType.IsValueType)
+				{
+					EmitUnbox(il, fieldInfo.FieldType);
+				}
+				else
+				{
+					il.Emit(OpCodes.Castclass, fieldInfo.FieldType);
+				}
+
+				if (fieldInfo.IsStatic)
+				{
+					il.Emit(OpCodes.Stsfld, fieldInfo);
+				}
+				else
+				{
+					il.Emit(OpCodes.Stfld, fieldInfo);
+				}
+				il.Emit(OpCodes.Ret);
+			}
+			else
+			{
+				EmitThrowInvalidOperationException(il, string.Format("Cannot write to read-only field '{0}.{1}'", fieldInfo.DeclaringType.FullName, fieldInfo.Name));
+			}
 		}
 		
 		internal static void EmitPropertyGetter(ILGenerator il, PropertyInfo propertyInfo, bool isInstanceMethod)
@@ -223,6 +323,77 @@ namespace ShareDeployed.Proxy.FastReflection
 		private static void EmitCall(ILGenerator il, MethodInfo method)
 		{
 			il.EmitCall((method.IsVirtual) ? OpCodes.Callvirt : OpCodes.Call, method, null);
+		}
+
+		private static void EmitConstant(ILGenerator il, object value)
+		{
+			if (value is String)
+			{
+				il.Emit(OpCodes.Ldstr, (string)value);
+				return;
+			}
+
+			if (value is bool)
+			{
+				if ((bool)value)
+				{
+					il.Emit(OpCodes.Ldc_I4_1);
+				}
+				else
+				{
+					il.Emit(OpCodes.Ldc_I4_0);
+				}
+				return;
+			}
+
+			if (value is Char)
+			{
+				il.Emit(OpCodes.Ldc_I4, (Char)value);
+				il.Emit(OpCodes.Conv_I2);
+				return;
+			}
+
+			if (value is byte)
+			{
+				il.Emit(OpCodes.Ldc_I4_S, (byte)value);
+				il.Emit(OpCodes.Conv_I1);
+			}
+			else if (value is Int16)
+			{
+				il.Emit(OpCodes.Ldc_I4, (Int16)value);
+				il.Emit(OpCodes.Conv_I2);
+			}
+			else if (value is Int32)
+			{
+				il.Emit(OpCodes.Ldc_I4, (Int32)value);
+			}
+			else if (value is Int64)
+			{
+				il.Emit(OpCodes.Ldc_I8, (Int64)value);
+			}
+			else if (value is UInt16)
+			{
+				il.Emit(OpCodes.Ldc_I4, (UInt16)value);
+				il.Emit(OpCodes.Conv_U2);
+			}
+			else if (value is UInt32)
+			{
+				il.Emit(OpCodes.Ldc_I4, (UInt32)value);
+				il.Emit(OpCodes.Conv_U4);
+			}
+			else if (value is UInt64)
+			{
+				il.Emit(OpCodes.Ldc_I8, (UInt64)value);
+				il.Emit(OpCodes.Conv_U8);
+			}
+			else if (value is Single)
+			{
+				il.Emit(OpCodes.Ldc_R4, (Single)value);
+			}
+			else if (value is Double)
+			{
+				il.Emit(OpCodes.Ldc_R8, (Double)value);
+			}
 		}
 
 		private static void EmitUnbox(ILGenerator il, Type argumentType)

@@ -65,6 +65,7 @@
     <Compile Include="FastReflection\DynamicMethodDelegateFactory.cs" />
     <Compile Include="FastReflection\FastProperty.cs" />
     <Compile Include="FastReflection\FastPropertyT.cs" />
+    <Compile Include="FastReflection\DynamicField.cs" />
     <Compile Include="FastReflection\PropertyAccessor.cs" />
     <Compile Include="FastReflection\PropertyAccessorException.cs" />
     <Compile Include="Interceptors\BeforeMethodExecutesInterceptor.cs" />
