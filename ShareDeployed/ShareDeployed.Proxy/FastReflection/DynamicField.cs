@@ -120,7 +120,7 @@ namespace ShareDeployed.Proxy.FastReflection
 		}
 	}
 
-	public class DynamicField
+	public sealed class DynamicField
 	{
 		/// <summary>
 		/// Creates dynamic field instance for the specified <see cref="FieldInfo"/>.

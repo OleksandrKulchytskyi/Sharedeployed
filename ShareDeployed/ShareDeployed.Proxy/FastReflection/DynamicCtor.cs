@@ -19,13 +19,14 @@ namespace ShareDeployed.Proxy.FastReflection
 		object Invoke(object[] arguments);
 	}
 
-	public class SafeConstructor : IDynamicConstructor
+	public class SafeCtorWrapper : IDynamicConstructor
 	{
 		private ConstructorInfo constructorInfo;
 
 		#region Generated Function Cache
 
-		private static readonly IDictionary<ConstructorInfo, ConstructorDelegate> constructorCache = new Dictionary<ConstructorInfo, ConstructorDelegate>();
+		private static readonly IDictionary<ConstructorInfo, ConstructorDelegate> constructorCache =
+			new Dictionary<ConstructorInfo, ConstructorDelegate>();
 
 		/// <summary>
 		/// Obtains cached constructor info or creates a new entry, if none is found.
@@ -52,7 +53,7 @@ namespace ShareDeployed.Proxy.FastReflection
 		/// Creates a new instance of the safe constructor wrapper.
 		/// </summary>
 		/// <param name="constructorInfo">Constructor to wrap.</param>
-		public SafeConstructor(ConstructorInfo constructorInfo)
+		public SafeCtorWrapper(ConstructorInfo constructorInfo)
 		{
 			this.constructorInfo = constructorInfo;
 			this.constructor = GetOrCreateDynamicConstructor(constructorInfo);
@@ -77,7 +78,7 @@ namespace ShareDeployed.Proxy.FastReflection
 		{
 			get
 			{
-				if(paramCount==-1)
+				if (paramCount == -1)
 				{
 					paramCount = constructorInfo.GetParameters().Length;
 				}
@@ -90,7 +91,7 @@ namespace ShareDeployed.Proxy.FastReflection
 	/// Factory class for dynamic constructors.
 	/// </summary>
 	/// <author>Aleksandar Seovic</author>
-	public class DynamicConstructor
+	public sealed class DynamicConstructor
 	{
 		/// <summary>
 		/// Creates dynamic constructor instance for the specified <see cref="ConstructorInfo"/>.
@@ -100,7 +101,7 @@ namespace ShareDeployed.Proxy.FastReflection
 		public static IDynamicConstructor Create(ConstructorInfo constructorInfo)
 		{
 			constructorInfo.ThrowIfNull("constructorInfo", "You cannot create a dynamic constructor for a null value.");
-			return new SafeConstructor(constructorInfo);
+			return new SafeCtorWrapper(constructorInfo);
 		}
 	}
 }
