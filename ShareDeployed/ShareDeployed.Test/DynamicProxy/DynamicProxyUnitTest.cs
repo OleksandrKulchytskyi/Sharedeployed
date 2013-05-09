@@ -150,6 +150,15 @@ namespace ShareDeployed.Test
 			Assert.IsTrue(TypePropertyMapper.Instance.Get(real.GetType(), "Default") != null);
 		}
 
+		[TestMethod]
+		public void FastFieldGetSetTest()
+		{
+			var real = new ErrorProneAbstracted();
+			ShareDeployed.Proxy.FastReflection.FastField ff = new Proxy.FastReflection.FastField(real.GetType().GetField("Id"));
+			ff.Set(real, 12);
+			Assert.IsTrue((int)ff.Get(real) == 12);
+		}
+
 		interface IDoWork
 		{
 			int Default { get; set; }
@@ -161,7 +170,8 @@ namespace ShareDeployed.Test
 
 		class ErrorProneAbstracted : IDoWork
 		{
-			
+			public int Id = -1;
+
 			public int Default { get; set; }
 
 			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorInjectionMode.OnError)]
@@ -339,7 +349,8 @@ namespace ShareDeployed.Test
 			ShareDeployed.Proxy.FastReflection.PropertyAccessor pa = new ShareDeployed.Proxy.FastReflection.PropertyAccessor(typeof(PropertyHolder), "Id");
 			System.Reflection.PropertyInfo pi = typeof(PropertyHolder).GetProperty("Id");
 			ShareDeployed.Proxy.FastReflection.FastProperty fp = new ShareDeployed.Proxy.FastReflection.FastProperty(pi);
-
+			ShareDeployed.Proxy.FastReflection.FastProperty<PropertyHolder> fp2 = new Proxy.FastReflection.FastProperty<PropertyHolder>(pi);
+			ShareDeployed.Proxy.FastReflection.FastProperty<PropertyHolder, int> fp3 = new Proxy.FastReflection.FastProperty<PropertyHolder, int>(pi);
 
 			Stopwatch sw = new Stopwatch();
 			sw.Start();
@@ -382,8 +393,96 @@ namespace ShareDeployed.Test
 			sw.Stop();
 			long fpTime = sw.ElapsedMilliseconds;
 
-			Debug.WriteLine(string.Format("Difference is:{0},{1},{2},{3}", directTime, reflTime, paTime, fpTime));
-			Assert.IsTrue(directTime < paTime && paTime > fpTime && fpTime < reflTime);
+			sw.Reset();
+			sw.Start();
+			for (int i = 1; i <= loopCount; i++)
+			{
+				fp2.Set(ph, i);
+				id = (int)fp2.Get(ph);
+			}
+			sw.Stop();
+			long fpTime2 = sw.ElapsedMilliseconds;
+
+			sw.Reset();
+			sw.Start();
+			for (int i = 1; i <= loopCount; i++)
+			{
+				fp3.Set(ph, i);
+				id = fp3.Get(ph);
+			}
+			sw.Stop();
+			long fpTime3 = sw.ElapsedMilliseconds;
+
+			Debug.WriteLine(string.Format("Difference is:{0},{1},{2},{3},{4},{5}", directTime, reflTime, paTime, fpTime, fpTime2, fpTime3));
+			Assert.IsTrue(fpTime3 < fpTime && fpTime2 < fpTime);
+			Assert.IsTrue(directTime < paTime && paTime > fpTime && fpTime3 < reflTime);
+		}
+
+		[TestMethod]
+		public void FieldAccessorPerformanceTest()
+		{
+			int loopCount = 5000;
+			ErrorProneAbstracted instance = new ErrorProneAbstracted();
+			System.Reflection.FieldInfo fi = typeof(ErrorProneAbstracted).GetField("Id");
+			ShareDeployed.Proxy.FastReflection.FastField ff = new Proxy.FastReflection.FastField(fi);
+			ShareDeployed.Proxy.FastReflection.FastField<ErrorProneAbstracted> ff2 = new Proxy.FastReflection.FastField<ErrorProneAbstracted>(fi);
+			ShareDeployed.Proxy.FastReflection.FastField<ErrorProneAbstracted, int> ff3 = new Proxy.FastReflection.FastField<ErrorProneAbstracted, int>(fi);
+			var dynField = ShareDeployed.Proxy.FastReflection.DynamicField.Create(fi);
+
+			Stopwatch sw = new Stopwatch();
+			sw.Start();
+			int id = 0;
+			for (int i = 1; i <= loopCount; i++)
+			{
+				fi.SetValue(instance, 12);
+				id = (int)fi.GetValue(instance);
+			}
+			sw.Stop();
+			long reflTime = sw.ElapsedMilliseconds;
+
+			sw.Reset();
+			sw.Start();
+			for (int i = 1; i <= loopCount; i++)
+			{
+				ff.Set(instance, i);
+				id = (int)ff.Get(instance);
+			}
+			sw.Stop();
+			long fastFieldTime = sw.ElapsedMilliseconds;
+
+			sw.Reset();
+			sw.Start();
+			for (int i = 1; i <= loopCount; i++)
+			{
+				ff2.Set(instance, i);
+				id = (int)ff2.Get(instance);
+			}
+			sw.Stop();
+			long fastFieldTime2 = sw.ElapsedMilliseconds;
+
+			sw.Reset();
+			sw.Start();
+			for (int i = 1; i <= loopCount; i++)
+			{
+				ff3.Set(instance, i);
+				id = ff3.Get(instance);
+			}
+			sw.Stop();
+			long fastFieldTime3 = sw.ElapsedMilliseconds;
+
+			sw.Reset();
+			sw.Start();
+			for (int i = 1; i <= loopCount; i++)
+			{
+				dynField.SetValue(instance, 12);
+				id = (int)dynField.GetValue(instance);
+			}
+			sw.Stop();
+			long dynFieldTime = sw.ElapsedMilliseconds;
+
+			Debug.WriteLine(string.Format("Difference is:{0},{1},{2},{3},{4}", reflTime, fastFieldTime, fastFieldTime2, fastFieldTime3, dynFieldTime));
+			Assert.IsTrue(fastFieldTime3 < fastFieldTime2 && fastFieldTime2 < fastFieldTime);
+			Assert.IsTrue(dynFieldTime < reflTime && fastFieldTime < reflTime);
 		}
 
 		[TestMethod]

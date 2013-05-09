@@ -63,7 +63,8 @@
     <Compile Include="Extensions\TypeExtension.cs" />
     <Compile Include="Extensions\ValueTypeExtension.cs" />
     <Compile Include="FastReflection\DynamicMethodDelegateFactory.cs" />
-    <Compile Include="FastReflection\FastProperty.cs" />
+    <Compile Include="FastReflection\FastField.cs" />
+	<Compile Include="FastReflection\FastProperty.cs" />
     <Compile Include="FastReflection\FastPropertyT.cs" />
     <Compile Include="FastReflection\DynamicField.cs" />
     <Compile Include="FastReflection\PropertyAccessor.cs" />
