@@ -72,6 +72,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Config\ProxyConfigTest.cs" />
     <Compile Include="DynamicProxy\DynamicProxyPipelineTest.cs" />
     <Compile Include="DefJsnoBase64Test.cs" />
     <Compile Include="Ioc\ProxyIocTest.cs" />
@@ -132,6 +133,9 @@
     <None Include="WebTest1.webtest">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Config\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

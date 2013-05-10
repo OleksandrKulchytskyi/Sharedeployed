@@ -43,7 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\ProxyMappingCollection.cs" />
+    <Compile Include="Config\ProxyMapperHandler.cs" />
     <Compile Include="Core\Common.cs" />
+	<Compile Include="Core\IInterceptor.cs" />
     <Compile Include="DynamicAssemblyBuilder.cs" />
     <Compile Include="DynamicProxy.cs" />
     <Compile Include="DynamicProxyPipeline.cs" />
@@ -64,7 +67,7 @@
     <Compile Include="Extensions\ValueTypeExtension.cs" />
     <Compile Include="FastReflection\DynamicMethodDelegateFactory.cs" />
     <Compile Include="FastReflection\FastField.cs" />
-	<Compile Include="FastReflection\FastProperty.cs" />
+    <Compile Include="FastReflection\FastProperty.cs" />
     <Compile Include="FastReflection\FastPropertyT.cs" />
     <Compile Include="FastReflection\DynamicField.cs" />
     <Compile Include="FastReflection\PropertyAccessor.cs" />
@@ -91,7 +94,6 @@
     <Compile Include="Interceptors\ExceptionInterceptor.cs" />
     <Compile Include="Extensions\GenericsHelper.cs" />
     <Compile Include="Extensions\GenericWeakReference.cs" />
-    <Compile Include="Core\IInterceptor.cs" />
     <Compile Include="InterfaceProxyFactory.cs" />
     <Compile Include="Core\IProxy.cs" />
     <Compile Include="IProxyInvocationHandler.cs" />
@@ -112,7 +114,9 @@
     <None Include="packages.config" />
     <None Include="TODO.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Config\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

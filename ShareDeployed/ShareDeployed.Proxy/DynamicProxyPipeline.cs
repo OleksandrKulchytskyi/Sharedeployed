@@ -31,6 +31,8 @@ namespace ShareDeployed.Proxy
 
 			_internalServices.TryAdd(logAggrType, ContracResolver.Resolve<Logging.ILogAggregator>());
 			LoggerAggregator.AddLogger(new Logging.Log4netProvider());
+
+			_internalServices.TryAdd(typeof(IDynamicProxyManager), new DynamicProxyManager());
 		}
 		#endregion
 
@@ -167,6 +169,16 @@ namespace ShareDeployed.Proxy
 			{
 				if (value is IContractResolver)
 					ReplaceService(typeof(IContractResolver), value);
+			}
+		}
+
+		public IDynamicProxyManager DynamixProxyManager
+		{
+			get { return GetInternalService<IDynamicProxyManager>(); }
+			set
+			{
+				if (value is IDynamicProxyManager)
+					ReplaceService(typeof(IDynamicProxyManager), value);
 			}
 		}
 		#endregion

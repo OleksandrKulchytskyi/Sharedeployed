@@ -264,6 +264,11 @@ namespace ShareDeployed.Test
 			public int Id { get; set; }
 			public string Name { get; set; }
 			public bool Old { get; set; }
+
+			public string GetName()
+			{
+				return Name;
+			}
 		}
 
 		[TestMethod]

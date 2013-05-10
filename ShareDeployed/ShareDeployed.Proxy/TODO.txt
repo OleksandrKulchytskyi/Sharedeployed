@@ -1,3 +1,4 @@
-1) Implement IoC configuration file parsing and building module (for example xml configuration files).
-2) Implement Proxy configurations via some file types.
+1) Implement IoC configuration file parsing and building module (for example xml configuration files). +
+2) Implement Proxy configurations via some file types. +
 3) Implement cleanup thread, that will track objects which have been accessed more than 15 min
+4) For IoC infrastructure implement AssemblyResolver mechanism
