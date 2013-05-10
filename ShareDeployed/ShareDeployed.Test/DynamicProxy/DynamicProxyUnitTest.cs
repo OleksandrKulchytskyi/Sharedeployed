@@ -155,8 +155,21 @@ namespace ShareDeployed.Test
 		{
 			var real = new ErrorProneAbstracted();
 			ShareDeployed.Proxy.FastReflection.FastField ff = new Proxy.FastReflection.FastField(real.GetType().GetField("Id"));
-			ff.Set(real, 12);
-			Assert.IsTrue((int)ff.Get(real) == 12);
+
+			try
+			{
+				ff.Set(real, 12);
+				object oId = ff.Get(real);
+				Assert.IsTrue((int)oId == 12);
+			}
+			catch (Exception ex)
+			{
+				if (ex.Message != null)
+				{
+
+				}
+				throw;
+			}
 		}
 
 		interface IDoWork
@@ -344,9 +357,10 @@ namespace ShareDeployed.Test
 		[TestMethod]
 		public void PropertyAccessorPerformanceTest()
 		{
-			int loopCount = 5000;
+			int loopCount = 1000;
 			PropertyHolder ph = new PropertyHolder();
-			ShareDeployed.Proxy.FastReflection.PropertyAccessor pa = new ShareDeployed.Proxy.FastReflection.PropertyAccessor(typeof(PropertyHolder), "Id");
+			//the slowest one
+			Proxy.FastReflection.PropertyAccessor pa = new Proxy.FastReflection.PropertyAccessor(typeof(PropertyHolder), "Id");
 			System.Reflection.PropertyInfo pi = typeof(PropertyHolder).GetProperty("Id");
 			ShareDeployed.Proxy.FastReflection.FastProperty fp = new ShareDeployed.Proxy.FastReflection.FastProperty(pi);
 			ShareDeployed.Proxy.FastReflection.FastProperty<PropertyHolder> fp2 = new Proxy.FastReflection.FastProperty<PropertyHolder>(pi);
@@ -421,7 +435,7 @@ namespace ShareDeployed.Test
 		[TestMethod]
 		public void FieldAccessorPerformanceTest()
 		{
-			int loopCount = 5000;
+			int loopCount = 100;
 			ErrorProneAbstracted instance = new ErrorProneAbstracted();
 			System.Reflection.FieldInfo fi = typeof(ErrorProneAbstracted).GetField("Id");
 			ShareDeployed.Proxy.FastReflection.FastField ff = new Proxy.FastReflection.FastField(fi);
@@ -496,7 +510,6 @@ namespace ShareDeployed.Test
 			var prop = System.ComponentModel.TypeDescriptor.GetProperties(cls);
 			sw.Stop();
 			long pdTime = sw.ElapsedTicks;
-
 
 			sw.Reset();
 			sw.Start();

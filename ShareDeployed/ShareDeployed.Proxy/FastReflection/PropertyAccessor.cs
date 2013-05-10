@@ -189,8 +189,7 @@ namespace ShareDeployed.Proxy.FastReflection
 			myType.AddInterfaceImplementation(typeof(IPropertyAccessor));
 
 			// Add a constructor
-			ConstructorBuilder constructor =
-				myType.DefineDefaultConstructor(MethodAttributes.Public);
+			ConstructorBuilder constructor = myType.DefineDefaultConstructor(MethodAttributes.Public);
 
 			// Define a method for the get operation. 
 			Type[] getParamTypes = new Type[] { typeof(object) };
@@ -205,15 +204,15 @@ namespace ShareDeployed.Proxy.FastReflection
 			if (targetGetMethod != null)
 			{
 				getIL.DeclareLocal(typeof(object));
-				getIL.Emit(OpCodes.Ldarg_1);								//Load the first argument (target object)
-				getIL.Emit(OpCodes.Castclass, this.mTargetType);			//Cast to the source type
-				getIL.EmitCall(OpCodes.Call, targetGetMethod, null);		//Get the property value
+				getIL.Emit(OpCodes.Ldarg_1); //Load the first argument (target object)
+				getIL.Emit(OpCodes.Castclass, this.mTargetType); //Cast to the source type
+				getIL.EmitCall(OpCodes.Call, targetGetMethod, null); //Get the property value
 
 				if (targetGetMethod.ReturnType.IsValueType)
 				{
-					getIL.Emit(OpCodes.Box, targetGetMethod.ReturnType);	//Box if necessary
+					getIL.Emit(OpCodes.Box, targetGetMethod.ReturnType); //Box if necessary
 				}
-				getIL.Emit(OpCodes.Stloc_0);								//Store it
+				getIL.Emit(OpCodes.Stloc_0);//Store it
 				getIL.Emit(OpCodes.Ldloc_0);
 			}
 			else
@@ -238,14 +237,14 @@ namespace ShareDeployed.Proxy.FastReflection
 				Type paramType = targetSetMethod.GetParameters()[0].ParameterType;
 
 				setIL.DeclareLocal(paramType);
-				setIL.Emit(OpCodes.Ldarg_1);						//Load the first argument (target object)
-				setIL.Emit(OpCodes.Castclass, this.mTargetType);	//Cast to the source type
-				setIL.Emit(OpCodes.Ldarg_2);						//Load the second argument (value object)
+				setIL.Emit(OpCodes.Ldarg_1);//Load the first argument (target object)
+				setIL.Emit(OpCodes.Castclass, this.mTargetType);//Cast to the source type
+				setIL.Emit(OpCodes.Ldarg_2);//Load the second argument (value object)
 
 				if (paramType.IsValueType)
 				{
-					setIL.Emit(OpCodes.Unbox, paramType);			//Unbox it 	
-					if (mTypeHash[paramType] != null)					//and load
+					setIL.Emit(OpCodes.Unbox, paramType);//Unbox it 
+					if (mTypeHash[paramType] != null)//and load
 					{
 						OpCode load = (OpCode)mTypeHash[paramType];
 						setIL.Emit(load);
@@ -257,11 +256,9 @@ namespace ShareDeployed.Proxy.FastReflection
 				}
 				else
 				{
-					setIL.Emit(OpCodes.Castclass, paramType);		//Cast class
+					setIL.Emit(OpCodes.Castclass, paramType);//Cast class
 				}
-
-				setIL.EmitCall(OpCodes.Callvirt,
-					targetSetMethod, null);							//Set the property value
+				setIL.EmitCall(OpCodes.Callvirt, targetSetMethod, null);//Set the property value
 			}
 			else
 			{
@@ -269,7 +266,6 @@ namespace ShareDeployed.Proxy.FastReflection
 			}
 
 			setIL.Emit(OpCodes.Ret);
-
 			// Load the type
 			myType.CreateType();
 			return newAssembly;

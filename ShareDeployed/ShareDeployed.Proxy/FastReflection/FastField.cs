@@ -29,6 +29,12 @@ namespace ShareDeployed.Proxy.FastReflection
 
 		private void InitializeSet()
 		{
+			//this.setDelegate = MakeFieldSetterUsingExpr();
+			this.setDelegate = MakeFieldSetter(this.Field);
+		}
+
+		private Action<object, object> MakeFieldSetterUsingExpr()
+		{
 			ParameterExpression targetExp = Expression.Parameter(typeof(object), "target");
 			ParameterExpression valueExp = Expression.Parameter(typeof(object), "value");
 
@@ -41,35 +47,61 @@ namespace ShareDeployed.Proxy.FastReflection
 			MemberExpression fieldExp = Expression.Field(instanceCast, Field);
 			BinaryExpression assignExp = Expression.Assign(fieldExp, valueCast);
 
-			this.setDelegate = Expression.Lambda<Action<object, object>>(assignExp, targetExp, valueExp).Compile();
+			return Expression.Lambda<Action<object, object>>(assignExp, targetExp, valueExp).Compile();
 		}
 
 		private void InitializeGet()
 		{
-			this.getDelegate = GetterValue_Delegate_ET();
+			//before
+			//this.getDelegate = GetterValue_Delegate_ET();
+			//new implementation
+			this.getDelegate = MakeFieldGetter(Field);
 		}
 
-		//private Action<T, TValue> MakeSetter<T, TValue>(FieldInfo field)
-		//{
-		//	DynamicMethod m = new DynamicMethod("setter", typeof(void), new Type[] { typeof(T), typeof(TValue) }, typeof(Program));
-		//	ILGenerator cg = m.GetILGenerator();
-
-		//	// arg0.<field> = arg1
-		//	cg.Emit(OpCodes.Ldarg_0);
-		//	cg.Emit(OpCodes.Ldarg_1);
-		//	cg.Emit(OpCodes.Stfld, field);
-		//	cg.Emit(OpCodes.Ret);
-
-		//	return (Action<T, TValue>)m.CreateDelegate(typeof(Action<T, TValue>));
-		//}
-
-		private Func<object, object> GetterValue_Delegate_ET()
+		private Func<object, object> MakeFieldGetter(FieldInfo field)
 		{
-			var instance = Expression.Parameter(typeof(object), "i");
+			// create a method without a name, object as result type and one parameter of type object the last parameter is very import for accessing private fields
+			DynamicMethod dm = new DynamicMethod(string.Empty, typeof(object), new Type[] { typeof(object) }, this.GetType().Module, true);
+
+			ILGenerator il = dm.GetILGenerator();
+			il.Emit(OpCodes.Ldarg_0);// Load the instance of the object (argument 0) onto the stack
+			il.Emit(OpCodes.Castclass, field.DeclaringType); // cast the parameter of type object to the type containing the field
+			// Load the value of the object's field (fi) onto the stack
+			il.Emit(OpCodes.Ldfld, field);
+			if (field.FieldType.IsValueType)
+				il.Emit(OpCodes.Box, field.FieldType); // box the value type, so you will have an object on the stack
+
+			il.Emit(OpCodes.Ret);
+
+			return (Func<object, object>)dm.CreateDelegate(typeof(Func<object, object>));
+		}
+
+		private Func<object, object> GetterValue_Delegate()
+		{
+			var instance = Expression.Parameter(typeof(object), "instance");
 			var convertInstance = Expression.TypeAs(instance, Field.DeclaringType);
 			var property = Expression.Field(convertInstance, Field);
 			var convertProperty = Expression.TypeAs(property, typeof(object));
 			return Expression.Lambda<Func<object, object>>(convertProperty, instance).Compile();
+		}
+
+		private Action<object, object> MakeFieldSetter(FieldInfo fieldInfo)
+		{
+			DynamicMethod method = new DynamicMethod(string.Empty, null, new Type[] { typeof(object), typeof(object) }, fieldInfo.Module, true);
+			ILGenerator il = method.GetILGenerator();
+
+			il.Emit(OpCodes.Ldarg_0); // load the first argument onto the stack (source of type object)
+			il.Emit(OpCodes.Castclass, fieldInfo.DeclaringType); // cast the parameter of type object to the type containing the field
+			il.Emit(OpCodes.Ldarg_1); // push the second argument onto the stack (this is the value)
+
+			if (fieldInfo.FieldType.IsValueType)
+				il.Emit(OpCodes.Unbox_Any, fieldInfo.FieldType); // unbox the value parameter to the value-type
+			else
+				il.Emit(OpCodes.Castclass, fieldInfo.FieldType); // cast the value on the stack to the field type
+
+			il.Emit(OpCodes.Stfld, fieldInfo); // store the value on stack in the field
+			il.Emit(OpCodes.Ret); // emit return
+			return (Action<object, object>)method.CreateDelegate(typeof(Action<object, object>));
 		}
 
 		public object Get(object instance)
@@ -167,6 +199,12 @@ namespace ShareDeployed.Proxy.FastReflection
 
 		private void InitializeSet()
 		{
+			//this.setDelegate=MakeSetterUsingExpr();
+			this.setDelegate = MakeFieldSetter<T, P>(Field);
+		}
+
+		private Action<T, P> MakeSetterUsingExpr()
+		{
 			ParameterExpression targetExp = Expression.Parameter(typeof(T), "target");
 			ParameterExpression valueExp = Expression.Parameter(typeof(P), "value");
 
@@ -174,19 +212,46 @@ namespace ShareDeployed.Proxy.FastReflection
 			MemberExpression fieldExp = Expression.Field(targetExp, Field);
 			BinaryExpression assignExp = Expression.Assign(fieldExp, valueExp);
 
-			this.setDelegate = Expression.Lambda<Action<T, P>>(assignExp, targetExp, valueExp).Compile();
+			return Expression.Lambda<Action<T, P>>(assignExp, targetExp, valueExp).Compile();
+		}
+
+		private Action<T, TValue> MakeFieldSetter<T, TValue>(FieldInfo field)
+		{
+			DynamicMethod m = new DynamicMethod("setter", typeof(void), new Type[] { typeof(T), typeof(TValue) }, this.GetType(), true);
+			ILGenerator cg = m.GetILGenerator();
+
+			// arg0.<field> = arg1
+			cg.Emit(OpCodes.Ldarg_0);
+			cg.Emit(OpCodes.Ldarg_1);
+			cg.Emit(OpCodes.Stfld, field);
+			cg.Emit(OpCodes.Ret);
+
+			return (Action<T, TValue>)m.CreateDelegate(typeof(Action<T, TValue>));
 		}
 
 		private void InitializeGet()
 		{
-			this.getDelegate = GetterValue_Delegate();
+			//this.getDelegate = GetterValue_DelegateExpr();
+			this.getDelegate = MakeFieldGetter<T, P>(Field);
 		}
 
-		private Func<T, P> GetterValue_Delegate()
+		private Func<T, P> GetterValue_DelegateExpr()
 		{
 			ParameterExpression instanceExp = Expression.Parameter(typeof(T), "i");
 			MemberExpression fieldExp = Expression.Field(instanceExp, Field);
 			return Expression.Lambda<Func<T, P>>(fieldExp, instanceExp).Compile();
+		}
+
+		private Func<T, TValue> MakeFieldGetter<T, TValue>(FieldInfo field)
+		{
+			DynamicMethod m = new DynamicMethod("getter", typeof(TValue), new Type[] { typeof(T) }, this.GetType(), true);
+			ILGenerator cg = m.GetILGenerator();
+
+			cg.Emit(OpCodes.Ldarg_0);
+			cg.Emit(OpCodes.Ldfld, field);
+			cg.Emit(OpCodes.Ret);
+
+			return (Func<T, TValue>)m.CreateDelegate(typeof(Func<T, TValue>));
 		}
 
 		public P Get(T instance)
