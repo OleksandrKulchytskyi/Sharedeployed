@@ -95,7 +95,7 @@
     <Compile Include="Crypto\CryptoHelperTest.cs" />
     <Compile Include="DynamicProxy\DynamicAssemblyUnitTest.cs" />
     <Compile Include="DynamicProxy\ProxyFactoryUnitTest.cs" />
-    <Compile Include="DynamicProxy\ConcurrentPoolTest.cs" />
+    <Compile Include="ObjectPool\ConcurrentPoolTest.cs" />
     <Compile Include="DynamicProxy\DynamicProxyUnitTest.cs" />
     <Compile Include="TypeExtensionTest.cs" />
   </ItemGroup>

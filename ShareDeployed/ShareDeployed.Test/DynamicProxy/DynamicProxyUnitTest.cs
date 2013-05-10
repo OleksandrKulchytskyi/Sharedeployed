@@ -153,23 +153,50 @@ namespace ShareDeployed.Test
 		[TestMethod]
 		public void FastFieldGetSetTest()
 		{
-			var real = new ErrorProneAbstracted();
-			ShareDeployed.Proxy.FastReflection.FastField ff = new Proxy.FastReflection.FastField(real.GetType().GetField("Id"));
+			ErrorProneAbstracted objInstance = new ErrorProneAbstracted();
+			System.Reflection.FieldInfo fi = objInstance.GetType().GetField("Id");
+			Proxy.FastReflection.FastField ff = new Proxy.FastReflection.FastField(fi);
+			Proxy.FastReflection.FastField<ErrorProneAbstracted, int> ff3 = new Proxy.FastReflection.FastField<ErrorProneAbstracted, int>(fi);
+			var dynField = Proxy.FastReflection.DynamicField.Create(fi);
 
-			try
-			{
-				ff.Set(real, 12);
-				object oId = ff.Get(real);
-				Assert.IsTrue((int)oId == 12);
-			}
-			catch (Exception ex)
-			{
-				if (ex.Message != null)
-				{
+			int id = -1;
+			Stopwatch sw = new Stopwatch();
 
-				}
-				throw;
-			}
+			sw.Start();
+			ff.Set(objInstance, 12);
+			id = (int)ff.Get(objInstance);
+			sw.Stop();
+
+			long fastElapsed = sw.ElapsedTicks;
+			Assert.IsTrue(id == 12);
+
+			sw.Reset();
+			sw.Start();
+			fi.SetValue(objInstance, 13);
+			id = (int)fi.GetValue(objInstance);
+			sw.Stop();
+			long reflectElapsed = sw.ElapsedTicks;
+			Assert.IsTrue(id == 13);
+
+			sw.Reset();
+			sw.Start();
+			dynField.SetValue(objInstance, 134);
+			id = (int)dynField.GetValue(objInstance);
+			sw.Stop();
+			long dynElapsed = sw.ElapsedTicks;
+			Assert.IsTrue(id == 134);
+
+			sw.Reset();
+			sw.Start();
+			ff3.Set(objInstance, 17);
+			id = ff3.Get(objInstance);
+			sw.Stop();
+
+			long fastGenElapsed = sw.ElapsedTicks;
+			Assert.IsTrue(id == 17);
+
+			Debug.WriteLine("FastField {0},FastField generic {1}, Reflection {2}, DynamicField {3}", fastElapsed, fastGenElapsed, reflectElapsed, dynElapsed);
+			Assert.IsTrue(reflectElapsed > fastElapsed);
 		}
 
 		interface IDoWork
