@@ -86,7 +86,7 @@ namespace ShareDeployed.Proxy
 		public void Add(string proxyId, dynamic value)
 		{
 			proxyId.ThrowIfNull("proxyId", "Parameter cannot be null.");
-			value.ThrowIfNull("value", "Parameter cannot be null.");
+			//value.ThrowIfNull("value", "Parameter cannot be null.");
 			if (_proxies.ContainsKey(proxyId))
 				throw new InvalidOperationException(string.Format("Proxy with same name [ {0} ] already exists.", proxyId));
 			else
@@ -125,8 +125,9 @@ namespace ShareDeployed.Proxy
 				if (targetType == null)
 					continue;
 
-				dynamic proxy= DynamicProxyFactory.CreateDynamicProxy(targetType, item.IsWeak);
-				this.Add(string.IsNullOrEmpty(item.Id) ? string.Concat(targetType.Name, "Proxy") : item.Id, proxy);
+				dynamic proxy = DynamicProxyFactory.CreateDynamicProxy(targetType, item.IsWeak);
+				string proxyId = string.IsNullOrEmpty(item.Id) ? string.Concat(targetType.Name, "Proxy") : item.Id;
+				this.Add(proxyId, proxy);
 			}
 		}
 		#endregion

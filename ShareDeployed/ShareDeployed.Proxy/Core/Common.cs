@@ -13,8 +13,9 @@ namespace ShareDeployed.Proxy
 	{
 		void Initialize(bool withinDomain = false);
 
-		Logging.ILogAggregator LoggerAggregator { get; }
-		IContractResolver ContracResolver { get; }
+		Logging.ILogAggregator LoggerAggregator { get; set; }
+		IContractResolver ContracResolver { get; set; }
+		IDynamicProxyManager DynamixProxyManager { get; set; }
 	}
 
 	public interface IConfigurable

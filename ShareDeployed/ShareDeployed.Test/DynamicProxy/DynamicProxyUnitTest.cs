@@ -259,18 +259,6 @@ namespace ShareDeployed.Test
 			}
 		}
 
-		public class PropertyHolder
-		{
-			public int Id { get; set; }
-			public string Name { get; set; }
-			public bool Old { get; set; }
-
-			public string GetName()
-			{
-				return Name;
-			}
-		}
-
 		[TestMethod]
 		public void DynamicProxyPropertyPerformanceSingleTest()
 		{
@@ -561,6 +549,18 @@ namespace ShareDeployed.Test
 			public long Some { get; set; }
 
 			public char Sex { get; set; }
+		}
+	}
+
+	public class PropertyHolder
+	{
+		public int Id { get; set; }
+		public string Name { get; set; }
+		public bool Old { get; set; }
+
+		public string GetName()
+		{
+			return Name;
 		}
 	}
 }
