@@ -20,6 +20,14 @@ namespace ShareDeployed.Proxy
 			typeDefaultsExpr = new ConcurrentDictionary<Type, Func<object>>();
 		}
 
+		public static Type GetTypeEx(string fullTypeName)
+		{
+			return Type.GetType(fullTypeName, false) ??
+				   AppDomain.CurrentDomain.GetAssemblies().AsParallel().WithDegreeOfParallelism(Environment.ProcessorCount - 1)
+							.Select(a => a.GetType(fullTypeName))
+							.FirstOrDefault(t => t != null);
+		}
+
 		public static object GetDefaultValue(this Type type)
 		{
 			return type.IsValueType ? typeDefaults.GetOrAdd(type, t => Activator.CreateInstance(t)) : null;
