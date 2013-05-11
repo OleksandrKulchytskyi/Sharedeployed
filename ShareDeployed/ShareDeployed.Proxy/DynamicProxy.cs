@@ -110,15 +110,6 @@ namespace ShareDeployed.Proxy
 			_targerType = target.GetType();
 		}
 
-		/// <summary>
-		/// check whether object reference (_weakTarget) is alive
-		/// </summary>
-		/// <returns></returns>
-		protected bool CheckIfWeakIsAlive()
-		{
-			return (_weakTarget != null && _weakTarget.IsAlive);
-		}
-
 		#region protected methods
 		protected void InitMappings()
 		{
@@ -153,9 +144,22 @@ namespace ShareDeployed.Proxy
 		protected IInvocation CreateMethodInvocation(InvokeMemberBinder binder, object _target, object[] args, Exception exc = null)
 		{
 			IInvocation invocation = new MethodInvocation(_target, binder, args);
-			if (exc != null) 
+			if (exc != null)
 				invocation.SetException(exc);
 			return invocation;
+		}
+
+		/// <summary>
+		/// Check whether weak reference to a target object is still alive,otherwise WeakObjectDisposedException will be thrown
+		/// <exception ref="ShareDeployed.Proxy.WeakObjectDisposedException"></exception>
+		/// </summary>
+		protected void CheckIfWeakRefIsAlive()
+		{
+			if (_weakTarget != null)
+			{
+				if (!_weakTarget.IsAlive && _weakTarget.Target == null)
+					throw new WeakObjectDisposedException(string.Format("Dynamic proxy target object {0}, has been disposed.", _targerType));
+			}
 		}
 		#endregion
 
@@ -167,6 +171,7 @@ namespace ShareDeployed.Proxy
 			bool isFail = false;
 			bool processed = false;
 			MethodInfo mi = null;
+			CheckIfWeakRefIsAlive();
 
 			MethodCallInfo mci = new MethodCallInfo(binder.Name, binder.CallInfo.ArgumentCount, binder.CallInfo.ArgumentNames);
 			IInvocation methodInvocation = CreateMethodInvocation(binder, _weakTarget == null ? _target : _weakTarget.Target, args);
@@ -289,6 +294,7 @@ namespace ShareDeployed.Proxy
 		public override bool TryGetMember(GetMemberBinder binder, out object result)
 		{
 			result = null;
+			CheckIfWeakRefIsAlive();
 			MemberInfo member = _targerType.GetMember(binder.Name).FirstOrDefault();
 			switch (member.MemberType)
 			{
@@ -328,6 +334,8 @@ namespace ShareDeployed.Proxy
 
 		public override bool TrySetMember(SetMemberBinder binder, object value)
 		{
+			CheckIfWeakRefIsAlive();
+
 			FieldInfo fieldInfo = _targerType.GetField(binder.Name);
 			if (fieldInfo != null)
 			{
@@ -399,7 +407,7 @@ namespace ShareDeployed.Proxy
 				object target = _weakTarget == null ? _target : _weakTarget.Target;
 				if ((target as IDisposable) != null)
 					(target as IDisposable).Dispose();
-				
+
 				if (_target != null)
 					_target = null;//make rootless, for better GC
 			}
