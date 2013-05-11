@@ -31,7 +31,7 @@ namespace ShareDeployed.Proxy
 		/// Empty ctor
 		/// </summary>
 		public DynamicProxy()
-		{	//check here obviously in case of ServicesMapper resolving system invokes default ctor
+		{
 			if (DynamicProxyPipeline.Instance != null)
 				_resolver = new GenericWeakReference<IContractResolver>(DynamicProxyPipeline.Instance.ContracResolver);
 			_methodInterceptors = new Lazy<ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>>(() =>
@@ -77,7 +77,7 @@ namespace ShareDeployed.Proxy
 		}
 		#endregion
 
-		#region properties
+		#region Properties
 		/// <summary>
 		/// Flag that indicates whether proxy wrapper will be using DynamicMethodDelegate for method calls
 		/// </summary>
@@ -185,8 +185,7 @@ namespace ShareDeployed.Proxy
 			if ((mi = TypeMethodsMapper.Instance.Get(_targerType, mci)) == null)
 			{
 				mi = _targerType.GetMethod(binder.Name, ReflectionUtils.PublicInstanceInvoke);
-				if (mi != null)
-					TypeMethodsMapper.Instance.Add(_targerType, mci, mi);
+				if (mi != null) TypeMethodsMapper.Instance.Add(_targerType, mci, mi);
 			}
 
 			var beforeInterceptors = _interceptors.Where(x => x.Mode == InterceptorInjectionMode.Before);
