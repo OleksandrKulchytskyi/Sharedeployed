@@ -128,11 +128,23 @@ namespace ShareDeployed.Proxy
 
 		private IEnumerable<Type> DomainTypesWithAttribute<T>() where T : Attribute
 		{
-			return from a in AppDomain.CurrentDomain.GetAssemblies().AsParallel()
+			// Note the AsParallel here, this will parallelize everything after.
+			return from a in AppDomain.CurrentDomain.GetAssemblies().AsParallel().WithDegreeOfParallelism(Environment.ProcessorCount - 1)
 				   from t in a.GetTypes()
 				   let attributes = t.GetCustomAttributes(typeof(T), true)
-				   where attributes != null && attributes.Length > 0
+				   where t.IsPublic && attributes != null && attributes.Length > 0
 				   select t;
+
+			//return from a in AppDomain.CurrentDomain.GetAssemblies().AsParallel()
+			//	   from t in a.GetTypes()
+			//	   let attributes = t.GetCustomAttributes(typeof(T), true)
+			//	   where attributes != null && attributes.Length > 0
+			//	   select t;
+
+			//return (from assembly in AppDomain.CurrentDomain.GetAssemblies().AsParallel().WithDegreeOfParallelism(Environment.ProcessorCount - 1)
+			//		from type in assembly.GetTypes()
+			//		where type != null && Attribute.IsDefined(typeof(T), type)
+			//		select type);
 
 		}
 

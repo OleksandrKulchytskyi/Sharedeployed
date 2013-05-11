@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using ShareDeployed.Proxy.Config;
+using System.Diagnostics;
 
 namespace ShareDeployed.Test
 {
@@ -18,6 +19,8 @@ namespace ShareDeployed.Test
 		[TestMethod]
 		public void TestDynamicProxyPipelene()
 		{
+			Stopwatch sw = new Stopwatch();
+			sw.Start();
 			Proxy.DynamicProxyPipeline.Instance.Initialize(true);
 
 			Proxy.IPipeline pipe = Proxy.DynamicProxyPipeline.Instance;
@@ -31,6 +34,14 @@ namespace ShareDeployed.Test
 
 			Assert.IsNotNull(pipe.DynamixProxyManager);
 			Assert.IsTrue(pipe.DynamixProxyManager.Count > 0);
+
+			dynamic propertyProxy = pipe.DynamixProxyManager.Get("propertyHolder");
+			Assert.IsTrue(propertyProxy.Id == 0);
+			propertyProxy.Name = "Hello world";
+			StringAssert.Contains(propertyProxy.GetName(), "Hello world");
+			sw.Stop();
+			long elapsedMs = sw.ElapsedMilliseconds;
+			Debug.WriteLine("Elapsed time {0}, ms", elapsedMs);
 		}
 	}
 }

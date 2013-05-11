@@ -13,6 +13,7 @@ namespace ShareDeployed.Proxy
 		private readonly string _paramCannotBeNullMsg = "Parameter target cannot be a null.";
 
 		protected int disposed = -1;
+		protected int _initialized = 0;
 		private bool _useFastProp;
 		private bool _useDynamicDel;
 		protected object _target;
@@ -30,8 +31,12 @@ namespace ShareDeployed.Proxy
 		/// Empty ctor
 		/// </summary>
 		public DynamicProxy()
-		{
-			_resolver = new GenericWeakReference<IContractResolver>(DynamicProxyPipeline.Instance.ContracResolver);
+		{	//check here obviously in case of ServicesMapper resolving system invokes default ctor
+			if (DynamicProxyPipeline.Instance != null)
+				_resolver = new GenericWeakReference<IContractResolver>(DynamicProxyPipeline.Instance.ContracResolver);
+			_methodInterceptors = new Lazy<ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>>(() =>
+									new ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>(), true);
+			_weakMapper = new GenericWeakReference<TypeAttributesMapper>(TypeAttributesMapper.Instance);
 		}
 
 		/// <summary>
@@ -60,13 +65,11 @@ namespace ShareDeployed.Proxy
 		/// <param name="useFastProperty">IUse FastProperty</param>
 		/// <param name="useDynamicDelegates">Use DynamicMethodDelegate for fast methods calls</param>
 		public DynamicProxy(object target, bool useFastProperty, bool useDynamicDelegates)
+			: base()
 		{
 			target.ThrowIfNull(_targetParamName, _paramCannotBeNullMsg);
 
 			_useFastProp = useFastProperty;
-			_methodInterceptors = new Lazy<ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>>(
-										() => new ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>(), true);
-			_weakMapper = new GenericWeakReference<TypeAttributesMapper>(TypeAttributesMapper.Instance);
 			_target = target;
 			_targerType = _target.GetType();
 
@@ -108,11 +111,15 @@ namespace ShareDeployed.Proxy
 			else
 				_target = target;
 			_targerType = target.GetType();
+			InitMappings();
 		}
 
 		#region protected methods
 		protected void InitMappings()
 		{
+			if (System.Threading.Interlocked.CompareExchange(ref _initialized, 1, 1) == 1)
+				return;
+
 			if (!_weakMapper.Target.Contains(_targerType))
 			{
 				InterceptorAttribute[] attributes = _targerType.GetCustomAttributes(typeof(InterceptorAttribute), false) as InterceptorAttribute[];
