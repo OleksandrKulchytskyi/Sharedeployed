@@ -60,7 +60,6 @@ namespace ShareDeployed.Proxy
 					break;
 				}
 			}
-
 			return result;
 		}
 

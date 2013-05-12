@@ -20,6 +20,47 @@ namespace ShareDeployed.Proxy
 			typeDefaultsExpr = new ConcurrentDictionary<Type, Func<object>>();
 		}
 
+		public static byte[] SerializeStructToBytes<T>(T structData) where T : struct
+		{
+			unsafe
+			{
+				// Allocate memory buffer.
+				byte[] buffer = new byte[System.Runtime.InteropServices.Marshal.SizeOf(typeof(T))];
+				fixed (byte* ptr = buffer)
+				{
+					// Serialize value.
+					System.Runtime.InteropServices.Marshal.StructureToPtr(structData, new IntPtr(ptr), true);
+				}
+				return buffer;
+			}
+		}
+
+		public static T DeserializeBytesToStruct<T>(byte[] buffer) where T : struct
+		{
+			unsafe
+			{
+				T data;
+				fixed (byte* dataPtr = buffer)
+				{	//deserialize bytes to struct
+					data = (T)System.Runtime.InteropServices.Marshal.PtrToStructure(new IntPtr(dataPtr), typeof(T));
+				}
+				return data;
+			}
+		}
+
+		public static unsafe TStruct BytesToStructure<TStruct>(this byte[] data) where TStruct : struct
+		{
+			fixed (byte* dataPtr = data)
+				return (TStruct)System.Runtime.InteropServices.Marshal.PtrToStructure(new IntPtr(dataPtr), typeof(TStruct));
+		}
+
+		public static unsafe byte[] StructureToBytes<TStruct>(TStruct st) where TStruct : struct
+		{
+			var bytes = new byte[System.Runtime.InteropServices.Marshal.SizeOf(st)];
+			fixed (byte* ptr = bytes) System.Runtime.InteropServices.Marshal.StructureToPtr(st, new IntPtr(ptr), true);
+			return bytes;
+		}
+
 		public static Type GetTypeEx(string fullTypeName)
 		{
 			return Type.GetType(fullTypeName, false) ??

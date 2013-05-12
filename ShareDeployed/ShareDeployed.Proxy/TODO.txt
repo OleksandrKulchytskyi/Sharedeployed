@@ -2,3 +2,8 @@
 2) Implement Proxy configurations via some file types. +
 3) Implement cleanup thread, that will track objects which have been accessed more than 15 min
 4) For IoC infrastructure implement AssemblyResolver mechanism
+
+GC improvements
+5) Consider replacing object references with integer handles in Dictionary objects (for example Type instance replace with int -> Type.GetHashCode())
+/* A single array of 100,000 object references is also more expensive, because although the array itself is only a single object, 
+now the garbage collector must also scan the contents of the array to see if any of the objects inside it need to be kept alive */

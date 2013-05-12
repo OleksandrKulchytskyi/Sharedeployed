@@ -20,6 +20,7 @@
     <DefineConstants>TRACE;DEBUG;DOT_NET_4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -46,14 +47,14 @@
     <Compile Include="Config\ProxyMappingCollection.cs" />
     <Compile Include="Config\ProxyMapperHandler.cs" />
     <Compile Include="Core\Common.cs" />
-	<Compile Include="Core\IInterceptor.cs" />
+    <Compile Include="Core\IInterceptor.cs" />
     <Compile Include="DynamicAssemblyBuilder.cs" />
     <Compile Include="DynamicProxy.cs" />
     <Compile Include="DynamicProxyPipeline.cs" />
     <Compile Include="DynamicProxyFactory.cs" />
     <Compile Include="Exceptions\ConstructorMissingException.cs" />
     <Compile Include="Exceptions\TypeIsNotInterface.cs" />
-	<Compile Include="Exceptions\WeakObjectDisposedException.cs" />
+    <Compile Include="Exceptions\WeakObjectDisposedException.cs" />
     <Compile Include="Extensions\ConvertHelper.cs" />
     <Compile Include="Extensions\DynamicProxyGenerator.cs" />
     <Compile Include="Extensions\IEnumerableUtils.cs" />
@@ -115,9 +116,7 @@
     <None Include="packages.config" />
     <None Include="TODO.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Config\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

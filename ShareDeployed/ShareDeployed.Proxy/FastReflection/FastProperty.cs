@@ -23,7 +23,7 @@ namespace ShareDeployed.Proxy.FastReflection
 			if (!omitGetInitializer)
 				InitializeGet();
 			InitializeSet();
-		} 
+		}
 		#endregion
 
 		private void InitializeSet()

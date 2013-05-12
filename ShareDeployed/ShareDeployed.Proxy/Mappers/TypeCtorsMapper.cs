@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ShareDeployed.Proxy
 {
 	public sealed class TypeCtorsMapper
 	{
-		private static ConcurrentDictionary<Type, SafeCollection<FastReflection.IDynamicConstructor>> _ctors;
+		private static ConcurrentDictionary<Type, SafeCollection<FastReflection.IDynamicConstructor>> _ctorContainer;
 		private static Lazy<TypeCtorsMapper> _instance;
 
 		#region ctors
 		static TypeCtorsMapper()
 		{
 			_instance = new Lazy<TypeCtorsMapper>(() => new TypeCtorsMapper(), true);
-			_ctors = new ConcurrentDictionary<Type, SafeCollection<FastReflection.IDynamicConstructor>>();
+			_ctorContainer = new ConcurrentDictionary<Type, SafeCollection<FastReflection.IDynamicConstructor>>();
 		}
 
 		private TypeCtorsMapper()
@@ -35,13 +33,13 @@ namespace ShareDeployed.Proxy
 		public bool Contains(Type contract)
 		{
 			contract.ThrowIfNull("contract", "Parameter cannot be null.");
-			return _ctors.ContainsKey(contract);
+			return _ctorContainer.ContainsKey(contract);
 		}
 
 		public ICollection<FastReflection.IDynamicConstructor> Get(Type contract)
 		{
 			SafeCollection<FastReflection.IDynamicConstructor> collection;
-			_ctors.TryGetValue(contract, out collection);
+			_ctorContainer.TryGetValue(contract, out collection);
 			return collection;
 		}
 
@@ -50,15 +48,15 @@ namespace ShareDeployed.Proxy
 			contract.ThrowIfNull("contract", "Parameter cannot be null.");
 			ctor.ThrowIfNull("ctor", "Parameter cannot be null.");
 
-			if (_ctors.ContainsKey(contract))
+			if (_ctorContainer.ContainsKey(contract))
 			{
-				_ctors[contract].Add(ctor);
+				_ctorContainer[contract].Add(ctor);
 			}
 			else
 			{
 				SafeCollection<FastReflection.IDynamicConstructor> collection = new SafeCollection<FastReflection.IDynamicConstructor>();
 				collection.Add(ctor);
-				_ctors.TryAdd(contract, collection);
+				_ctorContainer.TryAdd(contract, collection);
 			}
 		}
 
@@ -66,8 +64,8 @@ namespace ShareDeployed.Proxy
 		{
 			contract.ThrowIfNull("contract", "Parameter cannot be null.");
 			SafeCollection<FastReflection.IDynamicConstructor> col;
-			_ctors.TryRemove(contract, out col);
-		} 
+			_ctorContainer.TryRemove(contract, out col);
+		}
 		#endregion
 	}
 }
