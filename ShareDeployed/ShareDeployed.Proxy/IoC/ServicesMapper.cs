@@ -263,9 +263,9 @@ namespace ShareDeployed.Proxy
 				{
 					FastReflection.IDynamicConstructor dynCtor = null;
 					int argCount = _configCtorArgs[mapInfo.Key].Count;
-					if (TypeCtorsMapper.Instance.Contains(mapInfo.Key))
+					if (TypeCtorsMapper.Instance.Contains(mapInfo.Key.GetHashCode()))
 					{
-						dynCtor = TypeCtorsMapper.Instance.Get(mapInfo.Key).FirstOrDefault(x => x.ParametersCount == argCount);
+						dynCtor = TypeCtorsMapper.Instance.Get(mapInfo.Key.GetHashCode()).FirstOrDefault(x => x.ParametersCount == argCount);
 						if (dynCtor != null)
 						{
 							object[] parameters = InitCtorParameters(mapInfo.Key, argCount);
@@ -280,7 +280,7 @@ namespace ShareDeployed.Proxy
 						if (ci != null)
 						{
 							dynCtor = FastReflection.DynamicConstructor.Create(ci);
-							TypeCtorsMapper.Instance.Add(mapInfo.Key, dynCtor);
+							TypeCtorsMapper.Instance.Add(mapInfo.Key.GetHashCode(), dynCtor);
 							object[] parameters = InitCtorParameters(mapInfo.Key, argCount);
 							instance = dynCtor.Invoke(parameters);
 							return;

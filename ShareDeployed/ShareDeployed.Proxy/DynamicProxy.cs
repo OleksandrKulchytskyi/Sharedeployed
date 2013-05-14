@@ -13,6 +13,7 @@ namespace ShareDeployed.Proxy
 		private readonly string _paramCannotBeNullMsg = "Parameter target cannot be a null.";
 
 		protected int disposed = -1;
+		protected int _typeHash;
 		protected int _initialized = 0;
 		private bool _useFastProp;
 		private bool _useDynamicDel;
@@ -24,7 +25,7 @@ namespace ShareDeployed.Proxy
 		protected SafeCollection<InterceptorInfo> _interceptors;
 		private Lazy<ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>> _methodInterceptors;
 
-		private GenericWeakReference<IContractResolver> _resolver;
+		private GenericWeakReference<IContractResolver> _resolver = null;
 
 		#region ctors
 		/// <summary>
@@ -34,6 +35,7 @@ namespace ShareDeployed.Proxy
 		{
 			if (DynamicProxyPipeline.Instance != null)
 				_resolver = new GenericWeakReference<IContractResolver>(DynamicProxyPipeline.Instance.ContracResolver);
+
 			_methodInterceptors = new Lazy<ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>>(() =>
 									new ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>(), true);
 			_weakMapper = new GenericWeakReference<TypeAttributesMapper>(TypeAttributesMapper.Instance);
@@ -72,6 +74,7 @@ namespace ShareDeployed.Proxy
 			_useFastProp = useFastProperty;
 			_target = target;
 			_targerType = _target.GetType();
+			_typeHash = _targerType.GetHashCode();
 
 			InitMappings();
 		}
@@ -111,6 +114,7 @@ namespace ShareDeployed.Proxy
 			else
 				_target = target;
 			_targerType = target.GetType();
+			_typeHash = _typeHash.GetHashCode();
 			InitMappings();
 		}
 
@@ -120,7 +124,7 @@ namespace ShareDeployed.Proxy
 			if (System.Threading.Interlocked.CompareExchange(ref _initialized, 1, 1) == 1)
 				return;
 
-			if (!_weakMapper.Target.Contains(_targerType))
+			if (!_weakMapper.Target.Contains(_typeHash))
 			{
 				InterceptorAttribute[] attributes = _targerType.GetCustomAttributes(typeof(InterceptorAttribute), false) as InterceptorAttribute[];
 				if (attributes != null && attributes.Length > 0)
@@ -136,16 +140,16 @@ namespace ShareDeployed.Proxy
 							_interceptors.Add(info);
 						}
 					}
-					_weakMapper.Target.EmptyAndAddRange(_targerType, _interceptors);
+					_weakMapper.Target.EmptyAndAddRange(_typeHash, _interceptors);
 				}
 				else
 				{
 					_interceptors = new SafeCollection<InterceptorInfo>(attributes.Length);
-					_weakMapper.Target.EmptyAndAddRange(_targerType, _interceptors);
+					_weakMapper.Target.EmptyAndAddRange(_typeHash, _interceptors);
 				}
 			}
 			else
-				_interceptors = _weakMapper.Target.GetInterceptions(_targerType);
+				_interceptors = _weakMapper.Target.GetInterceptions(_typeHash);
 		}
 
 		protected IInvocation CreateMethodInvocation(InvokeMemberBinder binder, object _target, object[] args, Exception exc = null)
@@ -182,10 +186,10 @@ namespace ShareDeployed.Proxy
 
 			MethodCallInfo mci = new MethodCallInfo(binder.Name, binder.CallInfo.ArgumentCount, binder.CallInfo.ArgumentNames);
 			IInvocation methodInvocation = CreateMethodInvocation(binder, _weakTarget == null ? _target : _weakTarget.Target, args);
-			if ((mi = TypeMethodsMapper.Instance.Get(_targerType, mci)) == null)
+			if ((mi = TypeMethodsMapper.Instance.Get(_typeHash, mci)) == null)
 			{
 				mi = _targerType.GetMethod(binder.Name, ReflectionUtils.PublicInstanceInvoke);
-				if (mi != null) TypeMethodsMapper.Instance.Add(_targerType, mci, mi);
+				if (mi != null) TypeMethodsMapper.Instance.Add(_typeHash, mci, mi);
 			}
 
 			var beforeInterceptors = _interceptors.Where(x => x.Mode == InterceptorInjectionMode.Before);
@@ -199,7 +203,7 @@ namespace ShareDeployed.Proxy
 				}
 				else
 				{
-					result = TypeMethodsMapper.Instance.GetDynamicDelegate(_targerType, mci)(_targerType, args);
+					result = TypeMethodsMapper.Instance.GetDynamicDelegate(_typeHash, mci)(_targerType, args);
 					processed = true;
 				}
 
@@ -311,12 +315,12 @@ namespace ShareDeployed.Proxy
 					if (_useFastProp)
 					{
 						FastReflection.FastProperty fProp = null;
-						if ((fProp = TypePropertyMapper.Instance.Get(_targerType, binder.Name)) == null)
+						if ((fProp = TypePropertyMapper.Instance.Get(_typeHash, binder.Name)) == null)
 						{
 							PropertyInfo pInfo = _targerType.GetProperty(binder.Name);
 							if (pInfo != null)
 							{
-								TypePropertyMapper.Instance.Add(_targerType, pInfo, out fProp);
+								TypePropertyMapper.Instance.Add(_typeHash, pInfo, out fProp);
 								result = fProp.Get(_weakTarget == null ? _target : _weakTarget.Target);
 							}
 						}
@@ -353,12 +357,12 @@ namespace ShareDeployed.Proxy
 				if (_useFastProp)
 				{
 					FastReflection.FastProperty fProp = null;
-					if ((fProp = TypePropertyMapper.Instance.Get(_targerType, binder.Name)) == null)
+					if ((fProp = TypePropertyMapper.Instance.Get(_typeHash, binder.Name)) == null)
 					{
 						PropertyInfo pInfo = _targerType.GetProperty(binder.Name);
 						if (pInfo != null)
 						{
-							TypePropertyMapper.Instance.Add(_targerType, pInfo, out fProp);
+							TypePropertyMapper.Instance.Add(_typeHash, pInfo, out fProp);
 							fProp.Set(_weakTarget == null ? _target : _weakTarget.Target, value);
 							return true;
 						}

@@ -10,12 +10,12 @@ namespace ShareDeployed.Proxy
 	public sealed class TypePropertyMapper
 	{
 		private static Lazy<TypePropertyMapper> _lazyInit;
-		private static Cache<Type, ConcurrentDictionary<string, FastProperty>> _cache;
+		private static Cache<int, ConcurrentDictionary<string, FastProperty>> _cache;
 
 		static TypePropertyMapper()
 		{
 			_lazyInit = new Lazy<TypePropertyMapper>(() => new TypePropertyMapper(), true);
-			_cache = new Cache<Type, ConcurrentDictionary<string, FastProperty>>();
+			_cache = new Cache<int, ConcurrentDictionary<string, FastProperty>>();
 		}
 
 		private TypePropertyMapper()
@@ -30,7 +30,7 @@ namespace ShareDeployed.Proxy
 			}
 		}
 
-		public void Add(Type type, PropertyInfo pi)
+		public void Add(int type, PropertyInfo pi)
 		{
 			if (!_cache.Contains(type))
 			{
@@ -45,7 +45,7 @@ namespace ShareDeployed.Proxy
 			}
 		}
 
-		public void Add(Type type, PropertyInfo pi, out FastProperty fProp)
+		public void Add(int type, PropertyInfo pi, out FastProperty fProp)
 		{
 			fProp = null;
 			if (!_cache.Contains(type))
@@ -63,7 +63,7 @@ namespace ShareDeployed.Proxy
 			}
 		}
 
-		public FastProperty Get(Type type, string name)
+		public FastProperty Get(int type, string name)
 		{
 			if (_cache.Contains(type))
 			{

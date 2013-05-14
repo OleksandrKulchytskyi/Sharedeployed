@@ -6,14 +6,14 @@ namespace ShareDeployed.Proxy
 {
 	public sealed class TypeCtorsMapper
 	{
-		private static ConcurrentDictionary<Type, SafeCollection<FastReflection.IDynamicConstructor>> _ctorContainer;
+		private static ConcurrentDictionary<int, SafeCollection<FastReflection.IDynamicConstructor>> _ctorContainer;
 		private static Lazy<TypeCtorsMapper> _instance;
 
 		#region ctors
 		static TypeCtorsMapper()
 		{
 			_instance = new Lazy<TypeCtorsMapper>(() => new TypeCtorsMapper(), true);
-			_ctorContainer = new ConcurrentDictionary<Type, SafeCollection<FastReflection.IDynamicConstructor>>();
+			_ctorContainer = new ConcurrentDictionary<int, SafeCollection<FastReflection.IDynamicConstructor>>();
 		}
 
 		private TypeCtorsMapper()
@@ -30,22 +30,20 @@ namespace ShareDeployed.Proxy
 		}
 
 		#region public methods
-		public bool Contains(Type contract)
+		public bool Contains(int contract)
 		{
-			contract.ThrowIfNull("contract", "Parameter cannot be null.");
 			return _ctorContainer.ContainsKey(contract);
 		}
 
-		public ICollection<FastReflection.IDynamicConstructor> Get(Type contract)
+		public ICollection<FastReflection.IDynamicConstructor> Get(int contract)
 		{
 			SafeCollection<FastReflection.IDynamicConstructor> collection;
 			_ctorContainer.TryGetValue(contract, out collection);
 			return collection;
 		}
 
-		public void Add(Type contract, FastReflection.IDynamicConstructor ctor)
+		public void Add(int contract, FastReflection.IDynamicConstructor ctor)
 		{
-			contract.ThrowIfNull("contract", "Parameter cannot be null.");
 			ctor.ThrowIfNull("ctor", "Parameter cannot be null.");
 
 			if (_ctorContainer.ContainsKey(contract))
@@ -60,9 +58,8 @@ namespace ShareDeployed.Proxy
 			}
 		}
 
-		public void Remove(Type contract)
+		public void Remove(int contract)
 		{
-			contract.ThrowIfNull("contract", "Parameter cannot be null.");
 			SafeCollection<FastReflection.IDynamicConstructor> col;
 			_ctorContainer.TryRemove(contract, out col);
 		}

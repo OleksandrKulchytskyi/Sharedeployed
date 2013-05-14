@@ -86,7 +86,7 @@ namespace ShareDeployed.Proxy
 
 	public sealed class TypeMethodsMapper
 	{
-		private static ConcurrentDictionary<Type, ConcurrentDictionary<MethodCallInfo, MethodInfo>> _mappings;
+		private static ConcurrentDictionary<int, ConcurrentDictionary<MethodCallInfo, MethodInfo>> _mappings;
 		private static ConcurrentDictionary<MethodInfo, FastReflection.DynamicMethodDelegate> _dynamicDelMap;
 		private static Lazy<TypeMethodsMapper> _instance;
 
@@ -94,7 +94,7 @@ namespace ShareDeployed.Proxy
 		static TypeMethodsMapper()
 		{
 			_instance = new Lazy<TypeMethodsMapper>(() => new TypeMethodsMapper(), true);
-			_mappings = new ConcurrentDictionary<Type, ConcurrentDictionary<MethodCallInfo, MethodInfo>>();
+			_mappings = new ConcurrentDictionary<int, ConcurrentDictionary<MethodCallInfo, MethodInfo>>();
 			_dynamicDelMap = new ConcurrentDictionary<MethodInfo, FastReflection.DynamicMethodDelegate>();
 		}
 
@@ -112,7 +112,7 @@ namespace ShareDeployed.Proxy
 		}
 
 		#region public methods
-		public void Add(Type type, MethodCallInfo mci, MethodInfo mi)
+		public void Add(int type, MethodCallInfo mci, MethodInfo mi)
 		{
 			if (!_mappings.ContainsKey(type))
 			{
@@ -132,7 +132,7 @@ namespace ShareDeployed.Proxy
 			}
 		}
 
-		public MethodInfo Get(Type type, MethodCallInfo mci)
+		public MethodInfo Get(int type, MethodCallInfo mci)
 		{
 			if (_mappings.ContainsKey(type))
 			{
@@ -143,12 +143,12 @@ namespace ShareDeployed.Proxy
 			return null;
 		}
 
-		public bool Contains(Type type, MethodCallInfo mci)
+		public bool Contains(int type, MethodCallInfo mci)
 		{
 			return (_mappings.ContainsKey(type) && _mappings[type].ContainsKey(mci));
 		}
 
-		public FastReflection.DynamicMethodDelegate GetDynamicDelegate(Type type, MethodCallInfo mci)
+		public FastReflection.DynamicMethodDelegate GetDynamicDelegate(int type, MethodCallInfo mci)
 		{
 			if (_mappings.ContainsKey(type))
 			{

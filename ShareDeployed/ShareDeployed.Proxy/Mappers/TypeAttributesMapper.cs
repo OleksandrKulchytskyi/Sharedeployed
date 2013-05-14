@@ -5,14 +5,14 @@ namespace ShareDeployed.Proxy
 {
 	public sealed class TypeAttributesMapper
 	{
-		private static ConcurrentDictionary<Type, SafeCollection<InterceptorInfo>> _interceptorsMappings;
+		private static ConcurrentDictionary<int, SafeCollection<InterceptorInfo>> _interceptorsMappings;
 		private static Lazy<TypeAttributesMapper> _instance;
 
 		#region ctors
 		static TypeAttributesMapper()
 		{
 			_instance = new Lazy<TypeAttributesMapper>(() => new TypeAttributesMapper(), true);
-			_interceptorsMappings = new ConcurrentDictionary<Type, SafeCollection<InterceptorInfo>>();
+			_interceptorsMappings = new ConcurrentDictionary<int, SafeCollection<InterceptorInfo>>();
 		}
 
 		private TypeAttributesMapper()
@@ -29,7 +29,7 @@ namespace ShareDeployed.Proxy
 		}
 
 		#region public methods
-		public bool Add(Type type, InterceptorInfo info)
+		public bool Add(int type, InterceptorInfo info)
 		{
 			if (!_interceptorsMappings.ContainsKey(type))
 			{
@@ -45,7 +45,7 @@ namespace ShareDeployed.Proxy
 			return false;
 		}
 
-		public bool EmptyAndAddRange(Type type, SafeCollection<InterceptorInfo> interceptors)
+		public bool EmptyAndAddRange(int type, SafeCollection<InterceptorInfo> interceptors)
 		{
 			if (!_interceptorsMappings.ContainsKey(type))
 			{
@@ -66,7 +66,7 @@ namespace ShareDeployed.Proxy
 			}
 		}
 
-		public SafeCollection<InterceptorInfo> GetInterceptions(Type type)
+		public SafeCollection<InterceptorInfo> GetInterceptions(int type)
 		{
 			SafeCollection<InterceptorInfo> infos = default(SafeCollection<InterceptorInfo>); ;
 			if (_interceptorsMappings.ContainsKey(type))
@@ -77,12 +77,12 @@ namespace ShareDeployed.Proxy
 			return infos;
 		}
 
-		public bool Contains(Type t)
+		public bool Contains(int t)
 		{
 			return _interceptorsMappings.ContainsKey(t);
 		}
 
-		public bool Remove(Type type)
+		public bool Remove(int type)
 		{
 			if (!_interceptorsMappings.ContainsKey(type))
 				return false;

@@ -147,7 +147,7 @@ namespace ShareDeployed.Test
 			proxy.Default = 23;
 			Assert.IsTrue(proxy.Default == 23);
 
-			Assert.IsTrue(TypePropertyMapper.Instance.Get(real.GetType(), "Default") != null);
+			Assert.IsTrue(TypePropertyMapper.Instance.Get(real.GetType().GetHashCode(), "Default") != null);
 		}
 
 		[TestMethod]
