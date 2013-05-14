@@ -8,7 +8,7 @@ namespace ShareDeployed.Test.Ioc
 	[TestClass]
 	public class ProxyIocTest
 	{
-		System.Threading.ManualResetEvent _event;
+		private System.Threading.ManualResetEvent _event;
 
 		[TestInitialize]
 		public void OnInitialize()
