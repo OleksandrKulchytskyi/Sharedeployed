@@ -70,13 +70,12 @@ namespace ShareDeployed.Test
 			SafeCollection<int> coll2 = new SafeCollection<int>();
 
 			var types2 = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
-						 where !assembly.FullName.Contains("System")
-						 let tps =
-						 (from type in assembly.GetTypes()
-						  where !type.IsAbstract && !type.IsInterface && type.IsPublic
-						  select type)
-
-						 select new { Asm = assembly, Types = tps });
+						  where !assembly.FullName.Contains("System")
+						  let tps =
+						  (from type in assembly.GetTypes()
+						   where !type.IsAbstract && !type.IsInterface && !type.IsNested && type.IsPublic
+						   select type)
+						  select new { Asm = assembly, Types = tps });
 
 			foreach (var item in types2)
 			{
@@ -89,7 +88,7 @@ namespace ShareDeployed.Test
 				}
 			}
 
-			foreach(int hash1 in coll)
+			foreach (int hash1 in coll)
 			{
 				if (!coll2.Contains(hash1))
 					Assert.Fail();
@@ -100,6 +99,8 @@ namespace ShareDeployed.Test
 				if (!coll.Contains(hash2))
 					Assert.Fail();
 			}
+
+			Assert.IsTrue(coll2.Count == coll.Count);
 		}
 	}
 }
