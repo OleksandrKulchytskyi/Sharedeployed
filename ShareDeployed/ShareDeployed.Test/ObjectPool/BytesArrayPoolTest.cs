@@ -17,7 +17,6 @@ namespace ShareDeployed.Test.ObjectPool
 			_instance = new PoolBytesArray();
 		}
 
-
 		[TestMethod]
 		public void CheckDefaultTest()
 		{
