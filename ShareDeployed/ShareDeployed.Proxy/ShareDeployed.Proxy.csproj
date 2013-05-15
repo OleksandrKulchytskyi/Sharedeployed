@@ -91,6 +91,7 @@
     <Compile Include="Pooling\ConcurrentPool.cs" />
     <Compile Include="Pooling\IRecyclable.cs" />
     <Compile Include="Pooling\IRecycler.cs" />
+    <Compile Include="Pooling\PoolBytesArray.cs" />
     <Compile Include="Pooling\RecyclableObject.cs" />
     <Compile Include="Mappers\TypeAttributesMapper.cs" />
     <Compile Include="Interceptors\ExceptionInterceptor.cs" />
