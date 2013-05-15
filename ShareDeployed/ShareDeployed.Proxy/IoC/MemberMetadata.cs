@@ -86,5 +86,17 @@ namespace ShareDeployed.Proxy
 		{
 			return Type.GetHashCode() ^ Member.GetHashCode();
 		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj != null && (obj is MemberMetadata))
+				return Equals((MemberMetadata)obj);
+			return false;
+		}
+
+		private bool Equals(MemberMetadata compare)
+		{
+			return (this._type.Equals(compare._type) && _memberType.Equals(compare._memberType));
+		}
 	}
 }
