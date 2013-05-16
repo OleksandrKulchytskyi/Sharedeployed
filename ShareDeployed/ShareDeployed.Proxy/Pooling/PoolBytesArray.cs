@@ -12,9 +12,11 @@ namespace ShareDeployed.Proxy.Pooling
 	{
 		internal const int MaxChunkSize = 0x1f40;
 		private readonly int _capacity;
-		private readonly int _chunkLen;
-		private ConcurrentQueue<ByteArray> _internal;
+		private readonly long _chunkLen;
+		private ConcurrentQueue<ByteArray> _buckets;
+
 		private int _inUseCount;
+		private int _avaliable;
 
 		public PoolBytesArray()
 			: this(2, 85000)
@@ -26,16 +28,26 @@ namespace ShareDeployed.Proxy.Pooling
 		{
 		}
 
-		public PoolBytesArray(int initCapacity, int chunkLen)
+		public PoolBytesArray(int initCapacity, long chunkLen)
 		{
 			_capacity = initCapacity;
 			_chunkLen = chunkLen;
-			_internal = new ConcurrentQueue<ByteArray>();
+			_buckets = new ConcurrentQueue<ByteArray>();
 
 			for (int i = 0; i < _capacity; i++)
 			{
-				_internal.Enqueue(CreateInstance());
+				_buckets.Enqueue(CreateInstance());
 			}
+			_avaliable = _capacity;
+		}
+
+		#region Properties
+		/// <summary>
+		/// Return the value which indicates the capacity of byte array
+		/// </summary>
+		public long ChunkLength
+		{
+			get { return _chunkLen; }
 		}
 
 		// <summary>
@@ -43,7 +55,7 @@ namespace ShareDeployed.Proxy.Pooling
 		/// </summary>
 		public int Count
 		{
-			get { return _inUseCount + this._internal.Count; }
+			get { return _inUseCount + this._avaliable; }
 		}
 
 		/// <summary>
@@ -51,7 +63,7 @@ namespace ShareDeployed.Proxy.Pooling
 		/// </summary>
 		public int AvailableCount
 		{
-			get { return this._internal.Count; }
+			get { return this._avaliable; }
 		}
 
 		/// <summary>
@@ -67,38 +79,44 @@ namespace ShareDeployed.Proxy.Pooling
 		/// </summary>
 		public bool IsEmpty
 		{
-			get { return _internal.IsEmpty; }
+			get { return _buckets.IsEmpty; }
 		}
+		#endregion
 
-		public IEnumerable<ByteArray> Acquire(long overallLength)
+		public List<ByteArray> Acquire(long overallLength)
 		{
 			if (overallLength <= 0)
 				throw new ArgumentOutOfRangeException("Index must be greater than zero.");
 
-			int partsCount = (int)Math.Floor((double)((overallLength / _chunkLen) + 0.5));
+			int partsCount = (int)Math.Ceiling((Convert.ToDouble(overallLength) / Convert.ToDouble(_chunkLen)));
 			while (AvailableCount < partsCount)
 			{
-				_internal.Enqueue(CreateInstance());
+				_buckets.Enqueue(CreateInstance());
+				Interlocked.Increment(ref _avaliable);
 			}
 
+			List<ByteArray> buckets = new List<ByteArray>(partsCount);
 			while (partsCount != 0)
 			{
 				ByteArray array;
-				if (!_internal.TryDequeue(out array))
+				if (!_buckets.TryDequeue(out array))
 					throw new InvalidOperationException("Fail to perform deque operation.");
 
 				partsCount--;
 				Interlocked.Increment(ref _inUseCount);
+				Interlocked.Decrement(ref _avaliable);
 				array.Lock();
-				yield return array;
+				buckets.Add(array);
 			}
+			return buckets;
 		}
 
 		public void Release(ByteArray chunk)
 		{
 			chunk.Unlock();
-			_internal.Enqueue(chunk);
+			_buckets.Enqueue(chunk);
 			Interlocked.Decrement(ref _inUseCount);
+			Interlocked.Increment(ref _avaliable);
 		}
 
 		public void Release(IEnumerable<ByteArray> chunks)
@@ -115,11 +133,11 @@ namespace ShareDeployed.Proxy.Pooling
 		/// <returns>Allocated instance of BytesArray.</returns>
 		private ByteArray CreateInstance()
 		{
-			return new ByteArray(_chunkLen);
+			return new ByteArray(Convert.ToInt32(_chunkLen));
 		}
 	}
 
-	public struct ByteArray
+	public sealed class ByteArray
 	{
 		private byte[] _array;
 		private int _arrayAddr;
@@ -138,15 +156,28 @@ namespace ShareDeployed.Proxy.Pooling
 			_array = new byte[capacity];
 		}
 
+		#region Properties
 		public bool IsLocked
 		{
-			get { return (Interlocked.CompareExchange(ref _isLocked, 1, 1) == 1); }
+			get { return (_isLocked == 1); }
 		}
 
-		public int GetLen
+		public int RealLength
 		{
-			get { return Interlocked.CompareExchange(ref _len, 0, 0); }
+			get
+			{
+				return _len;
+			}
 		}
+
+		public int Capacity
+		{
+			get
+			{
+				return _capacity;
+			}
+		}
+		#endregion
 
 		public byte[] GetBytesArray() { return _array; }
 
@@ -202,6 +233,45 @@ namespace ShareDeployed.Proxy.Pooling
 			chunk.ThrowIfNull("chunk", "Parameter cannot be null.");
 			if (chunk.Length > _capacity)
 				throw new IndexOutOfRangeException(string.Format("Chunk length must be less or equals internal array capacity, {0}: {1}", chunk.Length, _capacity));
+
+			Array.Copy(chunk, _array, chunk.Length);
 		}
+
+		public void AssignRealLength(int length)
+		{
+			if (length > _capacity)
+				throw new IndexOutOfRangeException(string.Format("Length parameter must be less or equals internal array capacity, {0}: {1}", length, _capacity));
+
+			Interlocked.Exchange(ref _len, length);
+		}
+
+		#region overrides
+		public override bool Equals(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+			if (obj == null) return false;
+
+			return (obj is ByteArray) ? Equals((ByteArray)obj) : false;
+		}
+
+		private bool Equals(ByteArray arrary)
+		{
+			return this._arrayAddr == arrary._arrayAddr &&
+				this._capacity == arrary._capacity &&
+				this._len == arrary._len &&
+				this._isLocked == arrary._isLocked;
+		}
+
+		public override int GetHashCode()
+		{
+			int hash = 17;
+			hash = hash * 31 + _len.GetHashCode();
+			hash = hash * 31 + _capacity.GetHashCode();
+			hash = hash * 31 + _isLocked.GetHashCode();
+			hash = hash * 31 + _arrayAddr.GetHashCode();
+			return hash;
+		}
+		#endregion
 	}
 }

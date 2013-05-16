@@ -11,5 +11,5 @@ GC improvements:
 /* A single array of 100,000 object references is also more expensive, because although the array itself is only a single object, 
 now the garbage collector must also scan the contents of the array to see if any of the objects inside it need to be kept alive */
 
-6)Consider Overriding the Equals Method for Value Types (+/-) partially realized
+6)Consider overriding the Equals method for Value Types. (+)
 To use the standard implementation of Equals, your value type must be boxed and passed as an instance of the reference type System.ValueType.

@@ -75,6 +75,13 @@ namespace ShareDeployed.Proxy
 		public InstantiateAttribute()
 		{
 		}
+
+		public InstantiateAttribute(bool defaultIfUnable)
+		{
+			this.DefaultIfUnable = defaultIfUnable;
+		}
+
+		public bool DefaultIfUnable { get; set; }
 	}
 
 	/// <summary>

@@ -38,6 +38,13 @@ namespace ShareDeployed.Proxy
 			set { _argumentsName = value; }
 		}
 
+		public override bool Equals(object obj)
+		{
+			if (obj == null)
+				return false;
+
+			return (obj is MethodCallInfo) ? Equals((MethodCallInfo)obj) : false;
+		}
 
 		public bool Equals(MethodCallInfo other)
 		{
@@ -63,29 +70,35 @@ namespace ShareDeployed.Proxy
 			return result;
 		}
 
-		public override bool Equals(object obj)
-		{
-			if (obj is MethodCallInfo)
-			{
-				return Equals((MethodCallInfo)obj);
-			}
-			return false;
-		}
-
 		public override int GetHashCode()
 		{
-			return _methodName.GetHashCode() + _argsCount;
+			int hash = 17;
+			hash = hash * 31 + _methodName.GetHashCode();
+			hash = hash * 31 + _argsCount;
+			return hash;
+			//return _methodName.GetHashCode() + _argsCount;
 		}
 
 		public override string ToString()
 		{
 			return string.Format("{0} - {1} - {3}", MethodName, ArgumentsCount, string.Join(",", ArgumentsName));
 		}
+
+		public static bool operator ==(MethodCallInfo left, MethodCallInfo right)
+		{
+			return left.Equals(right);
+		}
+
+		public static bool operator !=(MethodCallInfo left, MethodCallInfo right)
+		{
+			return !left.Equals(right);
+		}
 	}
 	#endregion
 
 	public sealed class TypeMethodsMapper
 	{
+		//TODO: check here
 		private static ConcurrentDictionary<int, ConcurrentDictionary<MethodCallInfo, MethodInfo>> _mappings;
 		private static ConcurrentDictionary<MethodInfo, FastReflection.DynamicMethodDelegate> _dynamicDelMap;
 		private static Lazy<TypeMethodsMapper> _instance;
