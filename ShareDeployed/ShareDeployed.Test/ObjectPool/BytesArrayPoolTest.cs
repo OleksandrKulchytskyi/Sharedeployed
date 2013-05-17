@@ -5,6 +5,8 @@ using ShareDeployed.Proxy.Pooling;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace ShareDeployed.Test.ObjectPool
 {
@@ -121,6 +123,44 @@ namespace ShareDeployed.Test.ObjectPool
 
 			Assert.IsTrue(_instance.ItemsInUse == 0);
 			Assert.IsTrue(_instance.AvailableCount == buckets.Count);
+		}
+
+		[TestMethod]
+		public void PromotePinnedObjectToHigherGen()
+		{
+			byte[] bytes = new byte[128];
+			Debug.WriteLine("After array was allocated, generation is: " + GC.GetGeneration(bytes));
+			System.Runtime.InteropServices.GCHandle gch = GCHandle.Alloc(bytes, GCHandleType.Pinned);
+			GC.Collect();
+			Debug.WriteLine("Generation after GC.Collect: " + GC.GetGeneration(bytes));
+			gch.Free();
+			GC.KeepAlive(bytes);
+			Debug.WriteLine("Generation after GC.KeepAlive: " + GC.GetGeneration(bytes));
+		}
+
+		[TestMethod]
+		public void LOHAllocTestValidFor32bit()
+		{
+			//see: http://blog.mohammadjalloul.com/blogs/mo/archive/2010/02/21/the-large-object-heap.aspx
+			// http://www.codeproject.com/Articles/15992/Trouble-with-the-Large-Object-Heap
+			// Define size as 1 byte less than the cutoff value for allocating in the LOH.
+			int ARRAY_SIZE_BYTES = 85000 - 13;
+			byte[] bytesLOH = new byte[ARRAY_SIZE_BYTES + 2];
+			byte[] bytes = new byte[ARRAY_SIZE_BYTES];
+			for (int i = 0; i < bytes.Length; i++)
+			{
+				bytes[i] = 0x20; // space
+			}
+
+			for (int i = 0; i < bytesLOH.Length; i++)
+			{
+				bytesLOH[i] = 0x20; // space
+			}
+
+			int isInLoh = GC.GetGeneration(bytesLOH);
+			int isInGen0 = GC.GetGeneration(bytes);
+			Assert.IsTrue(isInLoh == 2);
+			Assert.IsTrue(isInGen0 == 0);
 		}
 	}
 }

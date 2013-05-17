@@ -40,9 +40,6 @@ namespace ShareDeployed.Proxy
 
 		public override bool Equals(object obj)
 		{
-			if (obj == null)
-				return false;
-
 			return (obj is MethodCallInfo) ? Equals((MethodCallInfo)obj) : false;
 		}
 

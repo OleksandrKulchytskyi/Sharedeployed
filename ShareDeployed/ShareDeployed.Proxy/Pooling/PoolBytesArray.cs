@@ -14,17 +14,18 @@ namespace ShareDeployed.Proxy.Pooling
 		private readonly int _capacity;
 		private readonly long _chunkLen;
 		private ConcurrentQueue<ByteArray> _buckets;
+		private const int sizeExcludingPromotionToGen2 = 84980;
 
 		private int _inUseCount;
 		private int _avaliable;
 
 		public PoolBytesArray()
-			: this(2, 85000)
+			: this(2, sizeExcludingPromotionToGen2)
 		{
 		}
 
 		public PoolBytesArray(int capacity)
-			: this(capacity, 85000)
+			: this(capacity, sizeExcludingPromotionToGen2)
 		{
 		}
 

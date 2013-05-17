@@ -73,7 +73,7 @@ namespace ShareDeployed.Proxy
 			get { return _memberType; }
 		}
 
-		FastReflection.FastProperty _fp;
+		private FastReflection.FastProperty _fp;
 		/// <summary>
 		/// Fast property wrapper
 		/// </summary>
@@ -89,9 +89,7 @@ namespace ShareDeployed.Proxy
 
 		public override bool Equals(object obj)
 		{
-			if (obj != null && (obj is MemberMetadata))
-				return Equals((MemberMetadata)obj);
-			return false;
+			return (obj is MemberMetadata) ? Equals((MemberMetadata)obj) : false;
 		}
 
 		private bool Equals(MemberMetadata compare)
