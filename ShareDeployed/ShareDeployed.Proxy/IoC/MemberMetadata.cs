@@ -16,7 +16,7 @@ namespace ShareDeployed.Proxy
 		Property
 	}
 
-	public struct MemberMetadata
+	public struct MemberMetadata : IEquatable<MemberMetadata>
 	{
 		public MemberMetadata(MemberInfo memberInfo)
 		{
@@ -92,7 +92,7 @@ namespace ShareDeployed.Proxy
 			return (obj is MemberMetadata) ? Equals((MemberMetadata)obj) : false;
 		}
 
-		private bool Equals(MemberMetadata compare)
+		public bool Equals(MemberMetadata compare)
 		{
 			return (this._type.Equals(compare._type) && _memberType.Equals(compare._memberType));
 		}

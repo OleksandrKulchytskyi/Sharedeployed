@@ -228,7 +228,7 @@ namespace ShareDeployed.Proxy
 			instanceDel = null;
 
 			int threadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
-			ThreadTypeInfo threadTypeInf = new ThreadTypeInfo(threadId, contract);
+			ThreadTypeInfo threadTypeInf = new ThreadTypeInfo(threadId, contract.GetHashCode());
 			if (!_perThreadObjects.ContainsKey(threadTypeInf))
 			{
 				HandlePerRequest(mapInfo, out instanceDel, out instance);

@@ -106,7 +106,8 @@ namespace ShareDeployed.Proxy.Pooling
 				partsCount--;
 				Interlocked.Increment(ref _inUseCount);
 				Interlocked.Decrement(ref _avaliable);
-				array.Lock();
+
+				//array.Lock();// see drawbacks of pinned objects
 				buckets.Add(array);
 			}
 			return buckets;
@@ -114,7 +115,8 @@ namespace ShareDeployed.Proxy.Pooling
 
 		public void Release(ByteArray chunk)
 		{
-			chunk.Unlock();
+			if (chunk.IsLocked)
+				chunk.Unlock();
 			_buckets.Enqueue(chunk);
 			Interlocked.Decrement(ref _inUseCount);
 			Interlocked.Increment(ref _avaliable);
@@ -196,6 +198,9 @@ namespace ShareDeployed.Proxy.Pooling
 
 			try
 			{
+				//NOTE: Pin objects for the shortest possible time. Pinning is cheap if no garbage collection occurs
+				//while the object is pinned. If calling unmanaged code that requires a pinned object for an indefinite amount of time (such as an asynchronous call), 
+				//consider copying or unmanaged memory allocation instead of pinning a managed object. 
 				_gcHandle = GCHandle.Alloc(_array, GCHandleType.Pinned);
 			}
 			catch (Exception)
@@ -224,8 +229,7 @@ namespace ShareDeployed.Proxy.Pooling
 			if (Interlocked.CompareExchange(ref _isLocked, -1, 1) != 1)
 				return;
 
-			if (_gcHandle.IsAllocated)
-				_gcHandle.Free();
+			if (_gcHandle.IsAllocated) _gcHandle.Free();
 			_arrayAddr = -1;
 		}
 

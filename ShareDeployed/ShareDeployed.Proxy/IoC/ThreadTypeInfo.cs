@@ -8,11 +8,11 @@ namespace ShareDeployed.Proxy
 	public struct ThreadTypeInfo : IEquatable<ThreadTypeInfo>
 	{
 		private int _hash;
-		public ThreadTypeInfo(int threadId, Type contract)
+		public ThreadTypeInfo(int threadId, int contractId)
 		{
 			_hash = 0;
 			_threadId = threadId;
-			_contract = contract;
+			_contractId = contractId;
 		}
 
 		private int _threadId;
@@ -22,12 +22,11 @@ namespace ShareDeployed.Proxy
 			set { _threadId = value; }
 		}
 
-		//TODO: consider here replace Type obj with it hashcode representation(int) this will make this type simple and smaller
-		private Type _contract;
-		public Type Contract
+		private int  _contractId;
+		public int ContractId
 		{
-			get { return _contract; }
-			set { _contract = value; }
+			get { return _contractId; }
+			set { _contractId = value; }
 		}
 
 		public override int GetHashCode()
@@ -35,7 +34,7 @@ namespace ShareDeployed.Proxy
 			if (_hash != 0) return _hash;
 			
 			_hash = 17;
-			_hash = _hash * 31 + _contract.GetHashCode();
+			_hash = _hash * 31 + _contractId.GetHashCode();
 			_hash = _hash * 31 + _threadId.GetHashCode();
 			return _hash;
 
@@ -49,7 +48,7 @@ namespace ShareDeployed.Proxy
 
 		public bool Equals(ThreadTypeInfo compare)
 		{
-			return (compare.Contract.Equals(this.Contract) && ThreadId.Equals(compare.ThreadId));
+			return (compare.ContractId.Equals(this.ContractId) && ThreadId.Equals(compare.ThreadId));
 		}
 
 		public static bool operator ==(ThreadTypeInfo left, ThreadTypeInfo right)

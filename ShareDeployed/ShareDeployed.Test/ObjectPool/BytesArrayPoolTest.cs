@@ -7,6 +7,7 @@ using System.IO;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Text;
 
 namespace ShareDeployed.Test.ObjectPool
 {
@@ -46,7 +47,8 @@ namespace ShareDeployed.Test.ObjectPool
 		[TestMethod]
 		public void ReadFileToChunks()
 		{
-			string fpath = @"d:\1.docx";
+			string fpath = @"d:\programming_the_mobile_web_2nd_edition.pdf";
+			//string fpath = @"d:\1.docx";
 			Interlocked.Exchange(ref _id, 15);
 
 			Assert.IsTrue(Interlocked.CompareExchange(ref _id, 0, 0) == 15);
@@ -93,6 +95,7 @@ namespace ShareDeployed.Test.ObjectPool
 						buffer = array.GetBytesArray();
 						read = fs.Read(buffer, 0, array.Capacity);
 						array.AssignRealLength(read);
+						array.Lock();
 					}
 					catch (Exception ex)
 					{
@@ -107,6 +110,7 @@ namespace ShareDeployed.Test.ObjectPool
 				foreach (ByteArray array in buckets)
 				{
 					fs.Write(array.GetBytesArray(), 0, array.RealLength);
+					array.Unlock();
 				}
 			}
 
@@ -117,7 +121,6 @@ namespace ShareDeployed.Test.ObjectPool
 			catch (Exception ex)
 			{
 				if (ex != null) { }
-
 				throw;
 			}
 
@@ -129,13 +132,18 @@ namespace ShareDeployed.Test.ObjectPool
 		public void PromotePinnedObjectToHigherGen()
 		{
 			byte[] bytes = new byte[128];
-			Debug.WriteLine("After array was allocated, generation is: " + GC.GetGeneration(bytes));
+			int location = GC.GetGeneration(bytes);
+			Debug.WriteLine("After array was allocated, generation is: " + location);
 			System.Runtime.InteropServices.GCHandle gch = GCHandle.Alloc(bytes, GCHandleType.Pinned);
+
 			GC.Collect();
-			Debug.WriteLine("Generation after GC.Collect: " + GC.GetGeneration(bytes));
+
+			location = GC.GetGeneration(bytes);
+			Debug.WriteLine("Generation after GC.Collect: " + location);
 			gch.Free();
 			GC.KeepAlive(bytes);
-			Debug.WriteLine("Generation after GC.KeepAlive: " + GC.GetGeneration(bytes));
+			location = GC.GetGeneration(bytes);
+			Debug.WriteLine("Generation after GC.KeepAlive: " + location);
 		}
 
 		[TestMethod]
@@ -161,6 +169,39 @@ namespace ShareDeployed.Test.ObjectPool
 			int isInGen0 = GC.GetGeneration(bytes);
 			Assert.IsTrue(isInLoh == 2);
 			Assert.IsTrue(isInGen0 == 0);
+		}
+
+		[TestMethod]
+		public void CheckFsLenVersusStringBuilder()
+		{
+			StringBuilder sb = new StringBuilder();
+			int flen = -1;
+			using (FileStream fs = File.Open(@"d:\DispatcherWrappers.txt", FileMode.Open))
+			{
+				flen = (int)fs.Length;
+			}
+
+			using (StreamReader sr = new StreamReader(@"d:\DispatcherWrappers.txt"))
+			{
+				string line;
+				while ((line = sr.ReadLine()) != null)
+				{
+					sb.AppendLine(line);
+				}
+			}
+
+			Assert.IsTrue(flen == sb.Length - 2);
+		}
+
+		[TestMethod]
+		public void ResidesOnStringvsSB()
+		{
+			StringBuilder sb = new StringBuilder(85000);
+			String s= new string('c', 84900);
+			int gen0=GC.GetGeneration(sb);
+			int gen2=GC.GetGeneration(s);
+			Assert.IsTrue(gen0 == 0);
+			Assert.IsTrue(gen2 == 2);
 		}
 	}
 }

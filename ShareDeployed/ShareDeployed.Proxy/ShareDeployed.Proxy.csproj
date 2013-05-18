@@ -88,6 +88,7 @@
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\Log4netProvider.cs" />
     <Compile Include="Logging\LogAggregator.cs" />
+	<Compile Include="Pooling\Pool.cs" />
     <Compile Include="Pooling\ConcurrentPool.cs" />
     <Compile Include="Pooling\IRecyclable.cs" />
     <Compile Include="Pooling\IRecycler.cs" />
