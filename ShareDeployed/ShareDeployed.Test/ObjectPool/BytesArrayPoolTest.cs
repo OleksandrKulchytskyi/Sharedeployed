@@ -39,7 +39,6 @@ namespace ShareDeployed.Test.ObjectPool
 			{
 				if (ex != null)
 				{
-
 				}
 			}
 		}
@@ -143,6 +142,8 @@ namespace ShareDeployed.Test.ObjectPool
 			gch.Free();
 			GC.KeepAlive(bytes);
 			location = GC.GetGeneration(bytes);
+			GC.Collect();
+			location = GC.GetGeneration(bytes);
 			Debug.WriteLine("Generation after GC.KeepAlive: " + location);
 		}
 
@@ -197,11 +198,65 @@ namespace ShareDeployed.Test.ObjectPool
 		public void ResidesOnStringvsSB()
 		{
 			StringBuilder sb = new StringBuilder(85000);
-			String s= new string('c', 84900);
-			int gen0=GC.GetGeneration(sb);
-			int gen2=GC.GetGeneration(s);
+			String s = new string('c', 84900);
+			int gen0 = GC.GetGeneration(sb);
+			int gen2 = GC.GetGeneration(s);
 			Assert.IsTrue(gen0 == 0);
 			Assert.IsTrue(gen2 == 2);
+		}
+
+		[TestMethod]
+		public void FunWithTestClass()
+		{
+			//string object size in .NEt 4.0 (4+4+4 +2 +2*len), before .NET 4 (4+4+4+4(m_arrayLengt)+2*length)
+			string s = new string('c',50); //-> 114
+
+			MyTestClass obj = new MyTestClass("Abhishek", 28);
+			obj.GetHashCode();
+			obj.GetNext(20);
+		}
+	}
+
+	public class MyTestClass
+	{
+		public static int RefCounter;
+
+		public MyTestClass(string name, int age)
+		{
+			this.Name = name;
+			this.Age = age;
+			MyTestClass.RefCounter++;
+		}
+
+		private string name;
+		public string Name
+		{
+			get
+			{
+				return name;
+			}
+			set
+			{
+				name = value;
+			}
+		}
+
+		private int age;
+		public int Age
+		{
+			get
+			{
+				return age;
+			}
+			set
+			{
+				age = value;
+			}
+		}
+
+		public void GetNext(int age)
+		{
+			Console.WriteLine("Getting next at age" + age);
 		}
 	}
 }
