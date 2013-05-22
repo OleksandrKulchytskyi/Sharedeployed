@@ -71,9 +71,12 @@ namespace ShareDeployed.Proxy
 		private int _hash;
 		public override int GetHashCode()
 		{
-			int _hash = 17;
-			_hash = _hash * 31 + _methodName.GetHashCode();
-			_hash = _hash * 31 + _argsCount;
+			if (_hash == -1)
+			{
+				_hash = 17;
+				_hash = _hash * 31 + _methodName.GetHashCode();
+				_hash = _hash * 31 + _argsCount;
+			}
 			return _hash;
 			//return _methodName.GetHashCode() + _argsCount;
 		}
