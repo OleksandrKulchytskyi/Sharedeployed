@@ -209,7 +209,7 @@ namespace ShareDeployed.Test.ObjectPool
 		public void FunWithTestClass()
 		{
 			//string object size in .NEt 4.0 (4+4+4 +2 +2*len), before .NET 4 (4+4+4+4(m_arrayLengt)+2*length)
-			string s = new string('c',50); //-> 114
+			string s = new string('c', 50); //-> 114
 
 			MyTestClass obj = new MyTestClass("Abhishek", 28);
 			obj.GetHashCode();
