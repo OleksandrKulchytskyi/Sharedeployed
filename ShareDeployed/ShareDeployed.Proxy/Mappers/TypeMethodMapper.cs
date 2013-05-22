@@ -10,6 +10,7 @@ namespace ShareDeployed.Proxy
 	{
 		public MethodCallInfo(string methodName, int argsCount, IEnumerable<string> argsName)
 		{
+			_hash = -1;
 			_methodName = methodName;
 			_argsCount = argsCount;
 			_argumentsName = new List<string>(argsCount);
@@ -67,12 +68,13 @@ namespace ShareDeployed.Proxy
 			return result;
 		}
 
+		private int _hash;
 		public override int GetHashCode()
 		{
-			int hash = 17;
-			hash = hash * 31 + _methodName.GetHashCode();
-			hash = hash * 31 + _argsCount;
-			return hash;
+			int _hash = 17;
+			_hash = _hash * 31 + _methodName.GetHashCode();
+			_hash = _hash * 31 + _argsCount;
+			return _hash;
 			//return _methodName.GetHashCode() + _argsCount;
 		}
 

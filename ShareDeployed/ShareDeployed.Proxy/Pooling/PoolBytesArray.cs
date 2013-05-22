@@ -268,14 +268,19 @@ namespace ShareDeployed.Proxy.Pooling
 				this._isLocked == arrary._isLocked;
 		}
 
+		private int _hash = -1;
 		public override int GetHashCode()
 		{
-			int hash = 17;
-			hash = hash * 31 + _len.GetHashCode();
-			hash = hash * 31 + _capacity.GetHashCode();
-			hash = hash * 31 + _isLocked.GetHashCode();
-			hash = hash * 31 + _arrayAddr.GetHashCode();
-			return hash;
+			if (_hash == -1)
+			{
+				_hash = 17;
+				_hash = _hash * 31 + _len.GetHashCode();
+				_hash = _hash * 31 + _capacity.GetHashCode();
+				_hash = _hash * 31 + _isLocked.GetHashCode();
+				_hash = _hash * 31 + _arrayAddr.GetHashCode();
+			}
+
+			return _hash;
 		}
 		#endregion
 	}
