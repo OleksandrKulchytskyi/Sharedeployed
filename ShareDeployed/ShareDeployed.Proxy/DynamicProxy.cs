@@ -152,9 +152,13 @@ namespace ShareDeployed.Proxy
 				_interceptors = _weakMapper.Target.GetInterceptions(_typeHash);
 		}
 
-		protected IInvocation CreateMethodInvocation(InvokeMemberBinder binder, object _target, object[] args, Exception exc = null)
+		protected IInvocation CreateMethodInvocation(InvokeMemberBinder binder, object _target, object[] args, Exception exc = null, Type returnType = null)
 		{
-			IInvocation invocation = new MethodInvocation(_target, binder, args);
+			IInvocation invocation;
+			if (returnType == null)
+				invocation = new MethodInvocation(_target, binder, args);
+			else
+				invocation = new MethodInvocation(_target, binder, args, returnType);
 			if (exc != null)
 				invocation.SetException(exc);
 			return invocation;
@@ -185,14 +189,21 @@ namespace ShareDeployed.Proxy
 			CheckIfWeakRefIsAlive();
 
 			MethodCallInfo mci = new MethodCallInfo(binder.Name, binder.CallInfo.ArgumentCount, binder.CallInfo.ArgumentNames);
-			IInvocation methodInvocation = CreateMethodInvocation(binder, _weakTarget == null ? _target : _weakTarget.Target, args);
 			if ((mi = TypeMethodsMapper.Instance.Get(_typeHash, mci)) == null)
 			{
 				mi = _targerType.GetMethod(binder.Name, ReflectionUtils.PublicInstanceInvoke);
 				if (mi != null) TypeMethodsMapper.Instance.Add(_typeHash, mci, mi);
 			}
+			IInvocation methodInvocation = CreateMethodInvocation(binder, _weakTarget == null ? _target : _weakTarget.Target, args, returnType: mi.ReturnType);
 
-			var beforeInterceptors = _interceptors.Where(x => x.Mode == InterceptorInjectionMode.Before);
+			var beforeInterceptors = _interceptors.Where(x => x.Mode == InterceptorMode.Before);
+			if (beforeInterceptors.Count() > 0)
+				ProcessBeforeExecuteInterceptors(methodInvocation, beforeInterceptors);
+			else
+			{
+				beforeInterceptors = GetMethodLevelAttributes(mi);
+				ProcessBeforeExecuteInterceptors(methodInvocation, beforeInterceptors);
+			}
 
 			try
 			{
@@ -216,7 +227,7 @@ namespace ShareDeployed.Proxy
 				methodInvocation.SetException(ex);
 				isFail = true;
 				bool rethrow = true;
-				var errorInterceptors = _interceptors.Where(x => x.Mode == InterceptorInjectionMode.OnError);
+				var errorInterceptors = _interceptors.Where(x => x.Mode == InterceptorMode.OnError);
 				if (errorInterceptors != null && errorInterceptors.Count() > 0)
 				{
 					rethrow = errorInterceptors.FirstOrDefault(x => x.EatException == true) == null ? true : false;
@@ -227,7 +238,7 @@ namespace ShareDeployed.Proxy
 				}
 				else if (mi != null)
 				{
-					IEnumerable<InterceptorInfo> methodInterceptors = CallMethodLevelAttributes(mi);
+					IEnumerable<InterceptorInfo> methodInterceptors = GetMethodLevelAttributes(mi);
 					rethrow = methodInterceptors.FirstOrDefault(x => x.EatException == true) == null ? true : false;
 					foreach (InterceptorInfo interceptor in methodInterceptors)
 					{
@@ -240,9 +251,24 @@ namespace ShareDeployed.Proxy
 			if (isFail && mi.ReturnType != typeof(void))
 				result = mi.ReturnType.GetDefaultValue();
 
-			var afterInterceptors = _interceptors.Where(x => x.Mode == InterceptorInjectionMode.After);
+			var afterInterceptors = _interceptors.Where(x => x.Mode == InterceptorMode.After);
 
 			return true;
+		}
+
+		private void ProcessBeforeExecuteInterceptors(IInvocation invocation, IEnumerable<InterceptorInfo> beforeInterceptors)
+		{
+			invocation.ThrowIfNull("invocation", "Parameter cannot be a null.");
+			beforeInterceptors.ThrowIfNull("beforeInterceptors", "Parameter cannot be a null.");
+			foreach (InterceptorInfo item in beforeInterceptors)
+			{
+				IContractResolver resolver = DynamicProxyPipeline.Instance.ContracResolver;
+				object resolved = resolver.Resolve(item.Interceptor);
+
+				IInterceptor casted = resolved as IInterceptor;
+				if (casted != null)
+					casted.Intercept(invocation);
+			}
 		}
 
 		private static void InterceptInternal(IInvocation methodInvocation, InterceptorInfo interceptor)
@@ -258,7 +284,7 @@ namespace ShareDeployed.Proxy
 				casted.Intercept(methodInvocation);
 		}
 
-		private IEnumerable<InterceptorInfo> CallMethodLevelAttributes(MethodInfo mi)
+		private IEnumerable<InterceptorInfo> GetMethodLevelAttributes(MethodInfo mi)
 		{
 			IList<InterceptorInfo> interceptors = null;
 			InterceptorAttribute[] attributes = mi.GetCustomAttributes(typeof(InterceptorAttribute), false) as InterceptorAttribute[];

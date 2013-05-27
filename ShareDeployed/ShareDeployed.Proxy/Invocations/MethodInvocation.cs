@@ -21,6 +21,12 @@ namespace ShareDeployed.Proxy
 			_args = args;
 		}
 
+		public MethodInvocation(object target, InvokeMemberBinder binder, object[] args, Type retType)
+			: this(target, binder, args)
+		{
+			_returnType = retType;
+		}
+
 		public MethodInvocation(object target, InvokeMemberBinder binder, object[] args, object proxy)
 			: this(target, binder, args)
 		{

@@ -189,6 +189,11 @@ namespace ShareDeployed.Proxy
 		#endregion
 
 		#region IContractResolver members
+		/// <summary>
+		/// Get instance of specific service by its Type
+		/// </summary>
+		/// <param name="contract"></param>
+		/// <returns></returns>
 		public object Resolve(Type contract)
 		{
 			KeyValuePair<Type, ServiceLifetime> mapInfo = default(KeyValuePair<Type, ServiceLifetime>);
@@ -403,6 +408,11 @@ namespace ShareDeployed.Proxy
 			}
 		}
 
+		/// <summary>
+		/// Get instance of specific service by its alias
+		/// </summary>
+		/// <param name="alias"></param>
+		/// <returns></returns>
 		public object Resolve(string alias)
 		{
 			alias.ThrowIfNull("alias", "Parameter cannot be null.");
@@ -413,10 +423,22 @@ namespace ShareDeployed.Proxy
 				return null;
 		}
 
+		/// <summary>
+		/// Get instance of specific service
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
 		public T Resolve<T>()
 		{
 			return (T)Resolve(typeof(T));
 		}
+
+		/// <summary>
+		/// Get instance of specific service by its alias
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="alias"></param>
+		/// <returns></returns>
 		public T Resolve<T>(string alias)
 		{
 			return (T)Resolve(alias);

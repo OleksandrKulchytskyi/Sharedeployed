@@ -1,0 +1,16 @@
+﻿<Window x:Class="ShareDeployed.Proxy.WpfTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="350" Width="525">
+	<StackPanel>
+		<Button Click="Button_Click" Content="GetAll"/>
+		<TextBox x:Name="cId"/>
+		<Button Click="Button_ClickID" Content="GetSingle"/>
+		<DataGrid ItemsSource="{Binding}" AutoGenerateColumns="False" x:Name="dg1">
+			<DataGrid.Columns>
+				<DataGridTextColumn Binding="{Binding Id}" Header="Id"/>
+				<DataGridTextColumn Binding="{Binding Name}" Header="Name"/>
+			</DataGrid.Columns>
+		</DataGrid>
+	</StackPanel>
+</Window>

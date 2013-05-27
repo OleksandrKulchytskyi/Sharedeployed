@@ -36,7 +36,7 @@ namespace ShareDeployed.Proxy
 				sb.AppendLine("Method is parameterless.");
 
 			if (invocation.ReturnValueType != typeof(void))
-				sb.AppendLine(string.Format("Return type is {0}", invocation.ReturnValue));
+				sb.AppendLine(string.Format("Return type is {0}", invocation.ReturnValueType));
 
 			LogAggregator.DoLog(Logging.LogSeverity.Info, sb.ToString(), null);
 			sb.Clear();

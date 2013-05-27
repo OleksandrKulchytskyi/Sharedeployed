@@ -22,7 +22,7 @@ namespace ShareDeployed.Test
 		{
 			public int DefaultData { get; set; }
 
-			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorInjectionMode.Before)]
+			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorMode.Before)]
 			public int DoWorkNonError(int add)
 			{
 				int i;
@@ -34,7 +34,7 @@ namespace ShareDeployed.Test
 				return i;
 			}
 
-			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = false, Mode = InterceptorInjectionMode.OnError)]
+			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = false, Mode = InterceptorMode.OnError)]
 			public int DoWorkReturnError(int add)
 			{
 				int i = 5;
@@ -43,7 +43,7 @@ namespace ShareDeployed.Test
 				return i;
 			}
 
-			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = false, Mode = InterceptorInjectionMode.OnError)]
+			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = false, Mode = InterceptorMode.OnError)]
 			public void DoWorkError(int add)
 			{
 				int i = 5;
@@ -52,7 +52,7 @@ namespace ShareDeployed.Test
 				throw new InvalidOperationException("Something is going wrong.");
 			}
 
-			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorInjectionMode.OnError)]
+			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorMode.OnError)]
 			public int DoWorkErrorNoThrow(int add)
 			{
 				int i = 5;
@@ -214,7 +214,7 @@ namespace ShareDeployed.Test
 
 			public int Default { get; set; }
 
-			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorInjectionMode.OnError)]
+			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorMode.OnError)]
 			public void DoWork()
 			{
 				int i;
@@ -226,7 +226,7 @@ namespace ShareDeployed.Test
 				Console.WriteLine(i);
 			}
 
-			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorInjectionMode.OnError)]
+			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorMode.OnError)]
 			public int DoWork2(int data)
 			{
 				int i;
@@ -238,13 +238,13 @@ namespace ShareDeployed.Test
 				return i;
 			}
 
-			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorInjectionMode.OnError)]
+			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorMode.OnError)]
 			public int DoWork3(int data, int data2)
 			{
 				return data + data2;
 			}
 
-			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorInjectionMode.OnError)]
+			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorMode.OnError)]
 			public int DoWorkErrored(int data)
 			{
 				int i;

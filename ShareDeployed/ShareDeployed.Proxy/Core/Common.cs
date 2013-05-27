@@ -1,9 +1,10 @@
-﻿using System;
+﻿using ShareDeployed.Proxy.Logging;
+using System;
 using System.Collections.Generic;
 
 namespace ShareDeployed.Proxy
 {
-	public enum InterceptorInjectionMode
+	public enum InterceptorMode
 	{
 		None = 0, Before, After, OnError
 	}
@@ -12,7 +13,7 @@ namespace ShareDeployed.Proxy
 	{
 		void Initialize(bool withinDomain = false);
 
-		Logging.ILogAggregator LoggerAggregator { get; set; }
+		ILogAggregator LoggerAggregator { get; set; }
 		IContractResolver ContracResolver { get; set; }
 		IDynamicProxyManager DynamixProxyManager { get; set; }
 	}
@@ -35,12 +36,12 @@ namespace ShareDeployed.Proxy
 
 	public class InterceptorInfo
 	{
-		public InterceptorInfo(Type interceptorType, InterceptorInjectionMode mode) :
+		public InterceptorInfo(Type interceptorType, InterceptorMode mode) :
 			this(interceptorType, mode, false)
 		{
 		}
 
-		public InterceptorInfo(Type interceptorType, InterceptorInjectionMode mode, bool eatException)
+		public InterceptorInfo(Type interceptorType, InterceptorMode mode, bool eatException)
 		{
 			Interceptor = interceptorType;
 			Mode = mode;
@@ -48,7 +49,7 @@ namespace ShareDeployed.Proxy
 		}
 
 		public Type Interceptor { get; private set; }
-		public InterceptorInjectionMode Mode { get; private set; }
+		public InterceptorMode Mode { get; private set; }
 		public bool EatException { get; private set; }
 	}
 
@@ -56,7 +57,7 @@ namespace ShareDeployed.Proxy
 	public sealed class InterceptorAttribute : Attribute
 	{
 		public Type InterceptorType { get; set; }
-		public InterceptorInjectionMode Mode { get; set; }
+		public InterceptorMode Mode { get; set; }
 		public bool EatException { get; set; }
 	}
 

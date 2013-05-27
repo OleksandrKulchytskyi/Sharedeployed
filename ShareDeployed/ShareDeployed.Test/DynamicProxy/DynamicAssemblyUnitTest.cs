@@ -71,7 +71,7 @@ namespace ShareDeployed.Test
 			dp.WriteDataParams(1, "1");
 		}
 
-		[Interceptor(InterceptorType = typeof(DynamicTestData), Mode = InterceptorInjectionMode.After)]
+		[Interceptor(InterceptorType = typeof(DynamicTestData), Mode = InterceptorMode.After)]
 		class DynamicTestData
 		{
 			public string data;
@@ -89,7 +89,7 @@ namespace ShareDeployed.Test
 			}
 		}
 
-		[Interceptor(InterceptorType = typeof(ExceptionInterceptor), Mode = InterceptorInjectionMode.OnError, EatException = false)]
+		[Interceptor(InterceptorType = typeof(ExceptionInterceptor), Mode = InterceptorMode.OnError, EatException = false)]
 		class ErrorProneClass
 		{
 			public string data;
