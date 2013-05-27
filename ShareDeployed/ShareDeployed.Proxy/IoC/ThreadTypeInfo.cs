@@ -22,7 +22,7 @@ namespace ShareDeployed.Proxy
 			set { _threadId = value; }
 		}
 
-		private int  _contractId;
+		private int _contractId;
 		public int ContractId
 		{
 			get { return _contractId; }
@@ -32,7 +32,7 @@ namespace ShareDeployed.Proxy
 		public override int GetHashCode()
 		{
 			if (_hash != 0) return _hash;
-			
+
 			_hash = 17;
 			_hash = _hash * 31 + _contractId.GetHashCode();
 			_hash = _hash * 31 + _threadId.GetHashCode();
@@ -64,7 +64,6 @@ namespace ShareDeployed.Proxy
 
 	public class ThreadTypeInfoEqualityComparer : IEqualityComparer<ThreadTypeInfo>
 	{
-
 		public bool Equals(ThreadTypeInfo x, ThreadTypeInfo y)
 		{
 			return x.Equals(y);

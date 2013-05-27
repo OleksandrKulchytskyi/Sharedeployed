@@ -417,6 +417,10 @@ namespace ShareDeployed.Proxy
 		{
 			return (T)Resolve(typeof(T));
 		}
+		public T Resolve<T>(string alias)
+		{
+			return (T)Resolve(alias);
+		}
 
 		public IEnumerable<object> ResolveAll(params Type[] types)
 		{

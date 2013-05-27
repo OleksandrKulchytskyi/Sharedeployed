@@ -29,6 +29,7 @@ namespace ShareDeployed.Proxy
 		object Resolve(Type contract);
 		object Resolve(string alias);
 		T Resolve<T>();
+		T Resolve<T>(string alias);
 		IEnumerable<object> ResolveAll(params Type[] types);
 	}
 
