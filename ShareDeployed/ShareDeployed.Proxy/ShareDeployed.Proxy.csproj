@@ -59,6 +59,7 @@
     <Compile Include="Extensions\DynamicProxyGenerator.cs" />
     <Compile Include="Extensions\IEnumerableUtils.cs" />
     <Compile Include="Extensions\ValidationHelper.cs" />
+    <Compile Include="Extensions\WeakEventHandler.cs" />
     <Compile Include="FastReflection\DynamicCtor.cs" />
     <Compile Include="FastReflection\ILManager.cs" />
     <Compile Include="FastReflection\IPropertyAccessor.cs" />
@@ -88,7 +89,7 @@
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\Log4netProvider.cs" />
     <Compile Include="Logging\LogAggregator.cs" />
-	<Compile Include="Pooling\Pool.cs" />
+    <Compile Include="Pooling\Pool.cs" />
     <Compile Include="Pooling\ConcurrentPool.cs" />
     <Compile Include="Pooling\IRecyclable.cs" />
     <Compile Include="Pooling\IRecycler.cs" />

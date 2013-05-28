@@ -79,7 +79,7 @@ namespace ShareDeployed.Test.MailGrabber
 
 		public void Handle(object sender, TestEventArgs e)
 		{
-			Console.WriteLine(e.Message); 
+			Console.WriteLine(e.Message);
 		}
 	}
 

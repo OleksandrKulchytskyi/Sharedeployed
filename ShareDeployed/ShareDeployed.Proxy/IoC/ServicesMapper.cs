@@ -1,4 +1,5 @@
-﻿using ShareDeployed.Proxy.IoC.Config;
+﻿using ShareDeployed.Proxy.Extensions;
+using ShareDeployed.Proxy.IoC.Config;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -59,6 +60,8 @@ namespace ShareDeployed.Proxy
 
 			_configCtorArgs = new ConcurrentDictionary<Type, SafeCollection<ServiceCtorArgumentElement>>();
 			_configProperties = new ConcurrentDictionary<Type, SafeCollection<ServicePropertyElement>>();
+
+			_invocations = new List<WeakEventHandler<ResolutionFailEventArgs>>();
 		}
 
 		#region Static methods
@@ -463,18 +466,49 @@ namespace ShareDeployed.Proxy
 			}
 		}
 
-		public event EventHandler<ResolutionFailEventArgs> ResolveFailed;
+		private List<WeakEventHandler<ResolutionFailEventArgs>> _invocations;
+		public event EventHandler<ResolutionFailEventArgs> ResolveFailed
+		{
+			add
+			{
+				bool lockTaken = System.Threading.Monitor.TryEnter(_invocations);
+				_invocations.Add(new WeakEventHandler<ResolutionFailEventArgs>(value));
+				if (lockTaken)
+					System.Threading.Monitor.Exit(_invocations);
+			}
+			remove
+			{
+				bool lockTaken = System.Threading.Monitor.TryEnter(_invocations);
+				_invocations.Remove(new WeakEventHandler<ResolutionFailEventArgs>(value));
+				if (lockTaken)
+					System.Threading.Monitor.Exit(_invocations);
+			}
+		}
 
 		private void OnResolutionFailed(Type resolvingType, string message, Exception ex = null)
 		{
-			EventHandler<ResolutionFailEventArgs> handler = System.Threading.Interlocked.CompareExchange(ref ResolveFailed, null, null);
-			if (handler != null)
+			List<WeakEventHandler<ResolutionFailEventArgs>> toRemove = new List<WeakEventHandler<ResolutionFailEventArgs>>();
+			foreach (WeakEventHandler<ResolutionFailEventArgs> weak in _invocations)
 			{
-				if (string.IsNullOrEmpty(message))
-					handler(this, new ResolutionFailEventArgs(resolvingType, ex));
+				if (weak.IsAlive())
+				{
+					EventHandler<ResolutionFailEventArgs> handler = (EventHandler<ResolutionFailEventArgs>)weak;
+					if (string.IsNullOrEmpty(message))
+						handler(this, new ResolutionFailEventArgs(resolvingType, ex));
+					else
+						handler(this, new ResolutionFailEventArgs(resolvingType, message));
+				}
 				else
-					handler(this, new ResolutionFailEventArgs(resolvingType, message));
+					toRemove.Add(weak);
 			}
+			bool lockTaken = System.Threading.Monitor.TryEnter(_invocations);
+			foreach (var item in toRemove)
+			{
+				_invocations.Remove(item);
+			}
+			toRemove.Clear();
+			if (lockTaken)
+				System.Threading.Monitor.Exit(_invocations);
 		}
 
 		#endregion
