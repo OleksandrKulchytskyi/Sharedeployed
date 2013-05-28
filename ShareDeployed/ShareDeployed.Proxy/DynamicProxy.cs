@@ -10,7 +10,7 @@ namespace ShareDeployed.Proxy
 	public class DynamicProxy : DynamicObject, IDisposable
 	{
 		private readonly string _targetParamName = "target";
-		private readonly string _paramCannotBeNullMsg = "Parameter target cannot be a null.";
+		private readonly string _paramCannotBeNullMsg = "Parameter cannot be a null.";
 
 		protected int disposed = -1;
 		protected int _typeHash;
@@ -265,8 +265,8 @@ namespace ShareDeployed.Proxy
 
 		private void ProcessBeforeExecuteInterceptors(IInvocation invocation, IEnumerable<InterceptorInfo> beforeInterceptors)
 		{
-			invocation.ThrowIfNull("invocation", "Parameter cannot be a null.");
-			beforeInterceptors.ThrowIfNull("beforeInterceptors", "Parameter cannot be a null.");
+			invocation.ThrowIfNull("invocation", _paramCannotBeNullMsg);
+			beforeInterceptors.ThrowIfNull("beforeInterceptors", _paramCannotBeNullMsg);
 			foreach (InterceptorInfo item in beforeInterceptors)
 			{
 				IInterceptor casted = ResolveInterceptorFromIoC(item);
@@ -277,8 +277,8 @@ namespace ShareDeployed.Proxy
 
 		private void InterceptInternal(IInvocation methodInvocation, InterceptorInfo interceptor)
 		{
-			methodInvocation.ThrowIfNull("methodInvocation", "Parameter cannot be a null.");
-			interceptor.ThrowIfNull("interceptor", "Parameter cannot be a null.");
+			methodInvocation.ThrowIfNull("methodInvocation", _paramCannotBeNullMsg);
+			interceptor.ThrowIfNull("interceptor", _paramCannotBeNullMsg);
 
 			IInterceptor casted = ResolveInterceptorFromIoC(interceptor);
 			if (casted != null)
@@ -287,8 +287,8 @@ namespace ShareDeployed.Proxy
 
 		private void ProcessAfterExecuteInterceptors(IInvocation invocation, IEnumerable<InterceptorInfo> afterInterceptors)
 		{
-			invocation.ThrowIfNull("invocation", "Parameter cannot be a null.");
-			afterInterceptors.ThrowIfNull("beforeInterceptors", "Parameter cannot be a null.");
+			invocation.ThrowIfNull("invocation", _paramCannotBeNullMsg);
+			afterInterceptors.ThrowIfNull("beforeInterceptors", _paramCannotBeNullMsg);
 			foreach (InterceptorInfo item in afterInterceptors)
 			{
 				IInterceptor casted = ResolveInterceptorFromIoC(item);
@@ -304,7 +304,7 @@ namespace ShareDeployed.Proxy
 
 			IInterceptor casted = resolved as IInterceptor;
 			return casted;
-		}		
+		}
 
 		private IEnumerable<InterceptorInfo> GetMethodLevelAttributes(MethodInfo mi, InterceptorMode mode = InterceptorMode.None)
 		{
