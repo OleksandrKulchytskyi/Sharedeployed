@@ -149,7 +149,7 @@ namespace ShareDeployed.Proxy
 			return contract;
 		}
 
-		public static KeyValuePair<Type, ServiceLifetime> GetFullMappingInfo(Type contract)
+		public static KeyValuePair<Type, ServiceLifetime> GetFullMappingInfo(Type contract, bool omitExc = false)
 		{
 			KeyValuePair<Type, ServiceLifetime> existingImpl = default(KeyValuePair<Type, ServiceLifetime>);
 
@@ -159,10 +159,11 @@ namespace ShareDeployed.Proxy
 				{
 					if (_servicesMap.TryGetValue(contract, out existingImpl))
 						return existingImpl;
+					else if (omitExc)
+						return existingImpl;
 					else
 					{
-
-						if (!_omitNotRegistered)
+						if (_omitNotRegistered)
 							throw new InvalidOperationException(string.Format("Mapping for type {0} doesn't exists.", contract));
 						if (contract.IsInterface)
 							throw new InvalidOperationException(string.Format("Unable to create instance of interface {0}.Mapping doesn't exists.", contract));
@@ -201,9 +202,7 @@ namespace ShareDeployed.Proxy
 		public object Resolve(Type contract)
 		{
 			KeyValuePair<Type, ServiceLifetime> mapInfo = default(KeyValuePair<Type, ServiceLifetime>);
-			//TODO: check here, method below will thrown exception in case of missing mapping for unregistered service,
-			//so as a result no ResolveFailed event w'ont be fired
-			if ((mapInfo = ServicesMapper.GetFullMappingInfo(contract)).Key == default(Type))
+			if ((mapInfo = ServicesMapper.GetFullMappingInfo(contract, omitExc: true)).Key == default(Type))
 			{
 				string message = string.Format("Mapping for type {0} doesn't exists.", contract);
 				OnResolutionFailed(contract, message);
