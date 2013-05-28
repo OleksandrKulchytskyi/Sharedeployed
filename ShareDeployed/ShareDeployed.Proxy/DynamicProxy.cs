@@ -252,6 +252,13 @@ namespace ShareDeployed.Proxy
 				result = mi.ReturnType.GetDefaultValue();
 
 			var afterInterceptors = _interceptors.Where(x => x.Mode == InterceptorMode.After);
+			if (afterInterceptors.Count() > 0)
+				ProcessAfterExecuteInterceptors(methodInvocation, afterInterceptors);
+			else
+			{
+				afterInterceptors = GetMethodLevelAttributes(mi, InterceptorMode.After);
+				ProcessAfterExecuteInterceptors(methodInvocation, afterInterceptors);
+			}
 
 			return true;
 		}
@@ -262,27 +269,42 @@ namespace ShareDeployed.Proxy
 			beforeInterceptors.ThrowIfNull("beforeInterceptors", "Parameter cannot be a null.");
 			foreach (InterceptorInfo item in beforeInterceptors)
 			{
-				IContractResolver resolver = DynamicProxyPipeline.Instance.ContracResolver;
-				object resolved = resolver.Resolve(item.Interceptor);
-
-				IInterceptor casted = resolved as IInterceptor;
+				IInterceptor casted = ResolveInterceptorFromIoC(item);
 				if (casted != null)
 					casted.Intercept(invocation);
 			}
 		}
 
-		private static void InterceptInternal(IInvocation methodInvocation, InterceptorInfo interceptor)
+		private void InterceptInternal(IInvocation methodInvocation, InterceptorInfo interceptor)
 		{
 			methodInvocation.ThrowIfNull("methodInvocation", "Parameter cannot be a null.");
 			interceptor.ThrowIfNull("interceptor", "Parameter cannot be a null.");
 
-			IContractResolver resolver = DynamicProxyPipeline.Instance.ContracResolver;
-			object resolved = resolver.Resolve(interceptor.Interceptor);
-
-			IInterceptor casted = resolved as IInterceptor;
+			IInterceptor casted = ResolveInterceptorFromIoC(interceptor);
 			if (casted != null)
 				casted.Intercept(methodInvocation);
 		}
+
+		private void ProcessAfterExecuteInterceptors(IInvocation invocation, IEnumerable<InterceptorInfo> afterInterceptors)
+		{
+			invocation.ThrowIfNull("invocation", "Parameter cannot be a null.");
+			afterInterceptors.ThrowIfNull("beforeInterceptors", "Parameter cannot be a null.");
+			foreach (InterceptorInfo item in afterInterceptors)
+			{
+				IInterceptor casted = ResolveInterceptorFromIoC(item);
+				if (casted != null)
+					casted.Intercept(invocation);
+			}
+		}
+
+		private IInterceptor ResolveInterceptorFromIoC(InterceptorInfo item)
+		{
+			IContractResolver resolver = DynamicProxyPipeline.Instance.ContracResolver;
+			object resolved = resolver.Resolve(item.Interceptor);
+
+			IInterceptor casted = resolved as IInterceptor;
+			return casted;
+		}		
 
 		private IEnumerable<InterceptorInfo> GetMethodLevelAttributes(MethodInfo mi, InterceptorMode mode = InterceptorMode.None)
 		{
@@ -306,7 +328,6 @@ namespace ShareDeployed.Proxy
 				}
 				else
 				{
-					//needs to be redesign
 					if (_methodInterceptors.Value.TryGetValue(mi, out interceptors))
 					{
 						if (mode != InterceptorMode.None && interceptors.Where(x => x.Mode == mode).FirstOrDefault() == null)

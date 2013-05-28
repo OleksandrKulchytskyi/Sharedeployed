@@ -50,7 +50,11 @@ namespace ShareDeployed.Proxy.WpfTest
 				{
 					dg1.ItemsSource = new List<Customer>() { cust };
 				}
-				else dg1.ItemsSource = null;
+				else
+				{
+					dg1.ItemsSource = null;
+					MessageBox.Show(this, "Fail to find such customer");
+				}
 			}
 		}
 	}
