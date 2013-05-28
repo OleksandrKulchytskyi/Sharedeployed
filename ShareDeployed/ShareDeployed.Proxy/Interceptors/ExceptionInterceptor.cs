@@ -22,12 +22,18 @@ namespace ShareDeployed.Proxy
 		protected void ProceesException(IInvocation invocation)
 		{
 			Exception cuurrentExc = invocation.Exception;
+#if DEBUG
 			Debug.WriteLine(cuurrentExc.Message);
+#endif
 			if (cuurrentExc.InnerException != null)
 			{
+#if DEBUG
 				Debug.WriteLine(cuurrentExc.InnerException.Message);
+#endif
 				if (cuurrentExc.InnerException.InnerException != null)
+#if DEBUG
 					Debug.WriteLine(cuurrentExc.InnerException.InnerException.Message);
+#endif
 			}
 
 			if (LogAggregator != null)

@@ -189,10 +189,10 @@ namespace ShareDeployed.Proxy
 			CheckIfWeakRefIsAlive();
 
 			MethodCallInfo mci = new MethodCallInfo(binder.Name, binder.CallInfo.ArgumentCount, binder.CallInfo.ArgumentNames);
-			if ((mi = TypeMethodsMapper.Instance.Get(_typeHash, mci)) == null)
+			if ((mi = TypeMethodsMapper.Instance.Get(_typeHash, ref mci)) == null)
 			{
 				mi = _targerType.GetMethod(binder.Name, ReflectionUtils.PublicInstanceInvoke);
-				if (mi != null) TypeMethodsMapper.Instance.Add(_typeHash, mci, mi);
+				if (mi != null) TypeMethodsMapper.Instance.Add(_typeHash, ref mci, mi);
 			}
 			IInvocation methodInvocation = CreateMethodInvocation(binder, _weakTarget == null ? _target : _weakTarget.Target, args, returnType: mi.ReturnType);
 
@@ -201,7 +201,7 @@ namespace ShareDeployed.Proxy
 				ProcessBeforeExecuteInterceptors(methodInvocation, beforeInterceptors);
 			else
 			{
-				beforeInterceptors = GetMethodLevelAttributes(mi);
+				beforeInterceptors = GetMethodLevelAttributes(mi, InterceptorMode.Before);
 				ProcessBeforeExecuteInterceptors(methodInvocation, beforeInterceptors);
 			}
 
@@ -214,7 +214,7 @@ namespace ShareDeployed.Proxy
 				}
 				else
 				{
-					result = TypeMethodsMapper.Instance.GetDynamicDelegate(_typeHash, mci)(_targerType, args);
+					result = TypeMethodsMapper.Instance.GetDynamicDelegate(_typeHash, ref mci)(_targerType, args);
 					processed = true;
 				}
 
@@ -238,7 +238,7 @@ namespace ShareDeployed.Proxy
 				}
 				else if (mi != null)
 				{
-					IEnumerable<InterceptorInfo> methodInterceptors = GetMethodLevelAttributes(mi);
+					IEnumerable<InterceptorInfo> methodInterceptors = GetMethodLevelAttributes(mi, InterceptorMode.OnError);
 					rethrow = methodInterceptors.FirstOrDefault(x => x.EatException == true) == null ? true : false;
 					foreach (InterceptorInfo interceptor in methodInterceptors)
 					{
@@ -284,30 +284,52 @@ namespace ShareDeployed.Proxy
 				casted.Intercept(methodInvocation);
 		}
 
-		private IEnumerable<InterceptorInfo> GetMethodLevelAttributes(MethodInfo mi)
+		private IEnumerable<InterceptorInfo> GetMethodLevelAttributes(MethodInfo mi, InterceptorMode mode = InterceptorMode.None)
 		{
 			IList<InterceptorInfo> interceptors = null;
 			InterceptorAttribute[] attributes = mi.GetCustomAttributes(typeof(InterceptorAttribute), false) as InterceptorAttribute[];
 			if (attributes != null && attributes.Length > 0)
 			{
+				//here we might have a situation when we chached only class level interceptors but method level interceptors left untouched
 				if (!_methodInterceptors.Value.ContainsKey(mi))
 				{
 					interceptors = new List<InterceptorInfo>(attributes.Length);
 					for (int i = 0; i < attributes.Length; i++)
 					{
 						InterceptorAttribute attr = attributes[i];
-						if (attr != null)
-						{
-							InterceptorInfo info = new InterceptorInfo(attr.InterceptorType, attr.Mode, attr.EatException);
-							interceptors.Add(info);
-						}
+						if (attr != null && mode == InterceptorMode.None)
+							CreateAndAddInterceptorInfo(interceptors, attr);
+						else if (attr != null && attr.Mode == mode)
+							CreateAndAddInterceptorInfo(interceptors, attr);
 					}
 					_methodInterceptors.Value.TryAdd(mi, interceptors);
 				}
 				else
-					_methodInterceptors.Value.TryGetValue(mi, out interceptors);
+				{
+					//needs to be redesign
+					if (_methodInterceptors.Value.TryGetValue(mi, out interceptors))
+					{
+						if (mode != InterceptorMode.None && interceptors.Where(x => x.Mode == mode).FirstOrDefault() == null)
+						{
+							var methodLevelAtt = attributes.Where(x => x.Mode == mode).ToList();
+							if (methodLevelAtt.Count > 0)
+							{
+								foreach (InterceptorAttribute attr in methodLevelAtt)
+								{
+									CreateAndAddInterceptorInfo(interceptors, attr);
+								}
+							}
+						}
+					}
+				}
 			}
 			return interceptors;
+		}
+
+		private void CreateAndAddInterceptorInfo(IList<InterceptorInfo> interceptors, InterceptorAttribute attr)
+		{
+			InterceptorInfo info = new InterceptorInfo(attr.InterceptorType, attr.Mode, attr.EatException);
+			interceptors.Add(info);
 		}
 
 		public override bool TryConvert(ConvertBinder binder, out object result)

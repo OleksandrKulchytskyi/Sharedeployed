@@ -66,9 +66,7 @@ namespace ShareDeployed.Proxy
 			{
 				Type implType = ServicesMapper.GetImplementation(objectType);
 				if (implType != null)
-				{
 					return ObjectInstantiater(implType);
-				}
 				else
 					throw new InvalidOperationException(string.Format("Mapping for abstraction {0} is not registered in the system.", objectType));
 			}

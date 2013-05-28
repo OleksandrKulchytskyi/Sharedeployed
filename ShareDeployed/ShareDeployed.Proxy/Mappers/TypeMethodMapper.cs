@@ -48,10 +48,10 @@ namespace ShareDeployed.Proxy
 		{
 			return (string.Equals(MethodName, other.MethodName, StringComparison.InvariantCulture) &&
 					ArgumentsCount == other.ArgumentsCount &&
-					IsArgumentsNameEquals(other));
+					IsArgumentsNameEquals(ref other));
 		}
 
-		private bool IsArgumentsNameEquals(MethodCallInfo compare)
+		private bool IsArgumentsNameEquals(ref MethodCallInfo compare)
 		{
 			bool result = true;
 			if (ArgumentsName.Count != compare.ArgumentsName.Count)
@@ -127,7 +127,7 @@ namespace ShareDeployed.Proxy
 		}
 
 		#region public methods
-		public void Add(int type, MethodCallInfo mci, MethodInfo mi)
+		public void Add(int type, ref  MethodCallInfo mci, MethodInfo mi)
 		{
 			if (!_mappings.ContainsKey(type))
 			{
@@ -147,7 +147,7 @@ namespace ShareDeployed.Proxy
 			}
 		}
 
-		public MethodInfo Get(int type, MethodCallInfo mci)
+		public MethodInfo Get(int type, ref MethodCallInfo mci)
 		{
 			if (_mappings.ContainsKey(type))
 			{
@@ -158,12 +158,12 @@ namespace ShareDeployed.Proxy
 			return null;
 		}
 
-		public bool Contains(int type, MethodCallInfo mci)
+		public bool Contains(int type, ref MethodCallInfo mci)
 		{
 			return (_mappings.ContainsKey(type) && _mappings[type].ContainsKey(mci));
 		}
 
-		public FastReflection.DynamicMethodDelegate GetDynamicDelegate(int type, MethodCallInfo mci)
+		public FastReflection.DynamicMethodDelegate GetDynamicDelegate(int type, ref MethodCallInfo mci)
 		{
 			if (_mappings.ContainsKey(type))
 			{

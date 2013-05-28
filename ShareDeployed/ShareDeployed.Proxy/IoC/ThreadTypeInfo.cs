@@ -37,7 +37,6 @@ namespace ShareDeployed.Proxy
 			_hash = _hash * 31 + _contractId.GetHashCode();
 			_hash = _hash * 31 + _threadId.GetHashCode();
 			return _hash;
-
 			//return _contract.GetHashCode() ^ _threadId.GetHashCode();
 		}
 
