@@ -23,9 +23,37 @@ namespace ShareDeployed.Proxy
 		void Configure();
 	}
 
+	public sealed class ResolutionFailEventArgs : EventArgs
+	{
+		public ResolutionFailEventArgs()
+			: base()
+		{
+		}
+
+		public ResolutionFailEventArgs(Type t, Exception ex)
+		{
+			ResolveType = t;
+			ResolutionError = ex;
+		}
+
+		public ResolutionFailEventArgs(Type resolvingType, string msg)
+		{
+			ResolveType = resolvingType;
+			ErrorMessage = msg;
+		}
+
+		public Type ResolveType { get; set; }
+
+		public Exception ResolutionError { get; set; }
+
+		public string ErrorMessage { get; set; }
+	}
+
 	public interface IContractResolver
 	{
 		bool OmitNotRegistred { get; set; }
+
+		event EventHandler<ResolutionFailEventArgs> ResolveFailed;
 
 		object Resolve(Type contract);
 		object Resolve(string alias);

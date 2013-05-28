@@ -199,8 +199,10 @@ namespace ShareDeployed.Proxy
 			KeyValuePair<Type, ServiceLifetime> mapInfo = default(KeyValuePair<Type, ServiceLifetime>);
 			if ((mapInfo = ServicesMapper.GetFullMappingInfo(contract)).Key == default(Type))
 			{
+				string message = string.Format("Mapping for type {0} doesn't exists.", contract);
+				OnResolutionFailed(contract, message);
 				if (!OmitNotRegistred)
-					throw new InvalidOperationException(string.Format("Mapping for type {0} doesn't exists.", contract));
+					throw new InvalidOperationException(message);
 				else return null;
 			}
 			else
@@ -460,6 +462,21 @@ namespace ShareDeployed.Proxy
 					_omitNotRegistered = value;
 			}
 		}
+
+		public event EventHandler<ResolutionFailEventArgs> ResolveFailed;
+
+		private void OnResolutionFailed(Type resolvingType, string message, Exception ex = null)
+		{
+			EventHandler<ResolutionFailEventArgs> handler = System.Threading.Interlocked.CompareExchange(ref ResolveFailed, null, null);
+			if (handler != null)
+			{
+				if (string.IsNullOrEmpty(message))
+					handler(this, new ResolutionFailEventArgs(resolvingType, ex));
+				else
+					handler(this, new ResolutionFailEventArgs(resolvingType, message));
+			}
+		}
+
 		#endregion
 
 		#region IConfigurable members
@@ -552,6 +569,7 @@ namespace ShareDeployed.Proxy
 			}
 		}
 		#endregion
+
 	}
 
 	/// <summary>

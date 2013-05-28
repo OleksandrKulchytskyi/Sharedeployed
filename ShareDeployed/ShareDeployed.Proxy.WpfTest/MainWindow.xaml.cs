@@ -24,6 +24,12 @@ namespace ShareDeployed.Proxy.WpfTest
 		{
 			InitializeComponent();
 			this.Loaded += MainWindow_Loaded;
+			this.Closing += MainWindow_Closing;
+		}
+
+		void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			(_proxy as DynamicProxy).Dispose();
 		}
 
 		void MainWindow_Loaded(object sender, RoutedEventArgs e)

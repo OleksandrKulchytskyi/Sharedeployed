@@ -39,14 +39,11 @@ namespace ShareDeployed.Mailgrabber.Helpers
 			// load and cast "this" pointer...
 			il.Emit(OpCodes.Ldarg_0);
 			il.Emit(OpCodes.Castclass, declaringType);
-
 			// load arguments...
 			il.Emit(OpCodes.Ldarg_1);
 			il.Emit(OpCodes.Ldarg_2);
-
 			// call method...
 			il.Emit(method.IsVirtual ? OpCodes.Callvirt : OpCodes.Call, method);
-
 			// done...
 			il.Emit(OpCodes.Ret);
 
@@ -59,6 +56,12 @@ namespace ShareDeployed.Mailgrabber.Helpers
 
 			if (target != null)
 				m_Thunk(target, sender, e);
+		}
+
+		public bool IsAlive()
+		{
+			object target = m_TargetRef.Target;
+			return (m_TargetRef.IsAlive && target != null);
 		}
 
 		public static implicit operator EventHandler<E>(WeakEventHandlerAdvanced<E> weh)

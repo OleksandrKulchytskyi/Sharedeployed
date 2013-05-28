@@ -78,6 +78,7 @@
     <Compile Include="Ioc\ProxyIocTest.cs" />
     <Compile Include="Ioc\IoCConfigTest.cs" />
     <Compile Include="Ioc\IoCHarnessTest.cs" />
+    <Compile Include="MailGrabber\MailGrabberUnitTest.cs" />
     <Compile Include="ObjectPool\BytesArrayPoolTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitTest2.cs" />
@@ -110,6 +111,10 @@
     <ProjectReference Include="..\ShareDeployed.DataAccess\ShareDeployed.DataAccess.csproj">
       <Project>{b92d4469-4a30-41a9-966a-d859084ead1d}</Project>
       <Name>ShareDeployed.DataAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ShareDeployed.Mailgrabber\ShareDeployed.Mailgrabber.csproj">
+      <Project>{967772d2-27b2-4c45-a6ba-1c695fa31076}</Project>
+      <Name>ShareDeployed.Mailgrabber</Name>
     </ProjectReference>
     <ProjectReference Include="..\ShareDeployed.Outlook\ShareDeployed.Outlook.csproj">
       <Project>{510f87e1-f628-45e6-aa4d-999cdd86f4c4}</Project>

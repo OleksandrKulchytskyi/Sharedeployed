@@ -175,7 +175,6 @@ namespace ShareDeployed.Proxy
 			}
 			return null;
 		}
-
 		#endregion
 	}
 }
