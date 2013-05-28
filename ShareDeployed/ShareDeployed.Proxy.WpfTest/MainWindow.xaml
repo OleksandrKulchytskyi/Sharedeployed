@@ -6,6 +6,9 @@
 		<Button Click="Button_Click" Content="GetAll"/>
 		<TextBox x:Name="cId"/>
 		<Button Click="Button_ClickID" Content="GetSingle"/>
+		<TextBox x:Name="cName"/>
+		<Button Click="Button_ClickName" Content="GetByName"/>
+		<Button Click="Button_ClickFailResolve" Content="GetUnexisted"/>
 		<DataGrid ItemsSource="{Binding}" AutoGenerateColumns="False" x:Name="dg1">
 			<DataGrid.Columns>
 				<DataGridTextColumn Binding="{Binding Id}" Header="Id"/>

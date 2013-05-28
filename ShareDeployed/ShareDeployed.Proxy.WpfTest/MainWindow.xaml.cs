@@ -63,5 +63,24 @@ namespace ShareDeployed.Proxy.WpfTest
 				}
 			}
 		}
+
+		private void Button_ClickName(object sender, RoutedEventArgs e)
+		{
+			Customer cust = _proxy.GetByName(cName.Text);
+			if (cust != null)
+			{
+				dg1.ItemsSource = new List<Customer>() { cust };
+			}
+			else
+			{
+				dg1.ItemsSource = null;
+				MessageBox.Show(this, "Fail to find such customer");
+			}
+		}
+
+		private void Button_ClickFailResolve(object sender, RoutedEventArgs e)
+		{
+			DynamicProxyPipeline.Instance.ContracResolver.Resolve<MainWindow>();
+		}
 	}
 }
