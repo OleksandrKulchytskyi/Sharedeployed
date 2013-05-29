@@ -16,10 +16,10 @@ namespace ShareDeployed.Proxy
 		public virtual void Intercept(IInvocation invocation)
 		{
 			invocation.ThrowIfNull("invocation", "Parameter cannot be null.");
-			ProceesException(invocation);
+			HandleException(invocation);
 		}
 
-		protected void ProceesException(IInvocation invocation)
+		protected void HandleException(IInvocation invocation)
 		{
 			Exception cuurrentExc = invocation.Exception;
 			if (cuurrentExc == null) return;

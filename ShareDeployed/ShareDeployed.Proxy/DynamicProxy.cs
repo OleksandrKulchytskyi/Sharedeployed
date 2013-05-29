@@ -398,16 +398,16 @@ namespace ShareDeployed.Proxy
 			return (resolved as IInterceptor);
 		}
 
-		protected IEnumerable<InterceptorInfo> GetMethodLevelInterceptors(MethodInfo mi, InterceptorMode mode = InterceptorMode.None)
+		protected SafeCollection<InterceptorInfo> GetMethodLevelInterceptors(MethodInfo mi, InterceptorMode mode = InterceptorMode.None)
 		{
-			IList<InterceptorInfo> localInterc = null;
+			SafeCollection<InterceptorInfo> localInterc = null;
 			InterceptorAttribute[] attributes = mi.GetCustomAttributes(typeof(InterceptorAttribute), false) as InterceptorAttribute[];
 			if (attributes != null && attributes.Length > 0)
 			{
 				//here we might have a situation when we chached only class level interceptors but method level interceptors left untouched
 				if (!_methodInterceptors.Value.ContainsKey(mi))
 				{
-					localInterc = new List<InterceptorInfo>(attributes.Length);
+					localInterc = new SafeCollection<InterceptorInfo>(attributes.Length);
 					for (int i = 0; i < attributes.Length; i++)
 					{
 						InterceptorAttribute attr = attributes[i];
@@ -416,12 +416,15 @@ namespace ShareDeployed.Proxy
 						else if (attr != null && attr.Mode == mode)
 							CreateAndAddInterceptorInfo(localInterc, attr);
 					}
-					_methodInterceptors.Value.TryAdd(mi, localInterc);
+					_methodInterceptors.Value.TryAdd(mi, localInterc.ToList());
 				}
 				else
 				{
-					if (_methodInterceptors.Value.TryGetValue(mi, out localInterc))
+					IList<InterceptorInfo> methInterc;
+					if (_methodInterceptors.Value.TryGetValue(mi, out methInterc))
 					{
+						localInterc = new SafeCollection<InterceptorInfo>();
+						localInterc.AddRange(methInterc);
 						if (mode != InterceptorMode.None && localInterc.Where(x => x.Mode == mode).FirstOrDefault() == null)
 						{
 							var methodLevelAtt = attributes.Where(x => x.Mode == mode).ToList();
@@ -431,17 +434,17 @@ namespace ShareDeployed.Proxy
 								{
 									CreateAndAddInterceptorInfo(localInterc, attr);
 								}
-								_methodInterceptors.Value.TryAdd(mi, localInterc);
+								_methodInterceptors.Value.TryAdd(mi, localInterc.ToList());
 							}
 							else localInterc.Clear();
 						}
 					}
 				}
 			}
-			return localInterc;
+			return localInterc ?? new SafeCollection<InterceptorInfo>();
 		}
 
-		protected void CreateAndAddInterceptorInfo(IList<InterceptorInfo> interceptors, InterceptorAttribute attr)
+		protected void CreateAndAddInterceptorInfo(SafeCollection<InterceptorInfo> interceptors, InterceptorAttribute attr)
 		{
 			InterceptorInfo info = new InterceptorInfo(attr.InterceptorType, attr.Mode, attr.EatException);
 			interceptors.Add(info);
