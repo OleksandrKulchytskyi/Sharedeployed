@@ -72,11 +72,17 @@ namespace ShareDeployed.Proxy
 			throw new NotImplementedException();
 		}
 
+		public void SetHadlingMethod(MethodInfo mi)
+		{
+			mi.ThrowIfNull("mi", "Parameter cannot be a null.");
+			_methodInvocationTarget = mi;
+			wasGot = true;
+		}
+
 		public MethodInfo GetConcreteMethodInvocationTarget()
 		{
 			if (_methodInvocationTarget == null)
 			{
-				//TODO: see workaround here to get rid of getting args types and retrieving methodInvo via Reflection!!!!
 				Type[] argsTypes = (from v in _args select v.GetType()).ToArray();
 				return _target.GetType().GetMethod(_invokeMemberBinder.Name, argsTypes);
 			}

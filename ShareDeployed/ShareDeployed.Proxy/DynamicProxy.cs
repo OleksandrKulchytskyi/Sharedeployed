@@ -17,8 +17,11 @@ namespace ShareDeployed.Proxy
 		protected int _initialized = 0;
 		private bool _useFastProp;
 		private bool _useDynamicDel;
+		//dynamic proxy target object
 		protected object _target;
+		//uses in case whem dynamic proxy is short-lived object and its target is long lived (gain better GC and prevent potential MemoryLeak)
 		protected GenericWeakReference<object> _weakTarget;
+		//type of dynamic proxy target object
 		protected Type _targerType;
 
 		private GenericWeakReference<TypeAttributesMapper> _weakMapper;
@@ -26,7 +29,7 @@ namespace ShareDeployed.Proxy
 		protected SafeCollection<InterceptorInfo> _interceptors;
 		//method level interceptors
 		private Lazy<ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>> _methodInterceptors;
-
+		//current service reolver
 		private GenericWeakReference<IContractResolver> _resolver = null;
 
 		#region ctors
@@ -163,15 +166,17 @@ namespace ShareDeployed.Proxy
 				_interceptors = _weakMapper.Target.GetInterceptions(_typeHash);
 		}
 
-		protected IInvocation CreateMethodInvocation(InvokeMemberBinder binder, object _target, object[] args, Exception exc = null, Type returnType = null)
+		protected IInvocation CreateMethodInvocation(InvokeMemberBinder binder, object _target, object[] args, Exception exc = null, Type returnType = null, MethodInfo mi = null)
 		{
 			IInvocation invocation;
 			if (returnType == null)
 				invocation = new MethodInvocation(_target, binder, args);
 			else
 				invocation = new MethodInvocation(_target, binder, args, returnType);
-			if (exc != null)
-				invocation.SetException(exc);
+
+			if (exc != null) invocation.SetException(exc);
+			if (mi != null) invocation.SetHadlingMethod(mi);
+
 			return invocation;
 		}
 
@@ -222,7 +227,8 @@ namespace ShareDeployed.Proxy
 
 				if (mi != null) TypeMethodsMapper.Instance.Add(_typeHash, ref mci, mi);
 			}
-			IInvocation methodInvocation = CreateMethodInvocation(binder, _weakTarget == null ? _target : _weakTarget.Target, args, returnType: mi.ReturnType);
+			IInvocation methodInvocation = CreateMethodInvocation(binder, _weakTarget == null ? _target : _weakTarget.Target,
+											args, returnType: mi.ReturnType, mi: mi);
 
 			var beforeInterceptors = _interceptors.Where(x => x.Mode == InterceptorMode.Before);
 			if (beforeInterceptors.Count() > 0)

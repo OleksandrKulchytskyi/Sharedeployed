@@ -33,6 +33,8 @@ namespace ShareDeployed.Proxy
 
 		MethodInfo Method { get; }
 
+		void SetHadlingMethod(MethodInfo mi);
+
 		MethodInfo MethodInvocationTarget { get; }
 
 		object Proxy { get; }
