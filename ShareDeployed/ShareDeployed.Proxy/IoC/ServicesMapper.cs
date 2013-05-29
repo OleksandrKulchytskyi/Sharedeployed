@@ -149,7 +149,7 @@ namespace ShareDeployed.Proxy
 			return contract;
 		}
 
-		public static KeyValuePair<Type, ServiceLifetime> GetFullMappingInfo(Type contract, bool omitExc = false)
+		public static KeyValuePair<Type, ServiceLifetime> GetFullMappingInfo(Type contract, bool omitException = false)
 		{
 			KeyValuePair<Type, ServiceLifetime> existingImpl = default(KeyValuePair<Type, ServiceLifetime>);
 
@@ -159,7 +159,7 @@ namespace ShareDeployed.Proxy
 				{
 					if (_servicesMap.TryGetValue(contract, out existingImpl))
 						return existingImpl;
-					else if (omitExc)
+					else if (omitException)
 						return existingImpl;
 					else
 					{
@@ -202,7 +202,7 @@ namespace ShareDeployed.Proxy
 		public object Resolve(Type contract)
 		{
 			KeyValuePair<Type, ServiceLifetime> mapInfo = default(KeyValuePair<Type, ServiceLifetime>);
-			if ((mapInfo = ServicesMapper.GetFullMappingInfo(contract, omitExc: true)).Key == default(Type))
+			if ((mapInfo = ServicesMapper.GetFullMappingInfo(contract, omitException: true)).Key == default(Type))
 			{
 				string message = string.Format("Mapping for type {0} doesn't exists.", contract);
 				OnResolutionFailed(contract, message);
@@ -473,24 +473,29 @@ namespace ShareDeployed.Proxy
 		{
 			add
 			{
-				bool lockTaken = System.Threading.Monitor.TryEnter(_invocations);
-				_invocations.Add(new WeakEventHandler<ResolutionFailEventArgs>(value));
-				if (lockTaken)
-					System.Threading.Monitor.Exit(_invocations);
+				lock (_invocations)
+				{
+					_invocations.Add(new WeakEventHandler<ResolutionFailEventArgs>(value));
+				}
 			}
 			remove
 			{
-				bool lockTaken = System.Threading.Monitor.TryEnter(_invocations);
-				_invocations.Remove(new WeakEventHandler<ResolutionFailEventArgs>(value));
-				if (lockTaken)
-					System.Threading.Monitor.Exit(_invocations);
+				lock (_invocations)
+				{
+					_invocations.Remove(new WeakEventHandler<ResolutionFailEventArgs>(value));
+				}
 			}
 		}
 
 		private void OnResolutionFailed(Type resolvingType, string message, Exception ex = null)
 		{
-			List<WeakEventHandler<ResolutionFailEventArgs>> toRemove = new List<WeakEventHandler<ResolutionFailEventArgs>>();
-			foreach (WeakEventHandler<ResolutionFailEventArgs> weak in _invocations)
+			List<WeakEventHandler<ResolutionFailEventArgs>> itemsToRemove = new List<WeakEventHandler<ResolutionFailEventArgs>>();
+			WeakEventHandler<ResolutionFailEventArgs>[] array;
+			lock (_invocations)
+			{
+				array = _invocations.ToArray();
+			}
+			foreach (WeakEventHandler<ResolutionFailEventArgs> weak in array)
 			{
 				if (weak.IsAlive())
 				{
@@ -501,16 +506,17 @@ namespace ShareDeployed.Proxy
 						handler(this, new ResolutionFailEventArgs(resolvingType, message));
 				}
 				else
-					toRemove.Add(weak);
+					itemsToRemove.Add(weak);
 			}
-			bool lockTaken = System.Threading.Monitor.TryEnter(_invocations);
-			foreach (var item in toRemove)
+			lock (_invocations)
 			{
-				_invocations.Remove(item);
+				foreach (var item in itemsToRemove)
+				{
+					_invocations.Remove(item);
+				}
 			}
-			toRemove.Clear();
-			if (lockTaken)
-				System.Threading.Monitor.Exit(_invocations);
+
+			itemsToRemove.Clear();
 		}
 
 		#endregion
