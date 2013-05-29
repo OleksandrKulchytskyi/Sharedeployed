@@ -72,6 +72,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ProducerConsumer\PCQ.cs" />
     <Compile Include="Config\ProxyConfigTest.cs" />
     <Compile Include="DynamicProxy\DynamicProxyPipelineTest.cs" />
     <Compile Include="DefJsnoBase64Test.cs" />
