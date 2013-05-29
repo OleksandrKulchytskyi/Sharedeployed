@@ -11,11 +11,24 @@ namespace ShareDeployed.Proxy
 		public MethodCallInfo(string methodName, int argsCount, IEnumerable<string> argsName)
 		{
 			_hash = -1;
+			_argsTypeHash = -1;
 			_methodName = methodName;
 			_argsCount = argsCount;
 			_argumentsName = new List<string>(argsCount);
-			if (argsCount > 0)
+			if (argsCount > 0 && argsName != null)
 				ArgumentsName.AddRange(argsName);
+		}
+
+		public MethodCallInfo(string methodName, int argsCount, int argsTypesHash)
+			: this(methodName, argsCount, null)
+		{
+			_argsTypeHash = argsTypesHash;
+		}
+
+		public MethodCallInfo(string methodName, int argsCount, IEnumerable<string> argsName, int argsTypesHash)
+			: this(methodName, argsCount, argsName)
+		{
+			_argsTypeHash = argsTypesHash;
 		}
 
 		private string _methodName;
@@ -39,6 +52,14 @@ namespace ShareDeployed.Proxy
 			set { _argumentsName = value; }
 		}
 
+		private int _argsTypeHash;
+		public int ArgumentTypesHash
+		{
+			get { return _argsTypeHash; }
+			set { _argsTypeHash = value; }
+		}
+
+
 		public override bool Equals(object obj)
 		{
 			return (obj is MethodCallInfo) ? Equals((MethodCallInfo)obj) : false;
@@ -48,6 +69,7 @@ namespace ShareDeployed.Proxy
 		{
 			return (string.Equals(MethodName, other.MethodName, StringComparison.InvariantCulture) &&
 					ArgumentsCount == other.ArgumentsCount &&
+					_argsTypeHash == other._argsTypeHash &&
 					IsArgumentsNameEquals(ref other));
 		}
 
@@ -76,6 +98,7 @@ namespace ShareDeployed.Proxy
 				_hash = 17;
 				_hash = _hash * 31 + _methodName.GetHashCode();
 				_hash = _hash * 31 + _argsCount;
+				_hash = _hash * 31 + _argsTypeHash.GetHashCode();
 			}
 			return _hash;
 			//return _methodName.GetHashCode() + _argsCount;

@@ -30,6 +30,7 @@ namespace ShareDeployed.Proxy.WpfTest
 		}
 
 		[Interceptor(Mode = InterceptorMode.Before, InterceptorType = typeof(BeforeMethodExecutesInterceptor))]
+		[Interceptor(EatException = true, Mode = InterceptorMode.OnError, InterceptorType = typeof(ExceptionInterceptor))]
 		public IEnumerable<Customer> GetCustomers()
 		{
 			return _customers;

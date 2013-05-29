@@ -245,6 +245,16 @@ namespace ShareDeployed.Test
 			}
 
 			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorMode.OnError)]
+			public int DoWork3(string data, string data2)
+			{
+				int i, i2;
+				if (Int32.TryParse(data, out i) && Int32.TryParse(data2, out i2))
+					return i + i2;
+				else
+					throw new AggregateException();
+			}
+
+			[Interceptor(InterceptorType = typeof(ExceptionInterceptor), EatException = true, Mode = InterceptorMode.OnError)]
 			public int DoWorkErrored(int data)
 			{
 				int i;
@@ -549,6 +559,16 @@ namespace ShareDeployed.Test
 			public long Some { get; set; }
 
 			public char Sex { get; set; }
+		}
+
+		[TestMethod]
+		public void TestCaseWithOverridedMethod()
+		{
+			dynamic proxy = new DynamicProxy(new ErrorProneAbstracted());
+
+			int result = proxy.DoWork3(1, 2);
+			int result2 = proxy.DoWork3("1", "2");
+			Assert.IsTrue(result == result2);
 		}
 	}
 

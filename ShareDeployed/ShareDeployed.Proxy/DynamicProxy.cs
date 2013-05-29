@@ -22,7 +22,9 @@ namespace ShareDeployed.Proxy
 		protected Type _targerType;
 
 		private GenericWeakReference<TypeAttributesMapper> _weakMapper;
+		//class level interceptors
 		protected SafeCollection<InterceptorInfo> _interceptors;
+		//method level interceptors
 		private Lazy<ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>> _methodInterceptors;
 
 		private GenericWeakReference<IContractResolver> _resolver = null;
@@ -36,9 +38,7 @@ namespace ShareDeployed.Proxy
 			if (DynamicProxyPipeline.Instance != null)
 				_resolver = new GenericWeakReference<IContractResolver>(DynamicProxyPipeline.Instance.ContracResolver);
 
-			_methodInterceptors = new Lazy<ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>>(() =>
-									new ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>(), true);
-			_weakMapper = new GenericWeakReference<TypeAttributesMapper>(TypeAttributesMapper.Instance);
+			InitInternals();
 		}
 
 		/// <summary>
@@ -76,7 +76,18 @@ namespace ShareDeployed.Proxy
 			_targerType = _target.GetType();
 			_typeHash = _targerType.GetHashCode();
 
+			InitInternals();
+
 			InitMappings();
+		}
+
+		private void InitInternals()
+		{
+			if (_weakMapper == null)
+				_weakMapper = new GenericWeakReference<TypeAttributesMapper>(TypeAttributesMapper.Instance);
+
+			if (_methodInterceptors == null)
+				_methodInterceptors = new Lazy<ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>>(() => new ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>(), true);
 		}
 		#endregion
 
@@ -172,7 +183,8 @@ namespace ShareDeployed.Proxy
 		{
 			if (_weakTarget != null)
 			{
-				if (!_weakTarget.IsAlive && _weakTarget.Target == null)
+				object target = _weakTarget.Target;
+				if (!_weakTarget.IsAlive && target == null)
 					throw new WeakObjectDisposedException(string.Format("Dynamic proxy target object {0}, has been disposed.", _targerType));
 			}
 		}
@@ -188,10 +200,26 @@ namespace ShareDeployed.Proxy
 			MethodInfo mi = null;
 			CheckIfWeakRefIsAlive();
 
-			MethodCallInfo mci = new MethodCallInfo(binder.Name, binder.CallInfo.ArgumentCount, binder.CallInfo.ArgumentNames);
+			MethodCallInfo mci;
+			Type[] argsTypes;
+			if (TryParseParametersTypes(args, out argsTypes))
+				mci = new MethodCallInfo(binder.Name, binder.CallInfo.ArgumentCount, binder.CallInfo.ArgumentNames, RetriveHashCode(argsTypes));
+			else
+				mci = new MethodCallInfo(binder.Name, binder.CallInfo.ArgumentCount, binder.CallInfo.ArgumentNames);
 			if ((mi = TypeMethodsMapper.Instance.Get(_typeHash, ref mci)) == null)
 			{
-				mi = _targerType.GetMethod(binder.Name, ReflectionUtils.PublicInstanceInvoke);
+				try
+				{
+					if (argsTypes == null)
+						mi = _targerType.GetMethod(binder.Name, ReflectionUtils.PublicInstanceInvoke);
+					else
+						mi = _targerType.GetMethod(binder.Name, argsTypes);
+				}
+				catch (AmbiguousMatchException ex)
+				{
+					this._resolver.Target.Resolve<Logging.ILogAggregator>().DoLog(Logging.LogSeverity.Error, ex.Message, ex);
+				}
+
 				if (mi != null) TypeMethodsMapper.Instance.Add(_typeHash, ref mci, mi);
 			}
 			IInvocation methodInvocation = CreateMethodInvocation(binder, _weakTarget == null ? _target : _weakTarget.Target, args, returnType: mi.ReturnType);
@@ -263,6 +291,32 @@ namespace ShareDeployed.Proxy
 			return true;
 		}
 
+		private bool TryParseParametersTypes(object[] paramsValue, out Type[] parsedTypes)
+		{
+			if (paramsValue == null)
+			{
+				parsedTypes = null;
+				return false;
+			}
+
+			parsedTypes = new Type[paramsValue.Length];
+			for (int i = 0; i < paramsValue.Length; i++)
+			{
+				parsedTypes[i] = paramsValue[i].GetType();
+			}
+			return true;
+		}
+
+		private int RetriveHashCode(Type[] types)
+		{
+			int hash = 0;
+			foreach (Type item in types)
+			{
+				hash += item.GetHashCode();
+			}
+			return hash;
+		}
+
 		private void ProcessBeforeExecuteInterceptors(IInvocation invocation, IEnumerable<InterceptorInfo> beforeInterceptors)
 		{
 			invocation.ThrowIfNull("invocation", _paramCannotBeNullMsg);
@@ -308,43 +362,44 @@ namespace ShareDeployed.Proxy
 
 		private IEnumerable<InterceptorInfo> GetMethodLevelAttributes(MethodInfo mi, InterceptorMode mode = InterceptorMode.None)
 		{
-			IList<InterceptorInfo> interceptors = null;
+			IList<InterceptorInfo> localInterc = null;
 			InterceptorAttribute[] attributes = mi.GetCustomAttributes(typeof(InterceptorAttribute), false) as InterceptorAttribute[];
 			if (attributes != null && attributes.Length > 0)
 			{
 				//here we might have a situation when we chached only class level interceptors but method level interceptors left untouched
 				if (!_methodInterceptors.Value.ContainsKey(mi))
 				{
-					interceptors = new List<InterceptorInfo>(attributes.Length);
+					localInterc = new List<InterceptorInfo>(attributes.Length);
 					for (int i = 0; i < attributes.Length; i++)
 					{
 						InterceptorAttribute attr = attributes[i];
 						if (attr != null && mode == InterceptorMode.None)
-							CreateAndAddInterceptorInfo(interceptors, attr);
+							CreateAndAddInterceptorInfo(localInterc, attr);
 						else if (attr != null && attr.Mode == mode)
-							CreateAndAddInterceptorInfo(interceptors, attr);
+							CreateAndAddInterceptorInfo(localInterc, attr);
 					}
-					_methodInterceptors.Value.TryAdd(mi, interceptors);
+					_methodInterceptors.Value.TryAdd(mi, localInterc);
 				}
 				else
 				{
-					if (_methodInterceptors.Value.TryGetValue(mi, out interceptors))
+					if (_methodInterceptors.Value.TryGetValue(mi, out localInterc))
 					{
-						if (mode != InterceptorMode.None && interceptors.Where(x => x.Mode == mode).FirstOrDefault() == null)
+						if (mode != InterceptorMode.None && localInterc.Where(x => x.Mode == mode).FirstOrDefault() == null)
 						{
 							var methodLevelAtt = attributes.Where(x => x.Mode == mode).ToList();
 							if (methodLevelAtt.Count > 0)
 							{
 								foreach (InterceptorAttribute attr in methodLevelAtt)
 								{
-									CreateAndAddInterceptorInfo(interceptors, attr);
+									CreateAndAddInterceptorInfo(localInterc, attr);
 								}
+								_methodInterceptors.Value.TryAdd(mi, localInterc);
 							}
 						}
 					}
 				}
 			}
-			return interceptors;
+			return localInterc;
 		}
 
 		private void CreateAndAddInterceptorInfo(IList<InterceptorInfo> interceptors, InterceptorAttribute attr)

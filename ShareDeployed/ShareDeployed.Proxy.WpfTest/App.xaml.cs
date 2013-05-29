@@ -17,7 +17,7 @@ namespace ShareDeployed.Proxy.WpfTest
 		{
 			base.OnStartup(e);
 			DynamicProxyPipeline.Instance.Configure();
-			DynamicProxyPipeline.Instance.ContracResolver.ResolveFailed+=ContracResolver_ResolveFailed;
+			DynamicProxyPipeline.Instance.ContracResolver.ResolveFailed += ContracResolver_ResolveFailed;
 		}
 
 		private void ContracResolver_ResolveFailed(object sender, ResolutionFailEventArgs e)
