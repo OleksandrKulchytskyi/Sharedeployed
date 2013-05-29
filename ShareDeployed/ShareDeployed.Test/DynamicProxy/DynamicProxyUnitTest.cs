@@ -208,6 +208,7 @@ namespace ShareDeployed.Test
 			int DoWorkErrored(int data);
 		}
 
+		[Interceptor(InterceptorType = typeof(AfterMethodExecutedInterceptor), Mode = InterceptorMode.After)]
 		class ErrorProneAbstracted : IDoWork
 		{
 			public int Id = -1;

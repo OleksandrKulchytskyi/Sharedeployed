@@ -76,6 +76,7 @@
     <Compile Include="FastReflection\PropertyAccessor.cs" />
     <Compile Include="FastReflection\PropertyAccessorException.cs" />
     <Compile Include="Interceptors\BeforeMethodExecutesInterceptor.cs" />
+    <Compile Include="Interceptors\AfterMethodExecutedInterceptor.cs" />
     <Compile Include="Interceptors\MethodInterceptor.cs" />
     <Compile Include="Invocations\MethodInvocation.cs" />
     <Compile Include="IoC\Config\ProxyServiceElement.cs" />

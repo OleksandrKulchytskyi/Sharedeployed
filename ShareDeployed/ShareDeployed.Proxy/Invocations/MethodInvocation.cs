@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Dynamic;
 using System.Reflection;
+using System.Linq;
 using System.Text;
 
 namespace ShareDeployed.Proxy
@@ -74,7 +75,11 @@ namespace ShareDeployed.Proxy
 		public MethodInfo GetConcreteMethodInvocationTarget()
 		{
 			if (_methodInvocationTarget == null)
-				return _target.GetType().GetMethod(_invokeMemberBinder.Name);
+			{
+				//TODO: see workaround here to get rid of getting args types and retrieving methodInvo via Reflection!!!!
+				Type[] argsTypes = (from v in _args select v.GetType()).ToArray();
+				return _target.GetType().GetMethod(_invokeMemberBinder.Name, argsTypes);
+			}
 			return _methodInvocationTarget;
 		}
 
