@@ -33,9 +33,12 @@ namespace ShareDeployed.Proxy.WpfTest
 		void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			_exit = true;
-			for (int i = 0; i < threads.Length; i++)
+			if (threads != null)
 			{
-				threads[i].Join();
+				for (int i = 0; i < threads.Length; i++)
+				{
+					threads[i].Join();
+				}
 			}
 			(_proxy as DynamicProxy).Dispose();
 		}

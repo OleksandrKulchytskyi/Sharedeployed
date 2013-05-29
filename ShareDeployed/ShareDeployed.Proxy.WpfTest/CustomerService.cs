@@ -41,7 +41,9 @@ namespace ShareDeployed.Proxy.WpfTest
 		{
 			return (from x in _customers where x.Id == id select x).First();
 		}
+
 		[Interceptor(EatException = true, Mode = InterceptorMode.OnError, InterceptorType = typeof(ExceptionInterceptor))]
+		[Interceptor(Mode = InterceptorMode.After, InterceptorType = typeof(AfterMethodExecutedInterceptor))]
 		public Customer GetByName(string name)
 		{
 			return (from x in _customers where x.Name.Equals(name) select x).First();

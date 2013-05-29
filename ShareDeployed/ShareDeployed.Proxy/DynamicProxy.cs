@@ -172,11 +172,9 @@ namespace ShareDeployed.Proxy
 
 		protected IInvocation CreateMethodInvocation(InvokeMemberBinder binder, object _target, object[] args, Exception exc = null, Type returnType = null, MethodInfo mi = null)
 		{
-			bool taken = false;
-			IInvocation invocation;
-			try
+			IInvocation invocation = null;
+			EnterCritical(ref _spinLock, () =>
 			{
-				_spinLock.TryEnter(ref taken);
 				if (returnType == null)
 					invocation = new MethodInvocation(_target, binder, args);
 				else
@@ -184,12 +182,7 @@ namespace ShareDeployed.Proxy
 
 				if (exc != null) invocation.SetException(exc);
 				if (mi != null) invocation.SetHadlingMethod(mi);
-			}
-			finally
-			{
-				if (taken)
-					_spinLock.Exit(false);
-			}
+			});
 			return invocation;
 		}
 
@@ -206,52 +199,73 @@ namespace ShareDeployed.Proxy
 					throw new WeakObjectDisposedException(string.Format("Dynamic proxy target object {0}, has been disposed.", _targerType));
 			}
 		}
+
+		protected void EnterCritical(ref System.Threading.SpinLock sl, Action action)
+		{
+			bool lockTaken = false;
+			try
+			{
+				sl.TryEnter(ref lockTaken);
+				action();
+			}
+			finally
+			{
+				if (lockTaken)
+					sl.Exit(false);
+			}
+		}
 		#endregion
 
 		#region DynamicObject overrides
 
 		public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
 		{
+			CheckIfWeakRefIsAlive();
 			result = null;
 			bool isFail = false;
 			bool processed = false;
 			MethodInfo mi = null;
-			CheckIfWeakRefIsAlive();
 
 			MethodCallInfo mci;
 			Type[] argsTypes;
 			if (TryParseParametersTypes(args, out argsTypes))
-				mci = new MethodCallInfo(binder.Name, binder.CallInfo.ArgumentCount, binder.CallInfo.ArgumentNames, RetriveHashCode(argsTypes));
+				mci = new MethodCallInfo(binder.Name, binder.CallInfo.ArgumentCount, binder.CallInfo.ArgumentNames, RetrieveHashCode(argsTypes));
 			else
 				mci = new MethodCallInfo(binder.Name, binder.CallInfo.ArgumentCount, binder.CallInfo.ArgumentNames);
+
 			if ((mi = TypeMethodsMapper.Instance.Get(_typeHash, ref mci)) == null)
 			{
 				try
 				{
-					if (argsTypes == null)
-						mi = _targerType.GetMethod(binder.Name, ReflectionUtils.PublicInstanceInvoke);
-					else
-						mi = _targerType.GetMethod(binder.Name, argsTypes);
+					if (argsTypes == null) mi = _targerType.GetMethod(binder.Name, ReflectionUtils.PublicInstanceInvoke);
+					else mi = _targerType.GetMethod(binder.Name, argsTypes);
 				}
 				catch (AmbiguousMatchException ex)
 				{
-					this._resolver.Target.Resolve<Logging.ILogAggregator>().DoLog(Logging.LogSeverity.Error, ex.Message, ex);
+					IContractResolver ioc = this._resolver.Target;
+					if (ioc != null)
+					{
+						Logging.ILogAggregator aggr = ioc.Resolve<Logging.ILogAggregator>();
+						if (aggr != null) aggr.DoLog(Logging.LogSeverity.Error, ex.Message, ex);
+					}
 				}
 
 				if (mi != null) TypeMethodsMapper.Instance.Add(_typeHash, ref mci, mi);
 			}
 
-
 			IInvocation methodInvocation = CreateMethodInvocation(binder, _weakTarget == null ? _target : _weakTarget.Target,
 											args, returnType: mi.ReturnType, mi: mi);
 
-			var beforeInterceptors = _interceptors.Where(x => x.Mode == InterceptorMode.Before);
+			IEnumerable<InterceptorInfo> beforeInterceptors = _interceptors.Where(x => x.Mode == InterceptorMode.Before);
 			if (beforeInterceptors.Count() > 0)
 				ProcessBeforeExecuteInterceptors(methodInvocation, beforeInterceptors);
 			else
 			{
-				beforeInterceptors = GetMethodLevelAttributes(mi, InterceptorMode.Before);
-				ProcessBeforeExecuteInterceptors(methodInvocation, beforeInterceptors);
+				EnterCritical(ref _spinLock, () =>
+				{
+					beforeInterceptors = GetMethodLevelInterceptors(mi, InterceptorMode.Before);
+					ProcessBeforeExecuteInterceptors(methodInvocation, beforeInterceptors);
+				});
 			}
 
 			try
@@ -273,17 +287,7 @@ namespace ShareDeployed.Proxy
 			}
 			catch (Exception ex)
 			{
-				bool lockTaken = false;
-				try
-				{
-					_spinLock.TryEnter(ref lockTaken);
-					methodInvocation.SetException(ex);
-				}
-				finally
-				{
-					if (lockTaken)
-						_spinLock.Exit(false);
-				}
+				EnterCritical(ref _spinLock, () => methodInvocation.SetException(ex));
 
 				isFail = true;
 				bool rethrow = true;
@@ -298,12 +302,16 @@ namespace ShareDeployed.Proxy
 				}
 				else if (mi != null)
 				{
-					IEnumerable<InterceptorInfo> methodInterceptors = GetMethodLevelAttributes(mi, InterceptorMode.OnError);
-					rethrow = methodInterceptors.FirstOrDefault(x => x.EatException == true) == null ? true : false;
-					foreach (InterceptorInfo interceptor in methodInterceptors)
+					IEnumerable<InterceptorInfo> methodInterceptors;
+					EnterCritical(ref _spinLock, () =>
 					{
-						InterceptInternal(methodInvocation, interceptor);
-					}
+						methodInterceptors = GetMethodLevelInterceptors(mi, InterceptorMode.OnError);
+						rethrow = methodInterceptors.FirstOrDefault(x => x.EatException == true) == null ? true : false;
+						foreach (InterceptorInfo interceptor in methodInterceptors)
+						{
+							InterceptInternal(methodInvocation, interceptor);
+						}
+					});
 				}
 				if (rethrow) throw;
 			}
@@ -311,13 +319,16 @@ namespace ShareDeployed.Proxy
 			if (isFail && mi.ReturnType != typeof(void))
 				result = mi.ReturnType.GetDefaultValue();
 
-			var afterInterceptors = _interceptors.Where(x => x.Mode == InterceptorMode.After);
+			IEnumerable<InterceptorInfo> afterInterceptors = _interceptors.Where(x => x.Mode == InterceptorMode.After);
 			if (afterInterceptors.Count() > 0)
 				ProcessAfterExecuteInterceptors(methodInvocation, afterInterceptors);
 			else
 			{
-				afterInterceptors = GetMethodLevelAttributes(mi, InterceptorMode.After);
-				ProcessAfterExecuteInterceptors(methodInvocation, afterInterceptors);
+				EnterCritical(ref _spinLock, () =>
+				{
+					afterInterceptors = GetMethodLevelInterceptors(mi, InterceptorMode.After);
+					ProcessAfterExecuteInterceptors(methodInvocation, afterInterceptors);
+				});
 			}
 
 			return true;
@@ -339,7 +350,7 @@ namespace ShareDeployed.Proxy
 			return true;
 		}
 
-		private int RetriveHashCode(Type[] types)
+		private int RetrieveHashCode(Type[] types)
 		{
 			int hash = 0;
 			foreach (Type item in types)
@@ -356,8 +367,7 @@ namespace ShareDeployed.Proxy
 			foreach (InterceptorInfo item in beforeInterceptors)
 			{
 				IInterceptor casted = ResolveInterceptorFromIoC(item);
-				if (casted != null)
-					casted.Intercept(invocation);
+				if (casted != null) casted.Intercept(invocation);
 			}
 		}
 
@@ -367,32 +377,28 @@ namespace ShareDeployed.Proxy
 			interceptor.ThrowIfNull("interceptor", _paramCannotBeNullMsg);
 
 			IInterceptor casted = ResolveInterceptorFromIoC(interceptor);
-			if (casted != null)
-				casted.Intercept(methodInvocation);
+			if (casted != null) casted.Intercept(methodInvocation);
 		}
 
 		private void ProcessAfterExecuteInterceptors(IInvocation invocation, IEnumerable<InterceptorInfo> afterInterceptors)
 		{
 			invocation.ThrowIfNull("invocation", _paramCannotBeNullMsg);
-			afterInterceptors.ThrowIfNull("beforeInterceptors", _paramCannotBeNullMsg);
+			afterInterceptors.ThrowIfNull("afterInterceptors", _paramCannotBeNullMsg);
 			foreach (InterceptorInfo item in afterInterceptors)
 			{
 				IInterceptor casted = ResolveInterceptorFromIoC(item);
-				if (casted != null)
-					casted.Intercept(invocation);
+				if (casted != null) casted.Intercept(invocation);
 			}
 		}
 
-		private IInterceptor ResolveInterceptorFromIoC(InterceptorInfo item)
+		protected IInterceptor ResolveInterceptorFromIoC(InterceptorInfo item)
 		{
 			IContractResolver resolver = DynamicProxyPipeline.Instance.ContracResolver;
 			object resolved = resolver.Resolve(item.Interceptor);
-
-			IInterceptor casted = resolved as IInterceptor;
-			return casted;
+			return (resolved as IInterceptor);
 		}
 
-		private IEnumerable<InterceptorInfo> GetMethodLevelAttributes(MethodInfo mi, InterceptorMode mode = InterceptorMode.None)
+		protected IEnumerable<InterceptorInfo> GetMethodLevelInterceptors(MethodInfo mi, InterceptorMode mode = InterceptorMode.None)
 		{
 			IList<InterceptorInfo> localInterc = null;
 			InterceptorAttribute[] attributes = mi.GetCustomAttributes(typeof(InterceptorAttribute), false) as InterceptorAttribute[];
@@ -427,6 +433,7 @@ namespace ShareDeployed.Proxy
 								}
 								_methodInterceptors.Value.TryAdd(mi, localInterc);
 							}
+							else localInterc.Clear();
 						}
 					}
 				}
@@ -434,7 +441,7 @@ namespace ShareDeployed.Proxy
 			return localInterc;
 		}
 
-		private void CreateAndAddInterceptorInfo(IList<InterceptorInfo> interceptors, InterceptorAttribute attr)
+		protected void CreateAndAddInterceptorInfo(IList<InterceptorInfo> interceptors, InterceptorAttribute attr)
 		{
 			InterceptorInfo info = new InterceptorInfo(attr.InterceptorType, attr.Mode, attr.EatException);
 			interceptors.Add(info);
@@ -500,6 +507,7 @@ namespace ShareDeployed.Proxy
 
 		public override bool TrySetMember(SetMemberBinder binder, object value)
 		{
+			value.ThrowIfNull("value", "Value cannot be null");
 			CheckIfWeakRefIsAlive();
 
 			FieldInfo fieldInfo = _targerType.GetField(binder.Name);
@@ -522,6 +530,7 @@ namespace ShareDeployed.Proxy
 							fProp.Set(_weakTarget == null ? _target : _weakTarget.Target, value);
 							return true;
 						}
+						else throw new InvalidOperationException("Fail to retrieve property " + binder.Name + " in the Type:" + _targerType.FullName);
 					}
 					else
 					{
