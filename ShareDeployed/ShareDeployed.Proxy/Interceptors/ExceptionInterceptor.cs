@@ -22,6 +22,7 @@ namespace ShareDeployed.Proxy
 		protected void ProceesException(IInvocation invocation)
 		{
 			Exception cuurrentExc = invocation.Exception;
+			if (cuurrentExc == null) return;
 #if DEBUG
 			Debug.WriteLine(cuurrentExc.Message);
 #endif

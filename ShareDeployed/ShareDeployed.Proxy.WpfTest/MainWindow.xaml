@@ -9,6 +9,7 @@
 		<TextBox x:Name="cName"/>
 		<Button Click="Button_ClickName" Content="GetByName"/>
 		<Button Click="Button_ClickFailResolve" Content="GetUnexisted"/>
+		<Button Click="Button_Click_1" Content="Perform test harness"/>
 		<DataGrid ItemsSource="{Binding}" AutoGenerateColumns="False" x:Name="dg1">
 			<DataGrid.Columns>
 				<DataGridTextColumn Binding="{Binding Id}" Header="Id"/>

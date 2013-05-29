@@ -12,6 +12,8 @@ namespace ShareDeployed.Proxy
 		private readonly string _targetParamName = "target";
 		private readonly string _paramCannotBeNullMsg = "Parameter cannot be a null.";
 
+		private System.Threading.SpinLock _spinLock;
+
 		protected int disposed = -1;
 		protected int _typeHash;
 		protected int _initialized = 0;
@@ -91,6 +93,8 @@ namespace ShareDeployed.Proxy
 
 			if (_methodInterceptors == null)
 				_methodInterceptors = new Lazy<ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>>(() => new ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>(), true);
+
+			_spinLock = new System.Threading.SpinLock();
 		}
 		#endregion
 
@@ -168,15 +172,24 @@ namespace ShareDeployed.Proxy
 
 		protected IInvocation CreateMethodInvocation(InvokeMemberBinder binder, object _target, object[] args, Exception exc = null, Type returnType = null, MethodInfo mi = null)
 		{
+			bool taken = false;
 			IInvocation invocation;
-			if (returnType == null)
-				invocation = new MethodInvocation(_target, binder, args);
-			else
-				invocation = new MethodInvocation(_target, binder, args, returnType);
+			try
+			{
+				_spinLock.TryEnter(ref taken);
+				if (returnType == null)
+					invocation = new MethodInvocation(_target, binder, args);
+				else
+					invocation = new MethodInvocation(_target, binder, args, returnType);
 
-			if (exc != null) invocation.SetException(exc);
-			if (mi != null) invocation.SetHadlingMethod(mi);
-
+				if (exc != null) invocation.SetException(exc);
+				if (mi != null) invocation.SetHadlingMethod(mi);
+			}
+			finally
+			{
+				if (taken)
+					_spinLock.Exit(false);
+			}
 			return invocation;
 		}
 
@@ -227,6 +240,8 @@ namespace ShareDeployed.Proxy
 
 				if (mi != null) TypeMethodsMapper.Instance.Add(_typeHash, ref mci, mi);
 			}
+
+
 			IInvocation methodInvocation = CreateMethodInvocation(binder, _weakTarget == null ? _target : _weakTarget.Target,
 											args, returnType: mi.ReturnType, mi: mi);
 
@@ -258,7 +273,18 @@ namespace ShareDeployed.Proxy
 			}
 			catch (Exception ex)
 			{
-				methodInvocation.SetException(ex);
+				bool lockTaken = false;
+				try
+				{
+					_spinLock.TryEnter(ref lockTaken);
+					methodInvocation.SetException(ex);
+				}
+				finally
+				{
+					if (lockTaken)
+						_spinLock.Exit(false);
+				}
+
 				isFail = true;
 				bool rethrow = true;
 				var errorInterceptors = _interceptors.Where(x => x.Mode == InterceptorMode.OnError);
