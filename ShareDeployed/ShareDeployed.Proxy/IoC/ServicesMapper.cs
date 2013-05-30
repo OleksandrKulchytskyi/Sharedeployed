@@ -482,8 +482,9 @@ namespace ShareDeployed.Proxy
 			remove
 			{
 				//TODO: some issue exists while removing event handler, obviously its related to the creational process fore new WeakEventHandler
-				//To be honest the code above won't actually removed event handler
-				LockFreeExtension.LockFreeUpdate(ref _invocations, d => { d.Remove(new WeakEventHandler<ResolutionFailEventArgs>(value)); return d; });
+				//To be honest the code above won't actually removed event handler.
+				//Actually  this won't work anyway! so just perform cleanup via OnResolutionFailed
+				//LockFreeExtension.LockFreeUpdate(ref _invocations, d => { d.Remove(new WeakEventHandler<ResolutionFailEventArgs>(value)); return d; });
 				//lock (_invocations)
 				//{
 				//	_invocations.Remove(new WeakEventHandler<ResolutionFailEventArgs>(value));
