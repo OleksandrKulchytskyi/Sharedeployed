@@ -4,13 +4,13 @@ using System.Threading;
 
 namespace ShareDeployed.Test.ProducerConsumer
 {
-	public class PCQueue : IDisposable
+	public class PCQueueThreaded : IDisposable
 	{
 		private readonly object _locker = new object();
 		private Thread[] _workers;
 		private Queue<Action> _itemQ = new Queue<Action>();
 
-		public PCQueue(int workerCount)
+		public PCQueueThreaded(int workerCount)
 		{
 			_workers = new Thread[workerCount];
 			// Create and start a separate thread for each worker

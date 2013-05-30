@@ -334,6 +334,7 @@ namespace ShareDeployed.Proxy
 			return true;
 		}
 
+		#region TryInvokeMember helpers
 		private bool TryParseParametersTypes(object[] paramsValue, out Type[] parsedTypes)
 		{
 			if (paramsValue == null)
@@ -449,6 +450,7 @@ namespace ShareDeployed.Proxy
 			InterceptorInfo info = new InterceptorInfo(attr.InterceptorType, attr.Mode, attr.EatException);
 			interceptors.Add(info);
 		}
+		#endregion
 
 		public override bool TryConvert(ConvertBinder binder, out object result)
 		{
@@ -567,6 +569,22 @@ namespace ShareDeployed.Proxy
 		public override bool TryCreateInstance(CreateInstanceBinder binder, object[] args, out object result)
 		{
 			return base.TryCreateInstance(binder, args, out result);
+		}
+
+		public override bool TryBinaryOperation(BinaryOperationBinder binder, object arg, out object result)
+		{
+			if (binder.Operation == System.Linq.Expressions.ExpressionType.Equal)
+			{
+				result = ((arg as DynamicProxy)._targerType.Equals(_targerType));
+				return true;
+			}
+			else if (binder.Operation == System.Linq.Expressions.ExpressionType.NotEqual)
+			{
+				result= !((arg as DynamicProxy)._targerType.Equals(_targerType));
+				return true;
+			}
+
+			return base.TryBinaryOperation(binder, arg, out result);
 		}
 
 		#endregion

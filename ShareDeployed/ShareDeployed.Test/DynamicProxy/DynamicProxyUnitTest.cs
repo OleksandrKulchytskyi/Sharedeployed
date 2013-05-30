@@ -566,7 +566,10 @@ namespace ShareDeployed.Test
 		public void TestCaseWithOverridedMethod()
 		{
 			dynamic proxy = new DynamicProxy(new ErrorProneAbstracted());
+			dynamic proxy2 = new DynamicProxy(new ErrorProneAbstracted());
 
+			bool equals = (proxy == proxy2);
+			
 			int result = proxy.DoWork3(1, 2);
 			int result2 = proxy.DoWork3("1", "2");
 			Assert.IsTrue(result == result2);

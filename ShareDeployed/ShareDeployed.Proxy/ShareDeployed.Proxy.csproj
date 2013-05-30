@@ -58,6 +58,7 @@
     <Compile Include="Extensions\ConvertHelper.cs" />
     <Compile Include="Extensions\DynamicProxyGenerator.cs" />
     <Compile Include="Extensions\IEnumerableUtils.cs" />
+    <Compile Include="Extensions\LockFreeExtension.cs" />
     <Compile Include="Extensions\ValidationHelper.cs" />
     <Compile Include="Extensions\WeakEventHandler.cs" />
     <Compile Include="FastReflection\DynamicCtor.cs" />

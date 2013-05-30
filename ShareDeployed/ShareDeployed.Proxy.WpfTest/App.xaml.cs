@@ -20,7 +20,7 @@ namespace ShareDeployed.Proxy.WpfTest
 			DynamicProxyPipeline.Instance.ContracResolver.ResolveFailed += ContracResolver_ResolveFailed;
 		}
 
-		private void ContracResolver_ResolveFailed(object sender, ResolutionFailEventArgs e)
+		public void ContracResolver_ResolveFailed(object sender, ResolutionFailEventArgs e)
 		{
 			DynamicProxyPipeline.Instance.LoggerAggregator.DoLog(Logging.LogSeverity.Fatal, e.ErrorMessage, e.ResolutionError);
 		}

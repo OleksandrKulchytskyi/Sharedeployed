@@ -72,6 +72,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Ioc\WeakEventHandlerUnitTest.cs" />
     <Compile Include="ProducerConsumer\PCQ.cs" />
     <Compile Include="Config\ProxyConfigTest.cs" />
     <Compile Include="DynamicProxy\DynamicProxyPipelineTest.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Ioc\IoCHarnessTest.cs" />
     <Compile Include="MailGrabber\MailGrabberUnitTest.cs" />
     <Compile Include="ObjectPool\BytesArrayPoolTest.cs" />
+    <Compile Include="ProducerConsumer\PCQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitTest2.cs" />
     <Compile Include="OutlookMnagerTest.cs" />

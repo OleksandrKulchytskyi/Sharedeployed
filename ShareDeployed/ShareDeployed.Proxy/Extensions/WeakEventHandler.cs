@@ -24,7 +24,6 @@ namespace ShareDeployed.Proxy.Extensions
 		public void Invoke(object sender, E e)
 		{
 			object target = _TargetRef.Target;
-
 			if (target != null)
 				_Thunk(target, sender, e);
 		}
@@ -40,6 +39,11 @@ namespace ShareDeployed.Proxy.Extensions
 			return weh._Handler;
 		}
 
+		public static implicit operator WeakEventHandler<E>(EventHandler<E> handler)
+		{
+			return new WeakEventHandler<E>(handler);
+		}
+
 		private EventHandlerThunk CreateDynamicThunk(EventHandler<E> eventHandler)
 		{
 			MethodInfo method = eventHandler.Method;
@@ -50,8 +54,7 @@ namespace ShareDeployed.Proxy.Extensions
 			  new Type[] { typeof(object), typeof(object), typeof(E) }, declaringType);
 
 			ILGenerator il = dm.GetILGenerator();
-
-			// load and cast "this" pointer...
+			// load and cast "this" pointer
 			il.Emit(OpCodes.Ldarg_0);
 			il.Emit(OpCodes.Castclass, declaringType);
 			// load arguments...
@@ -59,7 +62,7 @@ namespace ShareDeployed.Proxy.Extensions
 			il.Emit(OpCodes.Ldarg_2);
 			// call method...
 			il.Emit(method.IsVirtual ? OpCodes.Callvirt : OpCodes.Call, method);
-			// done...
+			// done , emit IL return.
 			il.Emit(OpCodes.Ret);
 
 			return (EventHandlerThunk)dm.CreateDelegate(typeof(EventHandlerThunk));

@@ -29,7 +29,7 @@ namespace ShareDeployed.Proxy.FastReflection
 			#region IL generation
 
 			#region Argument count check
-			// Define a label for succesfull argument count checking.
+			// Define a label for succesfull argument count checking.(in IL there are no for, while ,foreach loop
 			Label argsOK = ilGen.DefineLabel();
 
 			// Check input argument count.

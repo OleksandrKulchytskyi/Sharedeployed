@@ -40,6 +40,7 @@ namespace ShareDeployed.Proxy.WpfTest
 					threads[i].Join();
 				}
 			}
+			DynamicProxyPipeline.Instance.ContracResolver.ResolveFailed -= (Application.Current as App).ContracResolver_ResolveFailed;
 			(_proxy as DynamicProxy).Dispose();
 		}
 
@@ -52,9 +53,7 @@ namespace ShareDeployed.Proxy.WpfTest
 		{
 			IEnumerable<Customer> data = _proxy.GetCustomers();
 			if (data != null)
-			{
 				dg1.ItemsSource = data;
-			}
 		}
 
 		private void Button_ClickID(object sender, RoutedEventArgs e)
@@ -64,9 +63,7 @@ namespace ShareDeployed.Proxy.WpfTest
 			{
 				Customer cust = _proxy.GetById(id);
 				if (cust != null)
-				{
 					dg1.ItemsSource = new List<Customer>() { cust };
-				}
 				else
 				{
 					dg1.ItemsSource = null;
@@ -79,9 +76,7 @@ namespace ShareDeployed.Proxy.WpfTest
 		{
 			Customer cust = _proxy.GetByName(cName.Text);
 			if (cust != null)
-			{
 				dg1.ItemsSource = new List<Customer>() { cust };
-			}
 			else
 			{
 				dg1.ItemsSource = null;
