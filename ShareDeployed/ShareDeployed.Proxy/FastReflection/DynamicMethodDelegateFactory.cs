@@ -16,41 +16,41 @@ namespace ShareDeployed.Proxy.FastReflection
 		/// </summary>
 		public static DynamicMethodDelegate Create(MethodInfo method)
 		{
+			method.ThrowIfNull("method", "Parameter cannot be a null.");
 			ParameterInfo[] parms = method.GetParameters();
 			int numparams = parms.Length;
 
-			Type[] _argTypes = { typeof(object), typeof(object[]) };
+			Type[] argsTypes = { typeof(object), typeof(object[]) };
 
-			// Create dynamic method and obtain its IL generator to
-			// inject code.
-			DynamicMethod dynam = new DynamicMethod(string.Empty, typeof(object), _argTypes, typeof(DynamicMethodDelegateFactory));
-			ILGenerator il = dynam.GetILGenerator();
+			// Create dynamic method and obtain its IL generator to inject code.
+			DynamicMethod dynMthd = new DynamicMethod(string.Empty, typeof(object), argsTypes, typeof(DynamicMethodDelegateFactory));
+			ILGenerator ilGen = dynMthd.GetILGenerator();
 
 			#region IL generation
 
 			#region Argument count check
 			// Define a label for succesfull argument count checking.
-			Label argsOK = il.DefineLabel();
+			Label argsOK = ilGen.DefineLabel();
 
 			// Check input argument count.
-			il.Emit(OpCodes.Ldarg_1);
-			il.Emit(OpCodes.Ldlen);
-			il.Emit(OpCodes.Ldc_I4, numparams);
-			il.Emit(OpCodes.Beq, argsOK);
+			ilGen.Emit(OpCodes.Ldarg_1);
+			ilGen.Emit(OpCodes.Ldlen);
+			ilGen.Emit(OpCodes.Ldc_I4, numparams);
+			ilGen.Emit(OpCodes.Beq, argsOK);
 
 			// Argument count was wrong, throw TargetParameterCountException.
-			il.Emit(OpCodes.Newobj, typeof(TargetParameterCountException).GetConstructor(Type.EmptyTypes));
-			il.Emit(OpCodes.Throw);
+			ilGen.Emit(OpCodes.Newobj, typeof(TargetParameterCountException).GetConstructor(Type.EmptyTypes));
+			ilGen.Emit(OpCodes.Throw);
 
 			// Mark IL with argsOK label.
-			il.MarkLabel(argsOK);
+			ilGen.MarkLabel(argsOK);
 			#endregion
 
 			#region Instance push
 			// If method isn't static push target instance on top of stack.
 			if (!method.IsStatic)
 				// Argument 0 of dynamic method is target instance.
-				il.Emit(OpCodes.Ldarg_0);
+				ilGen.Emit(OpCodes.Ldarg_0);
 			#endregion
 
 			#region Standard argument layout
@@ -58,49 +58,44 @@ namespace ShareDeployed.Proxy.FastReflection
 			int i = 0;
 			while (i < numparams)
 			{
-				// Push args array reference onto the stack, followed
-				// by the current argument index (i). The Ldelem_Ref opcode will resolve them to args[i].
+				// Push args array reference onto the stack, followed by the current argument index (i). The Ldelem_Ref opcode will resolve them to args[i].
 				// Argument 1 of dynamic method is argument array.
-				il.Emit(OpCodes.Ldarg_1);
-				il.Emit(OpCodes.Ldc_I4, i);
-				il.Emit(OpCodes.Ldelem_Ref);
+				ilGen.Emit(OpCodes.Ldarg_1);
+				ilGen.Emit(OpCodes.Ldc_I4, i);
+				ilGen.Emit(OpCodes.Ldelem_Ref);
 
 				// If parameter [i] is a value type perform an unboxing.
 				Type parmType = parms[i].ParameterType;
 				if (parmType.IsValueType)
-					il.Emit(OpCodes.Unbox_Any, parmType);
+					ilGen.Emit(OpCodes.Unbox_Any, parmType);
 				i++;
 			}
 			#endregion
 
 			#region Method call
-
 			// Perform actual call.
-			// If method is not final a callvirt is required
-			// otherwise a normal call will be emitted.
+			// If method is not final a callvirt is required, otherwise a normal call will be emitted.
 			if (method.IsFinal)
-				il.Emit(OpCodes.Call, method);
+				ilGen.Emit(OpCodes.Call, method);
 			else
-				il.Emit(OpCodes.Callvirt, method);
+				ilGen.Emit(OpCodes.Callvirt, method);
 
 			if (method.ReturnType != typeof(void))
-			{
-				// If result is of value type it needs to be boxed
+			{	// If result is of value type it needs to be boxed
 				if (method.ReturnType.IsValueType)
-					il.Emit(OpCodes.Box, method.ReturnType);
+					ilGen.Emit(OpCodes.Box, method.ReturnType);
 			}
 			else
 			{
-				il.Emit(OpCodes.Ldnull);
+				ilGen.Emit(OpCodes.Ldnull);
 			}
 
 			// Emit return opcode.
-			il.Emit(OpCodes.Ret);
+			ilGen.Emit(OpCodes.Ret);
 			#endregion
 			#endregion
 
-			return (DynamicMethodDelegate)dynam.CreateDelegate(typeof(DynamicMethodDelegate));
+			return (DynamicMethodDelegate)dynMthd.CreateDelegate(typeof(DynamicMethodDelegate));
 		}
-
 	}
 }

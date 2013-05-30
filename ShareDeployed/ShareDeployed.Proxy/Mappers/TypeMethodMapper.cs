@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShareDeployed.Proxy.FastReflection;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
@@ -123,9 +124,8 @@ namespace ShareDeployed.Proxy
 
 	public sealed class TypeMethodsMapper
 	{
-		//TODO: check here
 		private static ConcurrentDictionary<int, ConcurrentDictionary<MethodCallInfo, MethodInfo>> _mappings;
-		private static ConcurrentDictionary<MethodInfo, FastReflection.DynamicMethodDelegate> _dynamicDelMap;
+		private static ConcurrentDictionary<MethodInfo, DynamicMethodDelegate> _dynamicDelMap;
 		private static Lazy<TypeMethodsMapper> _instance;
 
 		#region ctors
@@ -133,7 +133,7 @@ namespace ShareDeployed.Proxy
 		{
 			_instance = new Lazy<TypeMethodsMapper>(() => new TypeMethodsMapper(), true);
 			_mappings = new ConcurrentDictionary<int, ConcurrentDictionary<MethodCallInfo, MethodInfo>>();
-			_dynamicDelMap = new ConcurrentDictionary<MethodInfo, FastReflection.DynamicMethodDelegate>();
+			_dynamicDelMap = new ConcurrentDictionary<MethodInfo, DynamicMethodDelegate>();
 		}
 
 		private TypeMethodsMapper()
@@ -155,16 +155,14 @@ namespace ShareDeployed.Proxy
 			if (!_mappings.ContainsKey(type))
 			{
 				if (_mappings.TryAdd(type, new ConcurrentDictionary<MethodCallInfo, MethodInfo>()))
-				{
 					if (_mappings[type].TryAdd(mci, mi))
-						_dynamicDelMap.TryAdd(mi, FastReflection.DynamicMethodDelegateFactory.Create(mi));
-				}
+						_dynamicDelMap.TryAdd(mi, DynamicMethodDelegateFactory.Create(mi));
 			}
 			else if (!_mappings[type].ContainsKey(mci))
 			{
 				if (_mappings[type].TryAdd(mci, mi))
 				{
-					FastReflection.DynamicMethodDelegate del = FastReflection.DynamicMethodDelegateFactory.Create(mi);
+					DynamicMethodDelegate del = DynamicMethodDelegateFactory.Create(mi);
 					_dynamicDelMap.AddOrUpdate(mi, del, (key, oldVal) => oldVal = del);
 				}
 			}
@@ -174,7 +172,7 @@ namespace ShareDeployed.Proxy
 		{
 			if (_mappings.ContainsKey(type))
 			{
-				MethodInfo mi = null;
+				MethodInfo mi;
 				_mappings[type].TryGetValue(mci, out mi);
 				return mi;
 			}
@@ -186,7 +184,7 @@ namespace ShareDeployed.Proxy
 			return (_mappings.ContainsKey(type) && _mappings[type].ContainsKey(mci));
 		}
 
-		public FastReflection.DynamicMethodDelegate GetDynamicDelegate(int type, ref MethodCallInfo mci)
+		public DynamicMethodDelegate GetDynamicDelegate(int type, ref MethodCallInfo mci)
 		{
 			if (_mappings.ContainsKey(type))
 			{

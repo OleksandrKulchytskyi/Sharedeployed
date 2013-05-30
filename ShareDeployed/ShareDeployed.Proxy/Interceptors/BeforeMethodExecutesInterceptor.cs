@@ -21,8 +21,8 @@ namespace ShareDeployed.Proxy
 				return;
 
 			StringBuilder sb = new StringBuilder();
-			sb.Append("Action: before method executes, ");
-			sb.Append(string.Format("Method name {0}{1}", invocation.MethodInvocationTarget.Name, Environment.NewLine));
+			sb.Append("Before method executes, ");
+			sb.Append(string.Format("Method name:{0}{1}", invocation.MethodInvocationTarget.Name, Environment.NewLine));
 
 			if (invocation.Arguments != null && invocation.Arguments.Length > 0)
 			{
@@ -36,7 +36,7 @@ namespace ShareDeployed.Proxy
 				sb.AppendLine("Method is parameterless.");
 
 			if (invocation.ReturnValueType != typeof(void))
-				sb.AppendLine(string.Format("Return type is {0}", invocation.ReturnValueType));
+				sb.AppendLine(string.Format("Return type is:{0}", invocation.ReturnValueType));
 
 			LogAggregator.DoLog(Logging.LogSeverity.Info, sb.ToString(), null);
 			sb.Clear();
