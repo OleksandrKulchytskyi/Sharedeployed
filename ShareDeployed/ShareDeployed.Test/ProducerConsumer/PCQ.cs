@@ -36,12 +36,17 @@ namespace ShareDeployed.Test.ProducerConsumer
 
 		private void Consume()
 		{
-			while (true)                        // Keep consuming until
+			while (true)// Keep consuming until
 			{                                   // told otherwise.
-				Action item; lock (_locker) { while (_itemQ.Count == 0) Monitor.Wait(_locker); item = _itemQ.Dequeue(); }
+				Action item;
+				lock (_locker)
+				{
+					while (_itemQ.Count == 0)
+						Monitor.Wait(_locker);
+					item = _itemQ.Dequeue();
+				}
 				if (item == null) return;         // This signals our exit.
-				item();
-				// Execute item.
+				item(); // Execute item.
 			}
 		}
 	}

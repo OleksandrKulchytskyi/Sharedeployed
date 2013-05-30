@@ -50,14 +50,17 @@ namespace ShareDeployed.Test.Ioc
 			}
 		}
 
-		private void PerformExit(object data)
+		private void PerformAdd(object obj)
 		{
-			Thread.Sleep(TimeSpan.FromMinutes(1));
-			CancellationTokenSource cts = data as CancellationTokenSource;
-			cts.Cancel();
+			int count = 0;
+			while (true)
+			{
+				typeof(Customer).BindToSelfWithAlias(count.ToString()).InPerThreadScope();
+				Debug.WriteLine("Successfully added");
 
-			Thread.Sleep(TimeSpan.FromSeconds(3));
-			_event.Set();
+				Thread.Sleep(TimeSpan.FromSeconds(2));
+				count++;
+			}
 		}
 
 		private void PerformRead()
@@ -95,16 +98,71 @@ namespace ShareDeployed.Test.Ioc
 			}
 		}
 
-		private void PerformAdd(object obj)
+		private void PerformExit(object data)
 		{
-			int count = 0;
+			Thread.Sleep(TimeSpan.FromSeconds(30));
+			CancellationTokenSource cts = data as CancellationTokenSource;
+			cts.Cancel();
+
+			Thread.Sleep(TimeSpan.FromSeconds(3));
+			_event.Set();
+		}
+
+		[TestMethod]
+		public void IocHarnesTest2()
+		{
+			CancellationTokenSource cts = new CancellationTokenSource();
+			typeof(Customer).BindToSelf().InPerThreadScope();
+
+			Task[] tasks = new Task[3];
+			tasks[0] = Task.Factory.StartNew(PerformGet, TaskCreationOptions.LongRunning);
+			tasks[1] = Task.Factory.StartNew(PerformGet2, TaskCreationOptions.LongRunning);
+			tasks[2] = Task.Factory.StartNew(PerformExit, cts);
+
+			if (_event.WaitOne())
+			{
+				var objects = DynamicProxyPipeline.Instance.ContracResolver.ResolveAll(typeof(Customer));
+				if (objects != null)
+				{
+				}
+			}
+		}
+
+		private void PerformGet()
+		{
+			int i = 0;
 			while (true)
 			{
-				typeof(Customer).BindToSelfWithAlias(count.ToString()).InPerThreadScope();
-				Debug.WriteLine("Successfully added");
+				Customer c = DynamicProxyPipeline.Instance.ContracResolver.Resolve<Customer>();
+				if (c != null)
+				{
+					c.Id = i;
+					c.Name = i.ToString();
+					Debug.WriteLine(c.ToString());
+				}
+				else
+					Debug.WriteLine("Fail to retrieve customer.");
+				i++;
+				Thread.Sleep(TimeSpan.FromMilliseconds(10));
+			}
+		}
 
-				Thread.Sleep(TimeSpan.FromSeconds(2));
-				count++;
+		private void PerformGet2()
+		{
+			int i = 0;
+			while (true)
+			{
+				Customer c = DynamicProxyPipeline.Instance.ContracResolver.Resolve<Customer>();
+				if (c != null)
+				{
+					c.Id = i;
+					c.Name = i.ToString();
+					Debug.WriteLine(c.ToString());
+				}
+				else
+					Debug.WriteLine("Fail to retrieve customer.");
+				i++;
+				Thread.Sleep(TimeSpan.FromMilliseconds(10));
 			}
 		}
 
@@ -153,5 +211,9 @@ namespace ShareDeployed.Test.Ioc
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
+		public override string ToString()
+		{
+			return Id + Name ?? string.Empty;
+		}
 	}
 }
