@@ -39,6 +39,7 @@ namespace ShareDeployed.Proxy
 		/// Empty ctor
 		/// </summary>
 		public DynamicProxy()
+			: base()
 		{
 			if (DynamicProxyPipeline.Instance != null)
 				_resolver = new GenericWeakReference<IContractResolver>(DynamicProxyPipeline.Instance.ContracResolver);
@@ -72,7 +73,7 @@ namespace ShareDeployed.Proxy
 		/// <param name="useFastProperty">IUse FastProperty</param>
 		/// <param name="useDynamicDelegates">Use DynamicMethodDelegate for fast methods calls</param>
 		public DynamicProxy(object target, bool useFastProperty, bool useDynamicDelegates)
-			: base()
+			: this()
 		{
 			target.ThrowIfNull(_targetParamName, _paramCannotBeNullMsg);
 
@@ -81,8 +82,7 @@ namespace ShareDeployed.Proxy
 			_targerType = _target.GetType();
 			_typeHash = _targerType.GetHashCode();
 
-			InitInternals();
-
+			//InitInternals(); since we invoke this() there is no need to invoke InitInternals twice
 			InitMappings();
 		}
 
@@ -92,7 +92,8 @@ namespace ShareDeployed.Proxy
 				_weakMapper = new GenericWeakReference<TypeAttributesMapper>(TypeAttributesMapper.Instance);
 
 			if (_methodInterceptors == null)
-				_methodInterceptors = new Lazy<ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>>(() => new ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>(), true);
+				_methodInterceptors = new Lazy<ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>>(() =>
+												new ConcurrentDictionary<MethodInfo, IList<InterceptorInfo>>(), true);
 
 			_spinLock = new System.Threading.SpinLock();
 		}
@@ -580,7 +581,7 @@ namespace ShareDeployed.Proxy
 			}
 			else if (binder.Operation == System.Linq.Expressions.ExpressionType.NotEqual)
 			{
-				result= !((arg as DynamicProxy)._targerType.Equals(_targerType));
+				result = !((arg as DynamicProxy)._targerType.Equals(_targerType));
 				return true;
 			}
 

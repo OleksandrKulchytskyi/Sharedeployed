@@ -34,6 +34,7 @@ namespace ShareDeployed.Proxy.WpfTest
 
 			DynamicProxyPipeline.Instance.ContracResolver.ResolveFailed -= (Application.Current as App).ContracResolver_ResolveFailed;
 			(_proxy as DynamicProxy).Dispose();
+			System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
 		}
 
 		private void MainWindow_Loaded(object sender, RoutedEventArgs e)
