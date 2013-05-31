@@ -1,16 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ShareDeployed.Proxy.WpfTest
 {
@@ -30,21 +20,23 @@ namespace ShareDeployed.Proxy.WpfTest
 			this.Closing += MainWindow_Closing;
 		}
 
-		void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			_exit = true;
 			if (threads != null)
 			{
 				for (int i = 0; i < threads.Length; i++)
 				{
-					threads[i].Join();
+					threads[i].Join(TimeSpan.FromMilliseconds(50));
 				}
 			}
+			threads = null;
+
 			DynamicProxyPipeline.Instance.ContracResolver.ResolveFailed -= (Application.Current as App).ContracResolver_ResolveFailed;
 			(_proxy as DynamicProxy).Dispose();
 		}
 
-		void MainWindow_Loaded(object sender, RoutedEventArgs e)
+		private void MainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
 			_proxy = DynamicProxyPipeline.Instance.DynamixProxyManager.Get("customersProxy");
 		}
@@ -112,8 +104,7 @@ namespace ShareDeployed.Proxy.WpfTest
 			{
 				System.Threading.Thread.Sleep(100);
 				IList<Customer> customers = _proxy.GetCustomers();
-				if (customers == null)
-					throw new ArgumentException();
+				if (customers == null) throw new ArgumentException();
 			}
 		}
 
@@ -123,8 +114,7 @@ namespace ShareDeployed.Proxy.WpfTest
 			{
 				System.Threading.Thread.Sleep(100);
 				Customer cust = _proxy.GetById(1);
-				if (cust == null)
-					throw new ArgumentException();
+				if (cust == null) throw new ArgumentException();
 			}
 		}
 
@@ -134,8 +124,7 @@ namespace ShareDeployed.Proxy.WpfTest
 			{
 				System.Threading.Thread.Sleep(100);
 				Customer cust = _proxy.GetByName("Alex");
-				if (cust == null)
-					throw new ArgumentException();
+				if (cust == null) throw new ArgumentException();
 			}
 		}
 
@@ -145,8 +134,7 @@ namespace ShareDeployed.Proxy.WpfTest
 			{
 				System.Threading.Thread.Sleep(100);
 				Customer cust = _proxy.GetById(45);
-				if (cust != null)
-					throw new ArgumentException();
+				if (cust != null) throw new ArgumentException();
 			}
 		}
 	}

@@ -17,10 +17,10 @@ namespace ShareDeployed.Proxy
 			_lazy = new Lazy<TypesWithInjections>(() => new TypesWithInjections(), true);
 		}
 
-		private ConcurrentDictionary<Type, SafeCollection<MemberMetadata>> _container = null;
+		private ConcurrentDictionary<Type, SafeCollection<MemberMetadata>> _typeMetadata = null;
 		private TypesWithInjections()
 		{
-			_container = new ConcurrentDictionary<Type, SafeCollection<MemberMetadata>>();
+			_typeMetadata = new ConcurrentDictionary<Type, SafeCollection<MemberMetadata>>();
 		}
 
 		/// <summary>
@@ -34,49 +34,49 @@ namespace ShareDeployed.Proxy
 		public void Add(Type type, ref MemberMetadata metadata)
 		{
 			type.ThrowIfNull("type", "Parameter cannot be a null.");
-			if (_container.ContainsKey(type))
+			if (_typeMetadata.ContainsKey(type))
 			{
-				_container[type].Add(metadata);
+				_typeMetadata[type].Add(metadata);
 			}
 			else
 			{
 				SafeCollection<MemberMetadata> holder = new SafeCollection<MemberMetadata>();
 				holder.Add(metadata);
-				_container.TryAdd(type, holder);
+				_typeMetadata.TryAdd(type, holder);
 			}
 		}
 
 		public void AddRange(Type type, IEnumerable<MemberMetadata> metadatas)
 		{
 			type.ThrowIfNull("type", "Parameter cannot be a null.");
-			if (_container.ContainsKey(type))
+			if (_typeMetadata.ContainsKey(type))
 			{
-				_container[type].AddRange(metadatas);
+				_typeMetadata[type].AddRange(metadatas);
 			}
 			else
 			{
 				SafeCollection<MemberMetadata> holder = new SafeCollection<MemberMetadata>();
 				holder.AddRange(metadatas);
-				_container.TryAdd(type, holder);
+				_typeMetadata.TryAdd(type, holder);
 			}
 		}
 
 		public bool Contains(Type contract)
 		{
 			contract.ThrowIfNull("contract", "Parameter cannot be null");
-			return _container.ContainsKey(contract);
+			return _typeMetadata.ContainsKey(contract);
 		}
 
 		public IEnumerable<MemberMetadata> GetMetadataFor(Type type)
 		{
 			SafeCollection<MemberMetadata> metadatas;
-			_container.TryGetValue(type, out metadatas);
+			_typeMetadata.TryGetValue(type, out metadatas);
 			return metadatas;
 		}
 
 		public void Clear()
 		{
-			_container.Clear();
+			_typeMetadata.Clear();
 		}
 	}
 }

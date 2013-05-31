@@ -2,7 +2,6 @@
 using ShareDeployed.Proxy.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ShareDeployed.Test.Ioc
 {
