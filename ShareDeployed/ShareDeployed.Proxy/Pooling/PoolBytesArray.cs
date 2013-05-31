@@ -235,7 +235,7 @@ namespace ShareDeployed.Proxy.Pooling
 
 		public void AssignWithValues(byte[] chunk)
 		{
-			chunk.ThrowIfNull("chunk", "Parameter cannot be null.");
+			chunk.ThrowIfNull("chunk", "Parameter cannot be a null.");
 			if (chunk.Length > _capacity)
 				throw new IndexOutOfRangeException(string.Format("Chunk length must be less or equals internal array capacity, {0}: {1}", chunk.Length, _capacity));
 

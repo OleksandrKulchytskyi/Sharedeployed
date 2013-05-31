@@ -60,7 +60,7 @@ namespace ShareDeployed.Test
 			Pipeline.Initialize();
 
 			ExceptionInterceptor interceptor = Pipeline.ContracResolver.Resolve<ExceptionInterceptor>();
-			Assert.IsTrue(TypeWithInjections.Instance.Contains(typeof(ExceptionInterceptor)));
+			Assert.IsTrue(TypesWithInjections.Instance.Contains(typeof(ExceptionInterceptor)));
 
 			ExceptionInterceptor interceptor2 = Pipeline.ContracResolver.Resolve<ExceptionInterceptor>();
 			//cause to invoke ArgumentNullException by reason of second parameter value is equals to null

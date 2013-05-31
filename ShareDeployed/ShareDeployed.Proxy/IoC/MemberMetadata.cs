@@ -26,7 +26,7 @@ namespace ShareDeployed.Proxy
 			_fp = null;
 			_hash = -1;
 
-			memberInfo.ThrowIfNull("memberInfo", "Parameter cannot be null.");
+			memberInfo.ThrowIfNull("memberInfo", "Parameter cannot be a null.");
 			switch (memberInfo.MemberType)
 			{
 				case MemberTypes.Field:
@@ -87,7 +87,11 @@ namespace ShareDeployed.Proxy
 		public override int GetHashCode()
 		{
 			if (_hash == -1)
-				_hash = (Type.GetHashCode() ^ Member.GetHashCode());
+			{
+				_hash = 17;
+				_hash = _hash * 31 + Type.GetHashCode();
+				_hash = _hash * 31 + Member.GetHashCode();
+			}
 			return _hash;
 		}
 

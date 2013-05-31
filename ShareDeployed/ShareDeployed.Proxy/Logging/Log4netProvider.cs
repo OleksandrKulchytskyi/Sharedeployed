@@ -24,7 +24,7 @@ namespace ShareDeployed.Proxy.Logging
 
 		public Log4netProvider(ILog logger)
 		{
-			logger.ThrowIfNull("logger", "Parameter cannot be null.");
+			logger.ThrowIfNull("logger", "Parameter cannot be a null.");
 			_logger = logger;
 		}
 

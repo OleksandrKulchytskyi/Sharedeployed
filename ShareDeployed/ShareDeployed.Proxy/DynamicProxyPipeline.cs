@@ -85,8 +85,8 @@ namespace ShareDeployed.Proxy
 
 		public void ReplaceService(Type contract, object service)
 		{
-			contract.ThrowIfNull("contract", "Parameter cannot be null.");
-			service.ThrowIfNull("service", "Parameter cannot be null.");
+			contract.ThrowIfNull("contract", "Parameter cannot be a null.");
+			service.ThrowIfNull("service", "Parameter cannot be a null.");
 
 			if (_internalServices.ContainsKey(contract))
 				_internalServices.TryUpdate(contract, service, GetInternalService(contract));
@@ -150,7 +150,7 @@ namespace ShareDeployed.Proxy
 
 		private object GetInternalService(Type contract)
 		{
-			contract.ThrowIfNull("contract", "Parameter cannot be null.");
+			contract.ThrowIfNull("contract", "Parameter cannot be a null.");
 			return _internalServices[contract];
 		}
 

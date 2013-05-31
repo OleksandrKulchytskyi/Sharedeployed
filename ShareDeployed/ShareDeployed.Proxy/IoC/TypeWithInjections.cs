@@ -9,16 +9,16 @@ namespace ShareDeployed.Proxy
 	/// <summary>
 	/// Container that holds types with its appropriate members marked with Instantiate attributes
 	/// </summary>
-	public sealed class TypeWithInjections
+	public sealed class TypesWithInjections
 	{
-		static Lazy<TypeWithInjections> _lazy = null;
-		static TypeWithInjections()
+		static Lazy<TypesWithInjections> _lazy = null;
+		static TypesWithInjections()
 		{
-			_lazy = new Lazy<TypeWithInjections>(() => new TypeWithInjections(), true);
+			_lazy = new Lazy<TypesWithInjections>(() => new TypesWithInjections(), true);
 		}
 
 		private ConcurrentDictionary<Type, SafeCollection<MemberMetadata>> _container = null;
-		private TypeWithInjections()
+		private TypesWithInjections()
 		{
 			_container = new ConcurrentDictionary<Type, SafeCollection<MemberMetadata>>();
 		}
@@ -26,14 +26,14 @@ namespace ShareDeployed.Proxy
 		/// <summary>
 		/// Get singleton instance
 		/// </summary>
-		public static TypeWithInjections Instance
+		public static TypesWithInjections Instance
 		{
 			get { return _lazy.Value; ;}
 		}
 
-		public void Add(Type type, MemberMetadata metadata)
+		public void Add(Type type, ref MemberMetadata metadata)
 		{
-			type.ThrowIfNull("type", "Parameter cannot be null.");
+			type.ThrowIfNull("type", "Parameter cannot be a null.");
 			if (_container.ContainsKey(type))
 			{
 				_container[type].Add(metadata);
@@ -48,7 +48,7 @@ namespace ShareDeployed.Proxy
 
 		public void AddRange(Type type, IEnumerable<MemberMetadata> metadatas)
 		{
-			type.ThrowIfNull("type", "Parameter cannot be null.");
+			type.ThrowIfNull("type", "Parameter cannot be a null.");
 			if (_container.ContainsKey(type))
 			{
 				_container[type].AddRange(metadatas);
@@ -70,17 +70,13 @@ namespace ShareDeployed.Proxy
 		public IEnumerable<MemberMetadata> GetMetadataFor(Type type)
 		{
 			SafeCollection<MemberMetadata> metadatas;
-			if (_container.TryGetValue(type, out metadatas))
-				return metadatas;
-			else
-				return null;
+			_container.TryGetValue(type, out metadatas);
+			return metadatas;
 		}
 
 		public void Clear()
 		{
 			_container.Clear();
 		}
-
-
 	}
 }

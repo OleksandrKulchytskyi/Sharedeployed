@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShareDeployed.Proxy.FastReflection;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
@@ -6,14 +7,14 @@ namespace ShareDeployed.Proxy
 {
 	public sealed class TypeCtorsMapper
 	{
-		private static ConcurrentDictionary<int, SafeCollection<FastReflection.IDynamicConstructor>> _ctorContainer;
+		private static ConcurrentDictionary<int, SafeCollection<IDynamicConstructor>> _ctorContainer;
 		private static Lazy<TypeCtorsMapper> _instance;
 
 		#region ctors
 		static TypeCtorsMapper()
 		{
 			_instance = new Lazy<TypeCtorsMapper>(() => new TypeCtorsMapper(), true);
-			_ctorContainer = new ConcurrentDictionary<int, SafeCollection<FastReflection.IDynamicConstructor>>();
+			_ctorContainer = new ConcurrentDictionary<int, SafeCollection<IDynamicConstructor>>();
 		}
 
 		private TypeCtorsMapper()
@@ -35,16 +36,16 @@ namespace ShareDeployed.Proxy
 			return _ctorContainer.ContainsKey(contract);
 		}
 
-		public ICollection<FastReflection.IDynamicConstructor> Get(int contract)
+		public ICollection<IDynamicConstructor> Get(int contract)
 		{
-			SafeCollection<FastReflection.IDynamicConstructor> collection;
+			SafeCollection<IDynamicConstructor> collection;
 			_ctorContainer.TryGetValue(contract, out collection);
 			return collection;
 		}
 
-		public void Add(int contract, FastReflection.IDynamicConstructor ctor)
+		public void Add(int contract, IDynamicConstructor ctor)
 		{
-			ctor.ThrowIfNull("ctor", "Parameter cannot be null.");
+			ctor.ThrowIfNull("ctor", "Parameter cannot be a null.");
 
 			if (_ctorContainer.ContainsKey(contract))
 			{
@@ -52,7 +53,7 @@ namespace ShareDeployed.Proxy
 			}
 			else
 			{
-				SafeCollection<FastReflection.IDynamicConstructor> collection = new SafeCollection<FastReflection.IDynamicConstructor>();
+				SafeCollection<IDynamicConstructor> collection = new SafeCollection<IDynamicConstructor>();
 				collection.Add(ctor);
 				_ctorContainer.TryAdd(contract, collection);
 			}
@@ -60,7 +61,7 @@ namespace ShareDeployed.Proxy
 
 		public void Remove(int contract)
 		{
-			SafeCollection<FastReflection.IDynamicConstructor> col;
+			SafeCollection<IDynamicConstructor> col;
 			_ctorContainer.TryRemove(contract, out col);
 		}
 		#endregion

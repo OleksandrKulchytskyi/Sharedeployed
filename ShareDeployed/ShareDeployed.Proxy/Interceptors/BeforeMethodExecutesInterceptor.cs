@@ -15,10 +15,9 @@ namespace ShareDeployed.Proxy
 
 		public virtual void Intercept(IInvocation invocation)
 		{
-			invocation.ThrowIfNull("invocation", "Parameter cannot be null.");
+			invocation.ThrowIfNull("invocation", "Parameter cannot be a null.");
 
-			if (LogAggregator == null)
-				return;
+			if (LogAggregator == null) return;
 
 			StringBuilder sb = new StringBuilder();
 			sb.Append("Before method executes, ");

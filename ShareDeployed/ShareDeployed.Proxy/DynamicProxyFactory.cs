@@ -46,9 +46,9 @@ namespace ShareDeployed.Proxy
 	{
 		int Count { get; }
 
-		bool Contains(string proxyId);
 		void Clear();
-
+		bool Contains(string proxyId);
+		
 		void Add(string proxyId, dynamic value);
 		dynamic Get(string proxyId);
 		void Remove(string proxyId);
@@ -73,7 +73,7 @@ namespace ShareDeployed.Proxy
 
 		public bool Contains(string proxyId)
 		{
-			proxyId.ThrowIfNull("proxyId", "Parameter cannot be null.");
+			proxyId.ThrowIfNull("proxyId", "Parameter cannot be a null.");
 			return _proxies.ContainsKey(proxyId);
 		}
 
@@ -85,8 +85,8 @@ namespace ShareDeployed.Proxy
 
 		public void Add(string proxyId, dynamic value)
 		{
-			proxyId.ThrowIfNull("proxyId", "Parameter cannot be null.");
-			//value.ThrowIfNull("value", "Parameter cannot be null.");
+			proxyId.ThrowIfNull("proxyId", "Parameter cannot be a null.");
+			//value.ThrowIfNull("value", "Parameter cannot be a null.");
 			if (_proxies.ContainsKey(proxyId))
 				throw new InvalidOperationException(string.Format("Proxy with same name [ {0} ] already exists.", proxyId));
 			else
@@ -98,7 +98,7 @@ namespace ShareDeployed.Proxy
 
 		public dynamic Get(string proxyId)
 		{
-			proxyId.ThrowIfNull("proxyId", "Parameter cannot be null.");
+			proxyId.ThrowIfNull("proxyId", "Parameter cannot be a null.");
 			dynamic val;
 			_proxies.TryGetValue(proxyId, out val);
 			return val;
@@ -106,7 +106,7 @@ namespace ShareDeployed.Proxy
 
 		public void Remove(string proxyId)
 		{
-			proxyId.ThrowIfNull("proxyId", "Parameter cannot be null.");
+			proxyId.ThrowIfNull("proxyId", "Parameter cannot be a null.");
 			dynamic val;
 			if (_proxies.TryRemove(proxyId, out val))
 			{

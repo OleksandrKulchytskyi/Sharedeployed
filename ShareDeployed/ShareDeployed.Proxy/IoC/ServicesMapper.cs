@@ -107,7 +107,7 @@ namespace ShareDeployed.Proxy
 
 		public static Type RegisterTypeWithAlias(string alias, Type contract, Type impl, ServiceLifetime lifetime = ServiceLifetime.PerRequest, bool throwOnDuplicate = true)
 		{
-			alias.ThrowIfNull("alias", "Parameter cannot be null.");
+			alias.ThrowIfNull("alias", "Parameter cannot be a null.");
 			Type resolved = RegisterTypes(contract, impl, lifetime, throwOnDuplicate);
 			if (!_aliases.ContainsKey(alias))
 				_aliases.TryAdd(alias, resolved);
@@ -124,7 +124,7 @@ namespace ShareDeployed.Proxy
 
 		public static Type Register<T>(string alias, ServiceLifetime lifetime = ServiceLifetime.PerRequest, bool throwOnDuplicate = true)
 		{
-			alias.ThrowIfNull("alias", "Parameter cannot be null.");
+			alias.ThrowIfNull("alias", "Parameter cannot be a null.");
 			Type type = typeof(T);
 			return RegisterTypeWithAlias(alias, type, type, lifetime, throwOnDuplicate);
 		}
@@ -183,7 +183,7 @@ namespace ShareDeployed.Proxy
 
 		public static Type GetImplementationForAlias(string alias)
 		{
-			alias.ThrowIfNull("alias", "Parameter cannot be null.");
+			alias.ThrowIfNull("alias", "Parameter cannot be a null.");
 			Type existed;
 			if (_aliases.TryGetValue(alias, out existed))
 			{
@@ -269,7 +269,7 @@ namespace ShareDeployed.Proxy
 		{
 			instance = null;
 			instanceDel = null;
-			if (!mapInfo.Key.HasDefaultCtor())
+			if (!mapInfo.Key.HasDefaultCtor())//check if type has default ctor
 			{
 				if (_configCtorArgs.ContainsKey(mapInfo.Key))
 				{
@@ -281,12 +281,12 @@ namespace ShareDeployed.Proxy
 						if (dynCtor != null)
 						{
 							object[] parameters = InitCtorParameters(mapInfo.Key, argCount);
-							instance = dynCtor.Invoke(parameters);
+							instance = dynCtor.Invoke(parameters);//create new instance of an oject by invoking its ctor.
 							return;
 						}
 					}
 					else
-					{
+					{	//TODO: Potential bug, there might be situation where type has many overloaded ctor's with diff parameters types
 						ConstructorInfo ci = mapInfo.Key.GetConstructors(ReflectionUtils.PublicInstanceMembers).
 														FirstOrDefault(ctor => ctor.GetParameters().Length == argCount);
 						if (ci != null)
@@ -298,12 +298,16 @@ namespace ShareDeployed.Proxy
 							return;
 						}
 						else
-							throw new ConstructorMissingException(mapInfo.Key, argCount);
+						{
+							ConstructorMissingException ex = new ConstructorMissingException(mapInfo.Key, argCount);
+							OnResolutionFailed(mapInfo.Key, "Fail to find ctor with specified arguments count.", ex);
+							throw ex;
+						}
 					}
 				}
 			}
 			else
-			{
+			{	//create or retrieve CreateInstanceDelegate for type with default ctor
 				instanceDel = ObjectCreatorHelper.ObjectInstantiater(mapInfo.Key);
 				instance = instanceDel();
 			}
@@ -312,27 +316,21 @@ namespace ShareDeployed.Proxy
 		private object[] InitCtorParameters(Type type, int argCount)
 		{
 			object[] data;
-			SafeCollection<ServiceCtorArgumentElement> args;
-			if (!_configCtorArgs.TryGetValue(type, out args))
+			SafeCollection<ServiceCtorArgumentElement> ctorArgs;
+			if (!_configCtorArgs.TryGetValue(type, out ctorArgs))
 				throw new InvalidOperationException(string.Format("Fail to retrieve ctor arguments info for type {0}", type));
 			else
 			{
-				ServiceCtorArgumentElement[] ctorsArray = new ServiceCtorArgumentElement[args.Count];
+				ServiceCtorArgumentElement[] ctorsArray = new ServiceCtorArgumentElement[ctorArgs.Count];
 				data = new object[argCount];
-				args.CopyTo(ctorsArray, 0);
+				ctorArgs.CopyTo(ctorsArray, 0);
 				Array.Reverse(ctorsArray);
 				for (int i = 0; i < argCount; i++)
 				{
-					if (!string.IsNullOrEmpty(ctorsArray[i].Alias))
-					{
-						object argValue = Resolve(ctorsArray[i].Alias);
-						data[i] = argValue;
-					}
+					if (!string.IsNullOrEmpty(ctorsArray[i].Alias))// in case of filled alias parameter resolve object by its alias
+						data[i] = Resolve(ctorsArray[i].Alias);
 					else
-					{
-						object argValue = ConvertHelper.CreateType(ctorsArray[i].ValueType, ctorsArray[i].Value);
-						data[i] = argValue;
-					}
+						data[i] = ConvertHelper.CreateType(ctorsArray[i].ValueType, ctorsArray[i].Value);
 				}
 				return data;
 			}
@@ -340,9 +338,9 @@ namespace ShareDeployed.Proxy
 
 		private void InitializeInternalMembers(Type contract, object instance)
 		{
-			if (TypeWithInjections.Instance.Contains(contract))
+			if (TypesWithInjections.Instance.Contains(contract))
 			{
-				foreach (MemberMetadata metadata in TypeWithInjections.Instance.GetMetadataFor(contract))
+				foreach (MemberMetadata metadata in TypesWithInjections.Instance.GetMetadataFor(contract))
 				{
 					switch (metadata.MemberType)
 					{
@@ -352,8 +350,7 @@ namespace ShareDeployed.Proxy
 						case MemberType.Property:
 							metadata.FastProperty.Set(instance, Resolve(metadata.Type));
 							break;
-						default:
-							break;
+						default: break;
 					}
 				}
 				//omit code below
@@ -366,7 +363,8 @@ namespace ShareDeployed.Proxy
 			{
 				foreach (System.Reflection.MemberInfo mInfo in members)
 				{
-					TypeWithInjections.Instance.Add(contract, new MemberMetadata(mInfo));
+					MemberMetadata mMetadata = new MemberMetadata(mInfo);
+					TypesWithInjections.Instance.Add(contract, ref mMetadata);
 					switch (mInfo.MemberType)
 					{
 						case System.Reflection.MemberTypes.Field:
@@ -387,16 +385,16 @@ namespace ShareDeployed.Proxy
 
 		private void InitializeInternalsFromConfiguration(Type contract, object instance)
 		{
-			contract.ThrowIfNull("contract", "Parameter cannot be null.");
-			instance.ThrowIfNull("instance", "Parameter cannot be null.");
+			contract.ThrowIfNull("contract", "Parameter cannot be a null.");
+			instance.ThrowIfNull("instance", "Parameter cannot be a null.");
 
 			if (_configProperties.ContainsKey(contract))
 			{
 				foreach (ServicePropertyElement item in _configProperties[contract])
 				{
-					if (TypeWithInjections.Instance.Contains(contract))
+					if (TypesWithInjections.Instance.Contains(contract))
 					{
-						MemberMetadata metadata = TypeWithInjections.Instance.GetMetadataFor(contract).FirstOrDefault(x => x.FastProperty.Property.Name.Equals(item.Name));
+						MemberMetadata metadata = TypesWithInjections.Instance.GetMetadataFor(contract).FirstOrDefault(x => x.FastProperty.Property.Name.Equals(item.Name));
 						if (metadata.FastProperty != null)
 						{
 							object value = string.IsNullOrEmpty(item.Alias) ? ConvertHelper.CreateType(item.ValueType, item.Value) : Resolve(item.Alias);
@@ -407,7 +405,7 @@ namespace ShareDeployed.Proxy
 					{
 						PropertyInfo pi = instance.GetType().GetProperty(item.Name);
 						MemberMetadata newMetadata = new MemberMetadata(pi);
-						TypeWithInjections.Instance.Add(contract, newMetadata);
+						TypesWithInjections.Instance.Add(contract, ref newMetadata);
 						object value = string.IsNullOrEmpty(item.Alias) ? ConvertHelper.CreateType(item.ValueType, item.Value) : Resolve(item.Alias);
 						newMetadata.FastProperty.Set(instance, value);
 					}
@@ -422,7 +420,7 @@ namespace ShareDeployed.Proxy
 		/// <returns></returns>
 		public object Resolve(string alias)
 		{
-			alias.ThrowIfNull("alias", "Parameter cannot be null.");
+			alias.ThrowIfNull("alias", "Parameter cannot be a null.");
 			Type contract;
 			if (_aliases.TryGetValue(alias, out contract))
 				return Resolve(contract);
@@ -573,7 +571,7 @@ namespace ShareDeployed.Proxy
 
 		private void InitializeInternals(Type contract, Type expected, ProxyServiceElement service)
 		{
-			service.ThrowIfNull("service", "Parameter cannot be null.");
+			service.ThrowIfNull("service", "Parameter cannot be a null.");
 
 			if (service.ServiceProps != null && service.ServiceProps.Count > 0)
 				InitializePropertyMappings(service.ServiceProps, contract);

@@ -15,7 +15,7 @@ namespace ShareDeployed.Proxy
 
 		public virtual void Intercept(IInvocation invocation)
 		{
-			invocation.ThrowIfNull("invocation", "Parameter cannot be null.");
+			invocation.ThrowIfNull("invocation", "Parameter cannot be a null.");
 			HandleException(invocation);
 		}
 
@@ -37,8 +37,7 @@ namespace ShareDeployed.Proxy
 #endif
 			}
 
-			if (LogAggregator != null)
-				LogAggregator.DoLog(Logging.LogSeverity.Error, "ProceesException", cuurrentExc);
+			if (LogAggregator != null) LogAggregator.DoLog(Logging.LogSeverity.Error, "ProceesException", cuurrentExc);
 		}
 	}
 }
