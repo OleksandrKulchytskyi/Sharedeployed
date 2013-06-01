@@ -113,6 +113,7 @@
     <Compile Include="Extensions\SafeCollection.cs" />
     <Compile Include="IoC\ServicesMapper.cs" />
     <Compile Include="Mappers\TypePropertyMapper.cs" />
+	<Compile Include="Mappers\InjectionCtorMapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

@@ -86,17 +86,26 @@ namespace ShareDeployed.Proxy
 			return _aliases.ContainsKey(alias);
 		}
 
-		public static Type RegisterTypes(Type contract, Type impl, ServiceLifetime lifetime = ServiceLifetime.PerRequest, bool throwOnDuplicate = true)
+		public static Type RegisterType(Type contract, Type impl, ServiceLifetime lifetime = ServiceLifetime.PerRequest, bool throwOnDuplicate = true)
 		{
 			KeyValuePair<Type, ServiceLifetime> existingImpl;
 
 			if (!_servicesMap.TryGetValue(contract, out existingImpl))
-			{
-				// double check to ensure that an instance is not created before this lock
+			{	// double check to ensure that an instance is not created before this lock
 				lock (_syncRoot)
 				{
 					if (!_servicesMap.TryGetValue(contract, out existingImpl))
+					{
 						_servicesMap.Add(contract, new KeyValuePair<Type, ServiceLifetime>(impl, lifetime));
+						ConstructorInfo ci = impl.GetConstructors(ReflectionUtils.PublicInstanceMembers).FirstOrDefault(c =>
+											c.GetCustomAttributes(typeof(InjectionConstructorAttribute), false).FirstOrDefault() != null);
+						if (ci != null)//check whether type contains ctor which is marked with InjectionConstructor attribute
+						{
+							FastReflection.IDynamicConstructor dynCtor = FastReflection.DynamicConstructor.Create(ci);
+							List<Type> types = new List<Type>(ci.GetParameters().Select(x => x.ParameterType));
+							InjectionCtorMapper.Instance.Add(impl.GetHashCode(), new InjectionCtorInfo(dynCtor, types));
+						}
+					}
 					else if (throwOnDuplicate)
 						throw new InvalidOperationException(string.Format("Map already exists between {0} and {1}", contract, impl));
 				}
@@ -105,10 +114,10 @@ namespace ShareDeployed.Proxy
 			return contract;
 		}
 
-		public static Type RegisterTypeWithAlias(string alias, Type contract, Type impl, ServiceLifetime lifetime = ServiceLifetime.PerRequest, bool throwOnDuplicate = true)
+		public static Type RegisterTypeByAlias(string alias, Type contract, Type impl, ServiceLifetime lifetime = ServiceLifetime.PerRequest, bool throwOnDuplicate = true)
 		{
 			alias.ThrowIfNull("alias", "Parameter cannot be a null.");
-			Type resolved = RegisterTypes(contract, impl, lifetime, throwOnDuplicate);
+			Type resolved = RegisterType(contract, impl, lifetime, throwOnDuplicate);
 			if (!_aliases.ContainsKey(alias))
 				_aliases.TryAdd(alias, resolved);
 			else
@@ -119,14 +128,19 @@ namespace ShareDeployed.Proxy
 		public static Type Register<T>(ServiceLifetime lifetime = ServiceLifetime.PerRequest, bool throwOnDuplicate = true)
 		{
 			Type type = typeof(T);
-			return RegisterTypes(type, type, lifetime, throwOnDuplicate);
+			return RegisterType(type, type, lifetime, throwOnDuplicate);
+		}
+
+		public static Type Register<TInterface, TImplementation>(ServiceLifetime lifetime = ServiceLifetime.PerRequest, bool throwOnDuplicate = true)
+		{
+			return RegisterType(typeof(TInterface), typeof(TImplementation), lifetime, throwOnDuplicate);
 		}
 
 		public static Type Register<T>(string alias, ServiceLifetime lifetime = ServiceLifetime.PerRequest, bool throwOnDuplicate = true)
 		{
 			alias.ThrowIfNull("alias", "Parameter cannot be a null.");
 			Type type = typeof(T);
-			return RegisterTypeWithAlias(alias, type, type, lifetime, throwOnDuplicate);
+			return RegisterTypeByAlias(alias, type, type, lifetime, throwOnDuplicate);
 		}
 
 		public static Type ChangeLifetime(Type contract, ServiceLifetime lifetime)
@@ -269,44 +283,51 @@ namespace ShareDeployed.Proxy
 		{
 			instance = null;
 			instanceDel = null;
-			if (!mapInfo.Key.HasDefaultCtor())//check if type has default ctor
+
+			if (InjectionCtorMapper.Instance.Contains(mapInfo.GetHashCode()))
 			{
-				if (_configCtorArgs.ContainsKey(mapInfo.Key))
+				InjectionCtorInfo dynCtorInfo = InjectionCtorMapper.Instance.Get(mapInfo.GetHashCode());
+				if (dynCtorInfo != null)
 				{
-					FastReflection.IDynamicConstructor dynCtor = null;
-					int argCount = _configCtorArgs[mapInfo.Key].Count;
-					if (TypeCtorsMapper.Instance.Contains(mapInfo.Key.GetHashCode()))
+					instance = dynCtorInfo.DynamicCtor.Invoke(ResolveAll(dynCtorInfo.ParametersTypes.ToArray()).ToArray());
+					return;
+				}
+			}
+			else if (_configCtorArgs.ContainsKey(mapInfo.Key))
+			{
+				FastReflection.IDynamicConstructor dynCtor = null;
+				int argCount = _configCtorArgs[mapInfo.Key].Count;
+				if (TypeCtorsMapper.Instance.Contains(mapInfo.Key.GetHashCode()))
+				{
+					dynCtor = TypeCtorsMapper.Instance.Get(mapInfo.Key.GetHashCode()).FirstOrDefault(x => x.ParametersCount == argCount);
+					if (dynCtor != null)
 					{
-						dynCtor = TypeCtorsMapper.Instance.Get(mapInfo.Key.GetHashCode()).FirstOrDefault(x => x.ParametersCount == argCount);
-						if (dynCtor != null)
-						{
-							object[] parameters = InitCtorParameters(mapInfo.Key, argCount);
-							instance = dynCtor.Invoke(parameters);//create new instance of an oject by invoking its ctor.
-							return;
-						}
+						object[] parameters = InitCtorParameters(mapInfo.Key, argCount);
+						instance = dynCtor.Invoke(parameters); //create new instance of an oject by invoking its ctor.
+						return;
+					}
+				}
+				else
+				{	//TODO: Potential bug, there might be situation where type has many overloaded ctor's with diff parameters types
+					ConstructorInfo ci = mapInfo.Key.GetConstructors(ReflectionUtils.PublicInstanceMembers).
+													FirstOrDefault(ctor => ctor.GetParameters().Length == argCount);
+					if (ci != null)
+					{
+						dynCtor = FastReflection.DynamicConstructor.Create(ci);
+						TypeCtorsMapper.Instance.Add(mapInfo.Key.GetHashCode(), dynCtor);
+						object[] parameters = InitCtorParameters(mapInfo.Key, argCount);
+						instance = dynCtor.Invoke(parameters);
+						return;
 					}
 					else
-					{	//TODO: Potential bug, there might be situation where type has many overloaded ctor's with diff parameters types
-						ConstructorInfo ci = mapInfo.Key.GetConstructors(ReflectionUtils.PublicInstanceMembers).
-														FirstOrDefault(ctor => ctor.GetParameters().Length == argCount);
-						if (ci != null)
-						{
-							dynCtor = FastReflection.DynamicConstructor.Create(ci);
-							TypeCtorsMapper.Instance.Add(mapInfo.Key.GetHashCode(), dynCtor);
-							object[] parameters = InitCtorParameters(mapInfo.Key, argCount);
-							instance = dynCtor.Invoke(parameters);
-							return;
-						}
-						else
-						{
-							ConstructorMissingException ex = new ConstructorMissingException(mapInfo.Key, argCount);
-							OnResolutionFailed(mapInfo.Key, "Fail to find ctor with specified arguments count.", ex);
-							throw ex;
-						}
+					{
+						ConstructorMissingException ex = new ConstructorMissingException(mapInfo.Key, argCount);
+						OnResolutionFailed(mapInfo.Key, "Fail to find ctor with specified arguments count.", ex);
+						throw ex;
 					}
 				}
 			}
-			else
+			else if (mapInfo.Key.HasDefaultCtor())
 			{	//create or retrieve CreateInstanceDelegate for type with default ctor
 				instanceDel = ObjectCreatorHelper.ObjectInstantiater(mapInfo.Key);
 				instance = instanceDel();
@@ -558,7 +579,7 @@ namespace ShareDeployed.Proxy
 						Type expected = Type.GetType(service.Type, false);
 						if (contract != null && expected != null)
 						{
-							ServicesMapper.RegisterTypeWithAlias(string.IsNullOrEmpty(service.Alias) ? contract.FullName : service.Alias,
+							ServicesMapper.RegisterTypeByAlias(string.IsNullOrEmpty(service.Alias) ? contract.FullName : service.Alias,
 																	contract, expected, (ServiceLifetime)service.Scope);
 							InitializeInternals(contract, expected, service);
 						}
@@ -648,7 +669,7 @@ namespace ShareDeployed.Proxy
 		/// <param name="contract"></param>
 		public static Type BindToSelf(this Type contract)
 		{
-			ServicesMapper.RegisterTypes(contract, contract);
+			ServicesMapper.RegisterType(contract, contract);
 			return contract;
 		}
 
@@ -660,7 +681,7 @@ namespace ShareDeployed.Proxy
 		/// <remarks>Must be first in case of type registration</remarks>
 		public static Type BindToSelf(this Type contract, bool excludeException)
 		{
-			ServicesMapper.RegisterTypes(contract, contract, throwOnDuplicate: false);
+			ServicesMapper.RegisterType(contract, contract, throwOnDuplicate: false);
 			return contract;
 		}
 
@@ -670,7 +691,7 @@ namespace ShareDeployed.Proxy
 		/// <param name="contract"></param>
 		public static Type BindToSelfWithAlias(this Type contract, string alias)
 		{
-			ServicesMapper.RegisterTypeWithAlias(alias, contract, contract);
+			ServicesMapper.RegisterTypeByAlias(alias, contract, contract);
 			return contract;
 		}
 
@@ -680,7 +701,7 @@ namespace ShareDeployed.Proxy
 		/// <param name="contract"></param>
 		public static Type BindToSelfWithAliasInScope(this Type contract, string alias, ServiceLifetime scope)
 		{
-			ServicesMapper.RegisterTypeWithAlias(alias, contract, contract, scope);
+			ServicesMapper.RegisterTypeByAlias(alias, contract, contract, scope);
 			return contract;
 		}
 	}

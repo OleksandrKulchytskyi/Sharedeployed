@@ -114,6 +114,14 @@ namespace ShareDeployed.Proxy
 		public bool DefaultIfUnable { get; set; }
 	}
 
+	[AttributeUsage(AttributeTargets.Constructor, Inherited = false, AllowMultiple = false)]
+	sealed class InjectionConstructorAttribute : Attribute
+	{
+		public InjectionConstructorAttribute()
+		{
+		}
+	}
+
 	/// <summary>
 	/// A wrapper for value type.  Must be used in order for Fasterflect to 
 	/// work with value type such as struct.

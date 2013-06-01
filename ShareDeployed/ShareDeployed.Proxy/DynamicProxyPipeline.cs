@@ -27,7 +27,7 @@ namespace ShareDeployed.Proxy
 			_internalServices.TryAdd(typeof(IContractResolver), new ServicesMapper());
 
 			Type logAggrType = typeof(Logging.ILogAggregator);
-			ServicesMapper.RegisterTypeWithAlias("logAggregator", logAggrType, typeof(Logging.LogAggregator)).InSingletonScope();
+			ServicesMapper.RegisterTypeByAlias("logAggregator", logAggrType, typeof(Logging.LogAggregator)).InSingletonScope();
 
 			_internalServices.TryAdd(logAggrType, ContracResolver.Resolve<Logging.ILogAggregator>());
 			LoggerAggregator.AddLogger(new Logging.Log4netProvider());
