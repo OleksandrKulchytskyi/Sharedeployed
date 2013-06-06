@@ -65,11 +65,14 @@
     <Compile Include="FastReflection\ILManager.cs" />
     <Compile Include="FastReflection\IPropertyAccessor.cs" />
     <Compile Include="FastReflection\MethodInvokerFactory.cs" />
+	<Compile Include="Extensions\MultivalueDictionary.cs" />
     <Compile Include="Extensions\ReflectionUtils.cs" />
     <Compile Include="Extensions\StringUtils.cs" />
     <Compile Include="Extensions\TypeExtension.cs" />
     <Compile Include="Extensions\ValueTypeExtension.cs" />
     <Compile Include="FastReflection\DynamicMethodDelegateFactory.cs" />
+	<Compile Include="Event\Core.cs" />
+	<Compile Include="Event\EventBroker.cs" />
     <Compile Include="FastReflection\FastField.cs" />
     <Compile Include="FastReflection\FastProperty.cs" />
     <Compile Include="FastReflection\FastPropertyT.cs" />
@@ -113,7 +116,7 @@
     <Compile Include="Extensions\SafeCollection.cs" />
     <Compile Include="IoC\ServicesMapper.cs" />
     <Compile Include="Mappers\TypePropertyMapper.cs" />
-	<Compile Include="Mappers\InjectionCtorMapper.cs" />
+    <Compile Include="Mappers\InjectionCtorMapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -122,7 +125,9 @@
     <None Include="packages.config" />
     <None Include="TODO.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Event\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
