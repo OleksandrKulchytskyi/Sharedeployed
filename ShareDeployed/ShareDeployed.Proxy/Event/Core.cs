@@ -107,7 +107,7 @@ namespace ShareDeployed.Proxy.Event
 
 			if (parameters.Length != 2 || !typeof(EventArgs).IsAssignableFrom(parameters[1].ParameterType))
 				throw new ArgumentException("Method does not appear to be a valid event handler", "methodInfo");
-
+			//TODO: elaborate the retrieving and caching logic for generic event handlers
 			_handlerEventArgsType = typeof(EventHandler<>).MakeGenericType(parameters[1].ParameterType);
 		}
 

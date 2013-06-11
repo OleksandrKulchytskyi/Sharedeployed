@@ -65,14 +65,14 @@
     <Compile Include="FastReflection\ILManager.cs" />
     <Compile Include="FastReflection\IPropertyAccessor.cs" />
     <Compile Include="FastReflection\MethodInvokerFactory.cs" />
-	<Compile Include="Extensions\MultivalueDictionary.cs" />
+    <Compile Include="Extensions\MultivalueDictionary.cs" />
     <Compile Include="Extensions\ReflectionUtils.cs" />
     <Compile Include="Extensions\StringUtils.cs" />
     <Compile Include="Extensions\TypeExtension.cs" />
     <Compile Include="Extensions\ValueTypeExtension.cs" />
     <Compile Include="FastReflection\DynamicMethodDelegateFactory.cs" />
-	<Compile Include="Event\Core.cs" />
-	<Compile Include="Event\EventBroker.cs" />
+    <Compile Include="Event\Core.cs" />
+    <Compile Include="Event\EventBrokerPipeline.cs" />
     <Compile Include="FastReflection\FastField.cs" />
     <Compile Include="FastReflection\FastProperty.cs" />
     <Compile Include="FastReflection\FastPropertyT.cs" />
@@ -125,9 +125,7 @@
     <None Include="packages.config" />
     <None Include="TODO.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Event\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
