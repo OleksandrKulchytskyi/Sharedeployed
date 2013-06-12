@@ -1,4 +1,5 @@
-﻿using ShareDeployed.Proxy.Logging;
+﻿using ShareDeployed.Proxy.Event;
+using ShareDeployed.Proxy.Logging;
 using System;
 using System.Collections.Generic;
 
@@ -16,6 +17,7 @@ namespace ShareDeployed.Proxy
 		ILogAggregator LoggerAggregator { get; set; }
 		IContractResolver ContracResolver { get; set; }
 		IDynamicProxyManager DynamixProxyManager { get; set; }
+		IEventBrokerPipeline EventPipeline { get; }
 	}
 
 	public interface IConfigurable
@@ -52,6 +54,7 @@ namespace ShareDeployed.Proxy
 	public interface IContractResolver
 	{
 		bool OmitNotRegistred { get; set; }
+		IEventBrokerRegistrator EventRegistrator { get; }
 
 		event EventHandler<ResolutionFailEventArgs> ResolveFailed;
 

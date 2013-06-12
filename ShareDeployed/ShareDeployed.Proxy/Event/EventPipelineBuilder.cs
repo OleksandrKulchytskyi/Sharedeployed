@@ -8,12 +8,12 @@ namespace ShareDeployed.Proxy.Event
 {
 	public interface IEventPipelineBuilder
 	{
-		IEventBroker BuildFor(params Assembly[] assemblies);
+		IEventBrokerPipeline BuildFor(params Assembly[] assemblies);
 	}
 
 	public class EventPipelineBuilder : IEventPipelineBuilder
 	{
-		public IEventBroker BuildFor(params Assembly[] assemblies)
+		public IEventBrokerPipeline BuildFor(params Assembly[] assemblies)
 		{
 			EventBrokerPipeline pipeline = new EventBrokerPipeline();
 			foreach (Assembly asm in assemblies)

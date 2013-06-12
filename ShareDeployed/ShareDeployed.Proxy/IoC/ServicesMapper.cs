@@ -1,4 +1,5 @@
-﻿using ShareDeployed.Proxy.Extensions;
+﻿using ShareDeployed.Proxy.Event;
+using ShareDeployed.Proxy.Extensions;
 using ShareDeployed.Proxy.IoC.Config;
 using System;
 using System.Collections.Concurrent;
@@ -484,6 +485,17 @@ namespace ShareDeployed.Proxy
 			{
 				if (_omitNotRegistered != value)
 					_omitNotRegistered = value;
+			}
+		}
+
+		private IEventBrokerRegistrator _eventReg;
+		public IEventBrokerRegistrator EventRegistrator
+		{
+			get
+			{
+				if (_eventReg == null)
+					_eventReg = new EventBrokerRegistrator(this, this.Resolve<IEventBrokerPipeline>());
+				return _eventReg;
 			}
 		}
 

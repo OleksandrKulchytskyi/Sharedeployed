@@ -29,6 +29,8 @@ namespace ShareDeployed.Proxy
 			Type logAggrType = typeof(Logging.ILogAggregator);
 			ServicesMapper.RegisterTypeByAlias("logAggregator", logAggrType, typeof(Logging.LogAggregator)).InSingletonScope();
 
+			ServicesMapper.RegisterTypeByAlias("eventPipeline", typeof(Event.IEventBrokerPipeline), typeof(Event.EventBrokerPipeline));
+
 			_internalServices.TryAdd(logAggrType, ContracResolver.Resolve<Logging.ILogAggregator>());
 			LoggerAggregator.AddLogger(new Logging.Log4netProvider());
 
@@ -132,20 +134,8 @@ namespace ShareDeployed.Proxy
 			return from a in AppDomain.CurrentDomain.GetAssemblies().AsParallel().WithDegreeOfParallelism(Environment.ProcessorCount - 1)
 				   from t in a.GetTypes()
 				   let attributes = t.GetCustomAttributes(typeof(T), true)
-				   where t.IsPublic && attributes != null && attributes.Length > 0
+				   where t.IsPublic && !t.IsInterface && attributes != null && attributes.Length > 0
 				   select t;
-
-			//return from a in AppDomain.CurrentDomain.GetAssemblies().AsParallel()
-			//	   from t in a.GetTypes()
-			//	   let attributes = t.GetCustomAttributes(typeof(T), true)
-			//	   where attributes != null && attributes.Length > 0
-			//	   select t;
-
-			//return (from assembly in AppDomain.CurrentDomain.GetAssemblies().AsParallel().WithDegreeOfParallelism(Environment.ProcessorCount - 1)
-			//		from type in assembly.GetTypes()
-			//		where type != null && Attribute.IsDefined(typeof(T), type)
-			//		select type);
-
 		}
 
 		private object GetInternalService(Type contract)
@@ -192,6 +182,11 @@ namespace ShareDeployed.Proxy
 				if (value is IDynamicProxyManager)
 					ReplaceService(typeof(IDynamicProxyManager), value);
 			}
+		}
+
+		public Event.IEventBrokerPipeline EventPipeline
+		{
+			get { return GetInternalService<Event.IEventBrokerPipeline>(); }
 		}
 		#endregion
 
