@@ -4,7 +4,16 @@ using System.Reflection;
 
 namespace ShareDeployed.Proxy.Event
 {
-	public sealed class EventBrokerPipeline : IDisposable
+	public interface IEventBroker
+	{
+		void Fire(string eventId, object sender, EventArgs e);
+		void RegisterSubscriber(object subscriber, MethodInfo methodInfo, string eventID);
+		void RegisterSource(object source, EventInfo eventInfo, string eventID);
+		void UnregisterSubscriber(object subscriber, string eventID);
+		void UnregisterSource(object source, string eventID);
+	}
+
+	public sealed class EventBrokerPipeline : IEventBroker, IDisposable
 	{
 		MultivalueDictionary<string, EventSource> _sources = new MultivalueDictionary<string, EventSource>();
 		MultivalueDictionary<string, EventSubscriber> _subscribers = new MultivalueDictionary<string, EventSubscriber>();

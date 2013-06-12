@@ -52,6 +52,7 @@
     <Compile Include="DynamicProxy.cs" />
     <Compile Include="DynamicProxyPipeline.cs" />
     <Compile Include="DynamicProxyFactory.cs" />
+    <Compile Include="Event\EventPipelineBuilder.cs" />
     <Compile Include="Exceptions\ConstructorMissingException.cs" />
     <Compile Include="Exceptions\TypeIsNotInterface.cs" />
     <Compile Include="Exceptions\WeakObjectDisposedException.cs" />

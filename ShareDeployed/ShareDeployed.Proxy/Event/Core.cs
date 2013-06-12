@@ -16,7 +16,7 @@ namespace ShareDeployed.Proxy.Event
 		public string EventId { get; set; }
 	}
 
-	[AttributeUsage(AttributeTargets.Event, AllowMultiple = true, Inherited = true)]
+	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
 	public class EventSubscriberAttribute : Attribute
 	{
 		public EventSubscriberAttribute(string eventId)

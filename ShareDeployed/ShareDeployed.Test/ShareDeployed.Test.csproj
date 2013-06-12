@@ -72,6 +72,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Events\ProxyEventUnitTest.cs" />
     <Compile Include="Ioc\WeakEventHandlerUnitTest.cs" />
     <Compile Include="ProducerConsumer\PCQ.cs" />
     <Compile Include="Config\ProxyConfigTest.cs" />
