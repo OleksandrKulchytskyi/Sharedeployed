@@ -15,8 +15,14 @@ namespace ShareDeployed.Proxy.Event
 
 	public sealed class EventBrokerPipeline : IEventBrokerPipeline, IDisposable
 	{
-		MultivalueDictionary<string, EventSource> _sources = new MultivalueDictionary<string, EventSource>();
-		MultivalueDictionary<string, EventSubscriber> _subscribers = new MultivalueDictionary<string, EventSubscriber>();
+		private MultivalueDictionary<string, EventSource> _sources;
+		private MultivalueDictionary<string, EventSubscriber> _subscribers;
+
+		public EventBrokerPipeline()
+		{
+			_sources = new MultivalueDictionary<string, EventSource>();
+			_subscribers = new MultivalueDictionary<string, EventSubscriber>();
+		}
 
 		public void Fire(string eventId, object sender, EventArgs e)
 		{
