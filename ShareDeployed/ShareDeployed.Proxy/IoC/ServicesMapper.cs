@@ -581,8 +581,9 @@ namespace ShareDeployed.Proxy
 			object perThread;
 			for (int i = 0; i < perThreads.Length; i++)
 			{
-
 				_perThreadObjects.TryRemove(perThreads[i], out perThread);
+				if (perThread is IDisposable)
+					(perThread as IDisposable).Dispose();
 			}
 		}
 		#endregion
