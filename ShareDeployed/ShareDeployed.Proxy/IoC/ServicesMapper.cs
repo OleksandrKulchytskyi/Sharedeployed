@@ -555,6 +555,36 @@ namespace ShareDeployed.Proxy
 			itemsToRemove.Clear();
 		}
 
+
+		public void Unregister<T>()
+		{
+			Type contract = typeof(T);
+			Unregister(contract);
+		}
+
+		public void Unregister(Type contract)
+		{
+			KeyValuePair<Type, ServiceLifetime> data;
+			lock (_syncRoot)
+			{
+				if (_servicesMap.ContainsKey(contract))
+					_servicesMap.Remove(contract);
+			}
+
+			object singleton;
+			if (_singletonObjects.TryRemove(contract, out singleton))
+				if (singleton is IDisposable)
+					(singleton as IDisposable).Dispose();
+
+			int contractId = contract.GetHashCode();
+			var perThreads = _perThreadObjects.Keys.Where(x => x.ContractId == contractId).ToArray();
+			object perThread;
+			for (int i = 0; i < perThreads.Length; i++)
+			{
+
+				_perThreadObjects.TryRemove(perThreads[i], out perThread);
+			}
+		}
 		#endregion
 
 		#region IConfigurable members

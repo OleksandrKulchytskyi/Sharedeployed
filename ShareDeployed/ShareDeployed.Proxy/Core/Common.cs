@@ -63,6 +63,9 @@ namespace ShareDeployed.Proxy
 		T Resolve<T>();
 		T Resolve<T>(string alias);
 		IEnumerable<object> ResolveAll(params Type[] types);
+
+		void Unregister<T>();
+		void Unregister(Type contract);
 	}
 
 	public class InterceptorInfo
