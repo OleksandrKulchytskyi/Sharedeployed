@@ -42,7 +42,7 @@ namespace ShareDeployed.Test.Ioc
 			void DoAnything();
 		}
 
-		public class ChildClass: TypeForResolving
+		public class ChildClass : TypeForResolving
 		{
 			[Instantiate]
 			public IWorker Worker { get; set; }
@@ -126,14 +126,29 @@ namespace ShareDeployed.Test.Ioc
 		[ExpectedException(typeof(InvalidOperationException))]
 		public void HierrachyMethod()
 		{
-			Type childType=typeof(ChildClass);
+			Type childType = typeof(ChildClass);
 			childType.BindToSelf();
 			DynamicProxyPipeline.Instance.ContracResolver.OmitNotRegistred = true;
-			ChildClass obj= DynamicProxyPipeline.Instance.ContracResolver.Resolve<ChildClass>();
-			if (obj == null )
+			ChildClass obj = DynamicProxyPipeline.Instance.ContracResolver.Resolve<ChildClass>();
+			if (obj == null)
 				Assert.Fail();
 			Assert.IsNull(obj.Worker);
+
+			DynamicProxyPipeline.Instance.ContracResolver.Unregister<ChildClass>();
 		}
 
+		[TestMethod]
+		public void UnregisterTestMethod()
+		{
+			typeof(TypeForResolving).BindToSelfWithAliasInScope("1", ServiceLifetime.Singleton);
+
+			TypeForResolving data = DynamicProxyPipeline.Instance.ContracResolver.Resolve("1") as TypeForResolving;
+			if (data != null)
+			{
+				Assert.IsTrue(object.ReferenceEquals(data, DynamicProxyPipeline.Instance.ContracResolver.Resolve("1")));
+			}
+
+			DynamicProxyPipeline.Instance.ContracResolver.Unregister<TypeForResolving>();
+		}
 	}
 }

@@ -564,7 +564,6 @@ namespace ShareDeployed.Proxy
 
 		public void Unregister(Type contract)
 		{
-			KeyValuePair<Type, ServiceLifetime> data;
 			lock (_syncRoot)
 			{
 				if (_servicesMap.ContainsKey(contract))
@@ -678,7 +677,6 @@ namespace ShareDeployed.Proxy
 			}
 		}
 		#endregion
-
 	}
 
 	/// <summary>
