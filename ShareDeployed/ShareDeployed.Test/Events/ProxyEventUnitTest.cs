@@ -27,14 +27,34 @@ namespace ShareDeployed.Test.Eventing
 			EventSubscriber2 subs2 = DynamicProxyPipeline.Instance.ContracResolver.Resolve<EventSubscriber2>();
 
 			source.Invoke();
-
 			Assert.IsTrue(subs2.Handled);
+
+			DynamicProxyPipeline.Instance.ContracResolver.EventRegistrator.RegiterEvent<EventSource2>("WorkCompleted", "wc");
+			DynamicProxyPipeline.Instance.ContracResolver.EventRegistrator.RegiterEventListener<EventSubscriber3>("OnWorkCompleted", "wc");
+
+			EventSource2 source2 = DynamicProxyPipeline.Instance.ContracResolver.Resolve<EventSource2>();
+			EventSubscriber3 subs3 = DynamicProxyPipeline.Instance.ContracResolver.Resolve<EventSubscriber3>();
+
+			source2.Invoke();
+			Assert.IsTrue(subs3.Handled);
 		}
 	}
 
 	public class EventSource
 	{
 		[Proxy.Event.EventSource("workCompleted")]
+		public event EventHandler WorkCompleted;
+
+		public void Invoke()
+		{
+			EventHandler handler = WorkCompleted;
+			if (handler != null)
+				handler(this, EventArgs.Empty);
+		}
+	}
+
+	public class EventSource2
+	{
 		public event EventHandler WorkCompleted;
 
 		public void Invoke()
@@ -58,6 +78,17 @@ namespace ShareDeployed.Test.Eventing
 	{
 		internal bool Handled = false;
 		[Proxy.Event.EventSubscriber("workCompleted")]
+		public void OnWorkCompleted(object sender, EventArgs e)
+		{
+			Console.WriteLine("Done " + sender.ToString());
+			Handled = true;
+		}
+	}
+
+	public class EventSubscriber3
+	{
+		internal bool Handled = false;
+		
 		public void OnWorkCompleted(object sender, EventArgs e)
 		{
 			Console.WriteLine("Done " + sender.ToString());
