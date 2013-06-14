@@ -10,6 +10,11 @@ namespace ShareDeployed.Proxy
 		None = 0, Before, After, OnError
 	}
 
+	public interface IBuildAware
+	{
+		void OnBuilt();
+	}
+
 	public interface IPipeline
 	{
 		void Initialize(bool withinDomain = false);

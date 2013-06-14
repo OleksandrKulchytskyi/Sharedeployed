@@ -291,6 +291,7 @@ namespace ShareDeployed.Proxy
 				if (dynCtorInfo != null)
 				{
 					instance = dynCtorInfo.DynamicCtor.Invoke(ResolveAll(dynCtorInfo.ParametersTypes.ToArray()).ToArray());
+					InvokeBuiltAware(instance);
 					return;
 				}
 			}
@@ -305,6 +306,7 @@ namespace ShareDeployed.Proxy
 					{
 						object[] parameters = InitCtorParameters(mapInfo.Key, argCount);
 						instance = dynCtor.Invoke(parameters); //create new instance of an oject by invoking its ctor.
+						InvokeBuiltAware(instance);
 						return;
 					}
 				}
@@ -318,6 +320,7 @@ namespace ShareDeployed.Proxy
 						TypeCtorsMapper.Instance.Add(mapInfo.Key.GetHashCode(), dynCtor);
 						object[] parameters = InitCtorParameters(mapInfo.Key, argCount);
 						instance = dynCtor.Invoke(parameters);
+						InvokeBuiltAware(instance);
 						return;
 					}
 					else
@@ -332,7 +335,14 @@ namespace ShareDeployed.Proxy
 			{	//create or retrieve CreateInstanceDelegate for type with default ctor
 				instanceDel = ObjectCreatorHelper.ObjectInstantiater(mapInfo.Key);
 				instance = instanceDel();
+				InvokeBuiltAware(instance);
 			}
+		}
+
+		private void InvokeBuiltAware(object instance)
+		{
+			if (instance != null && instance is IBuildAware)
+				(instance as IBuildAware).OnBuilt();
 		}
 
 		private object[] InitCtorParameters(Type type, int argCount)
@@ -554,7 +564,6 @@ namespace ShareDeployed.Proxy
 
 			itemsToRemove.Clear();
 		}
-
 
 		public void Unregister<T>()
 		{
